@@ -29,7 +29,7 @@ def preprocessing(img):
 def main():
     # 学習済みモデルの読み込み
     net = L.Classifier(train_mnist.MLP(100, 10))
-    serializers.load_npz('source/PC/my_model.npz', net)  ###追加部分###
+    serializers.load_npz('source/PC/numberDetection/my_model.npz', net)  ###追加部分###
     optimizer = chainer.optimizers.Adam()
     optimizer.setup(net)
     # Raspberry Pi3（カメラシステム）のURL

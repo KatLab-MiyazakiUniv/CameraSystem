@@ -128,7 +128,7 @@ def main():
 
     # Run the training
     trainer.run()
-    chainer.serializers.save_npz('my_model.npz', model, compression=True)
+    chainer.serializers.save_npz('source/PC/numberDetection/my_model.npz', model, compression=True)
 
 
 if __name__ == '__main__':
