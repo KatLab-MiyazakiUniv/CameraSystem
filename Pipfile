@@ -9,6 +9,8 @@ verify_ssl = true
 numpy = "*"
 opencv-python = "*"
 pyserial = "*"
+chainer = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.6.7"
