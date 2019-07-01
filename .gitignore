@@ -1,0 +1,6 @@
+*.pdf
+.vscode
+bitclient_sample
+*.pyc
+.DS_Store
+*.docx
