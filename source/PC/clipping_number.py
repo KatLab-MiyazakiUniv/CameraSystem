@@ -94,7 +94,7 @@ def clipNumber(src_path, target_name, target_dir="./", output_size=[420, 297],
         数字カードの右上の座標。[X, Y]の順
 
     r_btm: list
-        数字カードん右下の座標。[X, Y]の順
+        数字カードの右下の座標。[X, Y]の順
     
     Returns
     -------
