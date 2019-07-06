@@ -1,7 +1,7 @@
 """
 @file: clipping_number.py
 @author: Takahiro55555
-@bfief: カメラシステムから取得した画像から、数字カードの部分を切り抜き、台形補正する。
+@brief: カメラシステムから取得した画像から、数字カードの部分を切り抜き、台形補正する。
 """
 
 import datetime
@@ -130,14 +130,14 @@ if __name__ == '__main__':
     src_name = captureImage(target_dir=imgs_dir)
     target_name = "_result_" + src_name # 切り取った画像の出力ファイル名
     
-    # 確認のために画像を表示しているだけ
+    # 画像を切り取り、保存する
+    clipNumber(src_path=imgs_dir + src_name, target_name=target_name, target_dir=imgs_dir)
+
+    # 確認のために画像を表示しているだけ（何かキーを押すと終了）
     img = cv2.imread(imgs_dir + src_name)
     cv2.imshow("color", img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-    # 画像を切り取り、保存する
-    clipNumber(src_path=imgs_dir + src_name, target_name=target_name, target_dir=imgs_dir)
 
     # 台形補正の結果を表示（何かキーを押すと終了）
     img = cv2.imread(imgs_dir + target_name)
