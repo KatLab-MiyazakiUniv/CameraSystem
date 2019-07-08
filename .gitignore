@@ -4,8 +4,7 @@ bitclient_sample
 *.pyc
 .DS_Store
 *.docx
-img.jpg
-img_ori.jpg
 *.npz
 cg.dot
 cg.png
+*.jpg
