@@ -7,7 +7,7 @@
 import cv2
 import numpy as np
 import glob
-from tqdm import tqdm
+from tqdm import tqdm, trange
 import os
 import shutil
 
@@ -24,6 +24,7 @@ def load_original():
 def binaryzation(image):
     #グレースケールへの変換
     img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    _, img = cv2.threshold(img,0,255,cv2.THRESH_OTSU)
     #画像を28x28に縮小
     img = cv2.resize(img, (28, 28))
     return img
@@ -45,7 +46,8 @@ def change_angle(image):
     angle = rand_num
 
     # 拡大比率
-    scale = 1.0
+    rand_num = np.random.rand() * 0.5 - 0.25
+    scale = 1.0 + rand_num
 
     # 回転変換行列の算出![edges.png](https://qiita-image-store.s3.amazonaws.com/0/294506/5d919d71-d994-ab16-28d2-c0217b975ff0.png)
 
@@ -91,7 +93,7 @@ def create_labels(dir_name):
     label_list = []
     for image in image_list:
         file_name = image[len(dir_name):]
-        label = file_name[:1]
+        label = str(int(file_name[:1]) - 1)
         label_list.append(file_name + " " + label)
     
     # ファイルを書き込みモードで開く
@@ -110,8 +112,8 @@ def create_dataset(name, iteration=100):
     shutil.rmtree(dir_name)
     os.mkdir(dir_name)
     
-    for original_image in tqdm(images):
-        for i in range(iteration):
+    for original_image in tqdm(images, desc='1st loop'):
+        for i in trange(iteration, desc='2nd loop'):
             image = change_brightness(original_image)
             image = change_angle(image)
             image = binaryzation(image)
@@ -121,6 +123,6 @@ def create_dataset(name, iteration=100):
     create_labels(dir_name)
 
 if __name__ == "__main__":
-    create_dataset("train")
-    create_dataset("valid", 20)
-    create_dataset("test", 20)
+    create_dataset("train", 1000)
+    create_dataset("valid", 10)
+    create_dataset("test", 300)
