@@ -7,6 +7,10 @@
 import cv2
 import numpy as np
 import glob
+from tqdm import tqdm
+import os
+import shutil
+
 
 def load_original():
     image_list = glob.glob("original/*")
@@ -84,18 +88,39 @@ def print_image(image):
 def create_labels(dir_name):
     image_list = glob.glob(dir_name + "*")
 
+    label_list = []
+    for image in image_list:
+        file_name = image[len(dir_name):]
+        label = file_name[:1]
+        label_list.append(file_name + " " + label)
+    
+    # ファイルを書き込みモードで開く
+    name = dir_name.split("/")[0]
+    text = "\n".join(label_list)             # 改行コードでつなぐ
+    with open(name + "/" + name + '_labels.txt', 'w') as f:
+        # 書き込み
+        f.write(text)
 
-if __name__ == "__main__":
+def create_dataset(name, iteration=100):
     images = load_original()
     num = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
     num_key = 0
-    dir_name = "train/images/"
-    for original_image in images:
-        for i in range(100):
+    dir_name = name + "/images/"
+    shutil.rmtree(dir_name)
+    os.mkdir(dir_name)
+    
+    for original_image in tqdm(images):
+        for i in range(iteration):
             image = change_brightness(original_image)
             image = change_angle(image)
             image = binaryzation(image)
             name = num[num_key] + "_" + str(i)
             save_image(image, name, dir_name)
         num_key += 1
+    create_labels(dir_name)
+
+if __name__ == "__main__":
+    create_dataset("train")
+    create_dataset("valid", 20)
+    create_dataset("test", 20)

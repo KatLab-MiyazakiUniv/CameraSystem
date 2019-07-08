@@ -8,3 +8,4 @@ bitclient_sample
 cg.dot
 cg.png
 *.jpg
+*_labels.txt
