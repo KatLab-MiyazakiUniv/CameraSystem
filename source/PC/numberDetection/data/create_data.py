@@ -6,18 +6,58 @@
 
 import cv2
 import numpy as np
-
+import glob
 
 def load_original():
+    image_list = glob.glob("original/*")
     # 画像の読込(numpy.ndarrayで読み込まれる)
-    image = cv2.imread('original/1.jpg')
-    return image
+    image_list.sort()
+    images = []
+    for image_address in image_list:
+        images.append(cv2.imread(image_address))
+    return images
 
+def binaryzation(image):
+    #グレースケールへの変換
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    #画像を28x28に縮小
+    img = cv2.resize(img, (28, 28))
+    return img
+
+def getMeanColor(image):
+    # RGB平均値を出力
+    # flattenで一次元化しmeanで平均を取得 
+    b = image.T[0].flatten().mean()
+    g = image.T[1].flatten().mean()
+    r = image.T[2].flatten().mean()
+    return {"r": r, "g": g, "b": b}
+
+def change_angle(image):
+    # 中心位置取得
+    center = tuple(np.array([image.shape[1] * 0.5, image.shape[0] * 0.5]))
+
+    # 回転させたい角度°(ラジアンではない)
+    rand_num = np.random.rand() * 60.0 - 30.0
+    angle = rand_num
+
+    # 拡大比率
+    scale = 1.0
+
+    # 回転変換行列の算出![edges.png](https://qiita-image-store.s3.amazonaws.com/0/294506/5d919d71-d994-ab16-28d2-c0217b975ff0.png)
+
+    affine_mat = cv2.getRotationMatrix2D(center, angle, scale)
+
+    # 平均色の取得
+    mean =  getMeanColor(image)
+    # アフィン変換(回転)
+    height, width = image.shape[:2]
+    rotation_image = cv2.warpAffine(image, affine_mat, (width, height), flags=cv2.INTER_CUBIC, borderValue=(mean["b"], mean["g"], mean["r"]))
+
+    return rotation_image
 
 def change_brightness(image):
     # 乱数生成
     rand_num = np.random.rand() / 2
-    print(rand_num)
     # γ値の定義(1より小さいと暗く、1より大きいと明るくなる)
     gamma = 1 - rand_num
 
@@ -31,8 +71,8 @@ def change_brightness(image):
     return image_gamma
 
 
-def save_image(image, name):
-    cv2.imwrite(name + ".jpg", image)
+def save_image(image, name, dir_name):
+    cv2.imwrite(dir_name + name + ".jpg", image)
 
 
 def print_image(image):
@@ -41,10 +81,21 @@ def print_image(image):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+def create_labels(dir_name):
+    image_list = glob.glob(dir_name + "*")
+
 
 if __name__ == "__main__":
-    for i in range(100):
-        image = load_original()
-        created_image = change_brightness(image)
-        name = "1_" + str(i)
-        save_image(created_image, name)
+    images = load_original()
+    num = ["1", "2", "3", "4", "5", "6", "7", "8"]
+
+    num_key = 0
+    dir_name = "train/images/"
+    for original_image in images:
+        for i in range(100):
+            image = change_brightness(original_image)
+            image = change_angle(image)
+            image = binaryzation(image)
+            name = num[num_key] + "_" + str(i)
+            save_image(image, name, dir_name)
+        num_key += 1
