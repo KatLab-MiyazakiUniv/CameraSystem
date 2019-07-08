@@ -7,6 +7,7 @@ import chainer.links as L
 from chainer import training
 from chainer.training import extensions
 import chainerx
+from chainer.datasets import LabeledImageDataset
 
 import matplotlib
 matplotlib.use('Agg')
@@ -74,11 +75,12 @@ def main():
     optimizer.setup(model)
 
     # Load the MNIST dataset
-    train, test = chainer.datasets.get_mnist()
+    #train, test = chainer.datasets.get_mnist()
+    train = LabeledImageDataset('source/PC/numberDetection/data/train/train_labels.txt', 'source/PC/numberDetection/data/train/images')
+    test = LabeledImageDataset('source/PC/numberDetection/data/test/test_labels.txt', 'source/PC/numberDetection/data/test/images')
 
     train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
-    test_iter = chainer.iterators.SerialIterator(test, args.batchsize,
-                                                 repeat=False, shuffle=False)
+    test_iter = chainer.iterators.SerialIterator(test, args.batchsize, repeat=False, shuffle=False)
 
     # Set up a trainer
     updater = training.updaters.StandardUpdater(

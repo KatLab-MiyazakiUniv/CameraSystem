@@ -12,6 +12,8 @@ opencv-python = "*"
 pyserial = "*"
 chainer = "*"
 matplotlib = "*"
+pillow = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.6.7"

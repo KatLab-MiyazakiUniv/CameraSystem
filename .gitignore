@@ -9,3 +9,8 @@ cg.dot
 cg.png
 *.jpg
 *_labels.txt
+result
+data/test/images
+data/train/images
+data/valid/images
+
