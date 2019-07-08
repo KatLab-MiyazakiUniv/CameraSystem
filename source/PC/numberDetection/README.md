@@ -2,9 +2,19 @@
 
 ## Usage
 
-先に、学習をおこない、モデルを作成する必要があります。
+### データセット作成
+先に、データセットを作成する必要があります。
 
-```python
+```bash
+cd source/PC/numberDetection/data
+python create_data.py
+```
+
+### 学習
+
+次に、学習をおこない、モデルを作成する必要があります。
+
+```bash
 python source/PC/numberDetection/train_mnist.py
 ```
 
@@ -12,12 +22,8 @@ python source/PC/numberDetection/train_mnist.py
 
 次に、認識を行います。
 
-```python
+```bash
 python source/PC/numberDetection/suuji.py
 ```
 
-実行すると、カメラ画像が表示されます。
-
-Eキーを押します。
-
-コンソールに、予測した数字が出ます。
+実行すると、カメラ画像を取得し、予測した数字をコンソールに出力します。
