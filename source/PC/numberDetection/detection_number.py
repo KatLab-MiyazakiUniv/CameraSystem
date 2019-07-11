@@ -43,33 +43,6 @@ def test_model(net):
     print("正解は", result)
     return
 
-def test_model_raspbery():
-    # Raspberry Pi3（カメラシステム）のURL
-    url = "http://192.168.11.25/?action=stream"
-
-    #Webカメラの映像表示
-    capture = cv2.VideoCapture(url)
-    if capture.isOpened() is False:
-            raise("IO Error")
-    while True:
-        #Webカメラの映像とりこみ
-        ret, image = capture.read()
-        if ret == False:
-            continue
-        #Webカメラの映像表示
-        cv2.imshow("Capture", image)
-        k = cv2.waitKey(10)
-        #Eキーで処理実行
-        if k == 101:
-            print("start")
-            img = preprocessing(image)
-            num = net.predictor(img)###追加部分###
-            print(np.argmax(num.data))###追加部分###
-        #ESCキーでキャプチャー画面を閉じる
-        if  k == 27:
-            break
-    cv2.destroyAllWindows()
-
 def get_image():
     imgs_dir = "source/PC/numberDetection/imgs/" # 画像を保管するディレクトリ
 

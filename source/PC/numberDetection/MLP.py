@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+#coding: utf-8
+
 import chainer.links as L
 import chainer.functions as F
 import chainer

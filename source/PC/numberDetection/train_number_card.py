@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#coding: utf-8
 import argparse
 
 import chainer
@@ -9,9 +10,13 @@ from chainer.training import extensions
 import chainerx
 from chainer.datasets import LabeledImageDataset
 from MLP import MLP
+import os
 
 import matplotlib
 matplotlib.use('Agg')
+
+data_directory = 'data/'
+
 
 def main():
     parser = argparse.ArgumentParser(description='Chainer example: MNIST')
@@ -59,11 +64,14 @@ def main():
 
     # Load the MNIST dataset
     #train, test = chainer.datasets.get_mnist()
-    train = LabeledImageDataset('source/PC/numberDetection/data/train/train_labels.txt', 'source/PC/numberDetection/data/train/images')
-    test = LabeledImageDataset('source/PC/numberDetection/data/test/test_labels.txt', 'source/PC/numberDetection/data/test/images')
+    train = LabeledImageDataset(os.path.join(
+        data_directory, 'train/train_labels.txt'), os.path.join(data_directory, 'train/images'))
+    test = LabeledImageDataset(os.path.join(
+        data_directory, 'test/test_labels.txt'), os.path.join(data_directory, 'test/images'))
 
     train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
-    test_iter = chainer.iterators.SerialIterator(test, args.batchsize, repeat=False, shuffle=False)
+    test_iter = chainer.iterators.SerialIterator(
+        test, args.batchsize, repeat=False, shuffle=False)
 
     # Set up a trainer
     updater = training.updaters.StandardUpdater(
@@ -113,7 +121,8 @@ def main():
 
     # Run the training
     trainer.run()
-    chainer.serializers.save_npz('source/PC/numberDetection/my_model.npz', model, compression=True)
+    chainer.serializers.save_npz(
+        'my_model.npz', model, compression=True)
 
 
 if __name__ == '__main__':
