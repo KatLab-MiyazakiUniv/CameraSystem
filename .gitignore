@@ -4,4 +4,13 @@ bitclient_sample
 *.pyc
 .DS_Store
 *.docx
+*.npz
+cg.dot
+cg.png
 *.jpg
+*_labels.txt
+result
+data/test/images
+data/train/images
+data/valid/images
+

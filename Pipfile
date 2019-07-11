@@ -3,7 +3,13 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[scripts]
+trainNumber = "bash -c \"cd source/PC/numberDetection && pwd && python train_number_card.py\""
+createNumberData = "bash -c \"cd source/PC/numberDetection/data && pwd && python create_data.py\""
+detectNumber = "bash -c \"cd source/PC/numberDetection && pwd && python detection_number.py\""
+
 [dev-packages]
+autopep8 = "*"
 
 [packages]
 numpy = "*"
@@ -11,6 +17,8 @@ opencv-python = "*"
 pyserial = "*"
 chainer = "*"
 matplotlib = "*"
+pillow = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.6.7"
