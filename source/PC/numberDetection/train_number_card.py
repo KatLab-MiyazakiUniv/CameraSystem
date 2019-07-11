@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 #coding: utf-8
+
+"""
+@file: train_number_card.py
+@author: korosuke613
+@brief: 数字カードを学習する
+"""
+
 import argparse
 
 import chainer

@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 #coding: utf-8
 
+"""
+@file: MLP.py
+@author: korosuke613
+@brief: 数字カードの学習を行うための3層パーセプトロン
+"""
+
 import chainer.links as L
 import chainer.functions as F
 import chainer

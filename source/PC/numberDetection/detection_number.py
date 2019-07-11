@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 #coding: utf-8
 
+"""
+@file: detection_number.py
+@author: korosuke613
+@brief: 数字カードを認識する
+"""
+
 import cv2
 import numpy as np
 from MLP import MLP
@@ -25,28 +31,6 @@ def preprocessing(img):
     img = np.array(img).reshape(1, 784)
     return img
 
-def test_model(net):
-    def preprocessing_local(img):
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        img = img.astype(np.float32)
-        img = np.array(img).reshape(1, 784)
-        return img
-    image_list = glob.glob(os.path.join(data_directory, "test/images/*"))
-    result = 0
-    for im in image_list:
-        image = cv2.imread(im)
-        img = preprocessing_local(image)
-        num = net.predictor(img)
-        correct = im[len(os.path.join(data_directory, "test/images/")):len(os.path.join(data_directory, "test/images/")) + 1]
-        actual = str(np.argmax(num.data) + 1)
-
-        if correct == actual:
-            result += 1
-        print(correct, actual)###追加部分###
-
-    print("正解は", result)
-    return
-
 def get_image():
     # ラズパイから映像を受信し、保存する
     src_name = captureImage(target_dir=imgs_directory)
@@ -57,24 +41,21 @@ def get_image():
     img = cv2.imread(imgs_directory + target_name)
     return img
 
-
-def main():
+def get_detect_number(img):
     # 学習済みモデルの読み込み
     net = L.Classifier(MLP(1000, 10))
     serializers.load_npz('my_model.npz', net)  ###追加部分###
     optimizer = chainer.optimizers.Adam()
     optimizer.setup(net)
-    #Webカメラの映像表示
-    #Eキーで処理実行
-    print("start")
+    num = net.predictor(img)
+    return np.argmax(num.data)+1
+
+def main():
     #Webカメラの映像とりこみ
     img = get_image()
     img = preprocessing(img)
-    num = net.predictor(img)
-    print(np.argmax(num.data)+1)
-    
-
-
+    number = get_detect_number(img)
+    print(number)
 
 if __name__ == '__main__':
     main()
