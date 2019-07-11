@@ -3,13 +3,17 @@
 
 import cv2
 import numpy as np
-import train_mnist
+from MLP import MLP
 from chainer import Chain, serializers
 import chainer.functions  as F
 import chainer.links as L
 import chainer
 import glob
+import os
 from clipping_number import clipNumber, captureImage
+
+data_directory = "data"
+imgs_directory = "imgs" # 画像を保管するディレクトリ
 
 def preprocessing(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -27,13 +31,13 @@ def test_model(net):
         img = img.astype(np.float32)
         img = np.array(img).reshape(1, 784)
         return img
-    image_list = glob.glob("source/PC/numberDetection/data/test/images/*")
+    image_list = glob.glob(os.path.join(data_directory, "test/images/*"))
     result = 0
     for im in image_list:
         image = cv2.imread(im)
         img = preprocessing_local(image)
         num = net.predictor(img)
-        correct = im[len("source/PC/numberDetection/data/test/images/"):len("source/PC/numberDetection/data/test/images/") + 1]
+        correct = im[len(os.path.join(data_directory, "test/images/")):len(os.path.join(data_directory, "test/images/")) + 1]
         actual = str(np.argmax(num.data) + 1)
 
         if correct == actual:
@@ -44,22 +48,20 @@ def test_model(net):
     return
 
 def get_image():
-    imgs_dir = "source/PC/numberDetection/imgs/" # 画像を保管するディレクトリ
-
     # ラズパイから映像を受信し、保存する
-    src_name = captureImage(target_dir=imgs_dir)
+    src_name = captureImage(target_dir=imgs_directory)
     target_name = "_result_" + src_name # 切り取った画像の出力ファイル名
     
     # 画像を切り取り、保存する
-    clipNumber(src_path=imgs_dir + src_name, target_name=target_name, target_dir=imgs_dir)
-    img = cv2.imread(imgs_dir + target_name)
+    clipNumber(src_path=imgs_directory + src_name, target_name=target_name, target_dir=imgs_directory)
+    img = cv2.imread(imgs_directory + target_name)
     return img
 
 
 def main():
     # 学習済みモデルの読み込み
-    net = L.Classifier(train_mnist.MLP(1000, 10))
-    serializers.load_npz('source/PC/numberDetection/my_model.npz', net)  ###追加部分###
+    net = L.Classifier(MLP(1000, 10))
+    serializers.load_npz('my_model.npz', net)  ###追加部分###
     optimizer = chainer.optimizers.Adam()
     optimizer.setup(net)
     #Webカメラの映像表示

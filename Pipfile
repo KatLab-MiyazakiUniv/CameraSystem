@@ -4,7 +4,9 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [scripts]
-trainNumber = "bash -c \"cd source/PC/numberDetection && pwd &&  python train_number_card.py\""
+trainNumber = "bash -c \"cd source/PC/numberDetection && pwd && python train_number_card.py\""
+createNumberData = "bash -c \"cd source/PC/numberDetection/data && pwd && python create_data.py\""
+detectNumber = "bash -c \"cd source/PC/numberDetection && pwd && python detection_number.py\""
 
 [dev-packages]
 autopep8 = "*"
