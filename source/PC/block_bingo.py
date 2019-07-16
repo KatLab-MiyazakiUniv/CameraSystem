@@ -8,6 +8,10 @@
 class CrossCircle:
     """
     交点サークル
+
+    puplic memba
+    ------------
+    self.lines[y][x]
     """
     def __init__(self, color, block=""):
         self._color = color # 交点サークルの色
@@ -16,13 +20,13 @@ class CrossCircle:
         # self.lines[y][x]
         self.lines = {0:{-1:None, 1:None}, 1:{0:None}, -1:{0:None}}
 
-    def get_color(self):
+    def get_color(self) -> str:
         return self._color
 
     def set_block(self, block):
         self._block = block
 
-    def get_block(self):
+    def get_block(self) -> str:
         return self._block
 
 
@@ -36,7 +40,7 @@ class Line:
     def set_cost(self, cost):
         self._cost = cost
 
-    def get_cost(self):
+    def get_cost(self) -> int:
         return self._cost
 
 class BlockBingo:
