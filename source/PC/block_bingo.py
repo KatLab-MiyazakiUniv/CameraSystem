@@ -52,10 +52,6 @@ class Block:
 class CrossCircle:
     """
     交点サークル
-
-    puplic memba
-    ------------
-    self.lines[y][x]
     """
     def __init__(self, color):
         self._color = color # 交点サークルの色
