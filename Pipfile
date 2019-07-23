@@ -19,6 +19,7 @@ chainer = "*"
 matplotlib = "*"
 pillow = "*"
 tqdm = "*"
+opencv-contrib-python = "*"
 
 [requires]
 python_version = "3.6.7"
