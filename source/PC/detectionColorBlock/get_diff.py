@@ -4,13 +4,18 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
+import sys
+sys.path.append('../numberDetection')
 
-data_directory = "source/PC/detectionColorBlock/data/original"
+from clipping_number import clipNumber
 
-def showMatchAB(fileA, fileB):
+data_directory = "data/original"
+
+
+def show_match(file_a, file_b):
     # 画像の読み込み
-    imgA = cv2.imread(fileA)
-    imgB = cv2.imread(fileB)
+    imgA = cv2.imread(file_a)
+    imgB = cv2.imread(file_b)
 
     # グレー変換
     grayA = cv2.cvtColor(imgA, cv2.COLOR_BGR2GRAY)
@@ -20,21 +25,22 @@ def showMatchAB(fileA, fileB):
     height, width = grayA.shape
     # 部分画像を作って、マッチングさせる
     result_window = np.zeros((height, width), dtype=imgA.dtype)
-    for start_y in range(0, height-100, 50):
-        for start_x in range(0, width-100, 50):
-            window = grayA[start_y:start_y+100, start_x:start_x+100]
+    for start_y in range(0, height - 100, 50):
+        for start_x in range(0, width - 100, 50):
+            window = grayA[start_y:start_y + 100, start_x:start_x + 100]
             match = cv2.matchTemplate(grayB, window, cv2.TM_CCOEFF_NORMED)
             _, _, _, max_loc = cv2.minMaxLoc(match)
-            matched_window = grayB[max_loc[1]:max_loc[1]+100, max_loc[0]:max_loc[0]+100]
+            matched_window = grayB[max_loc[1]:max_loc[1] + 100, max_loc[0]:max_loc[0] + 100]
             result = cv2.absdiff(window, matched_window)
-            result_window[start_y:start_y+100, start_x:start_x+100] = result
+            result_window[start_y:start_y + 100, start_x:start_x + 100] = result
 
     plt.imshow(result_window)
 
-def matchAB(fileA, fileB):
+
+def match(file_a, file_b):
     # 画像の読み込み
-    imgA = cv2.imread(fileA)
-    imgB = cv2.imread(fileB)
+    imgA = cv2.imread(file_a)
+    imgB = cv2.imread(file_b)
 
     # グレー変換
     grayA = cv2.cvtColor(imgA, cv2.COLOR_BGR2GRAY)
@@ -44,14 +50,14 @@ def matchAB(fileA, fileB):
     height, width = grayA.shape
     # 部分画像を作って、マッチングさせる
     result_window = np.zeros((height, width), dtype=imgA.dtype)
-    for start_y in range(0, height-100, 50):
-        for start_x in range(0, width-100, 50):
-            window = grayA[start_y:start_y+100, start_x:start_x+100]
+    for start_y in range(0, height - 100, 50):
+        for start_x in range(0, width - 100, 50):
+            window = grayA[start_y:start_y + 100, start_x:start_x + 100]
             match = cv2.matchTemplate(grayB, window, cv2.TM_CCOEFF_NORMED)
             _, _, _, max_loc = cv2.minMaxLoc(match)
-            matched_window = grayB[max_loc[1]:max_loc[1]+100, max_loc[0]:max_loc[0]+100]
+            matched_window = grayB[max_loc[1]:max_loc[1] + 100, max_loc[0]:max_loc[0] + 100]
             result = cv2.absdiff(window, matched_window)
-            result_window[start_y:start_y+100, start_x:start_x+100] = result
+            result_window[start_y:start_y + 100, start_x:start_x + 100] = result
 
     # マッチングした結果できた差分画像の輪郭を抽出し、四角で囲む
     _, result_window_bin = cv2.threshold(result_window, 127, 255, cv2.THRESH_BINARY)
@@ -66,15 +72,19 @@ def matchAB(fileA, fileB):
         cv2.rectangle(imgC, loc1, loc2, 255, 2)
 
     # 画像表示する
-    plt.subplot(1, 3, 1), plt.imshow(cv2.cvtColor(imgA, cv2.COLOR_BGR2RGB)), plt.title('A'), plt.xticks([]), plt.yticks([])
-    plt.subplot(1, 3, 2), plt.imshow(cv2.cvtColor(imgB, cv2.COLOR_BGR2RGB)), plt.title('B'), plt.xticks([]), plt.yticks([])
-    plt.subplot(1, 3, 3), plt.imshow(cv2.cvtColor(imgC, cv2.COLOR_BGR2RGB)), plt.title('Answer'), plt.xticks([]), plt.yticks([])
+    plt.subplot(1, 3, 1), plt.imshow(cv2.cvtColor(imgA, cv2.COLOR_BGR2RGB)), plt.title('A'), plt.xticks([]), plt.yticks(
+        [])
+    plt.subplot(1, 3, 2), plt.imshow(cv2.cvtColor(imgB, cv2.COLOR_BGR2RGB)), plt.title('B'), plt.xticks([]), plt.yticks(
+        [])
+    plt.subplot(1, 3, 3), plt.imshow(cv2.cvtColor(imgC, cv2.COLOR_BGR2RGB)), plt.title('Answer'), plt.xticks(
+        []), plt.yticks([])
     plt.show()
 
-def test():
+
+def test(file_a, file_b):
     # 画像の読み込み
-    img_src1 = cv2.imread(none_fig, 1)
-    img_src2 = cv2.imread(fix_fig, 1)
+    img_src1 = cv2.imread(file_a, 1)
+    img_src2 = cv2.imread(file_b, 1)
 
     fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
 
@@ -82,16 +92,24 @@ def test():
     fgmask = fgbg.apply(img_src2)
 
     # 表示
-    cv2.imshow('frame',fgmask)
+    cv2.imshow('frame', fgmask)
 
     # 検出画像
-    bg_diff_path  = './diff.jpg'
-    cv2.imwrite(bg_diff_path,fgmask)
+    bg_diff_path = './diff.jpg'
+    cv2.imwrite(bg_diff_path, fgmask)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+
+def cripping_field(file):
+    clipNumber(file, "clip_field.png", output_size=[640, 640],
+               l_top=[194, 279], l_btm=[1145, 625],
+               r_top=[1278, 149], r_btm=[675, 65])
+
+
 if __name__ == '__main__':
-    none_fig = os.path.join(data_directory, "none.png")
-    fix_fig = os.path.join(data_directory, "fix.png")
-    showMatchAB(none_fig, fix_fig)
+    none_fig = os.path.join(data_directory, "clip_field_none.png")
+    fix_fig = os.path.join(data_directory, "clip_field_fix.png")
+    test(none_fig, fix_fig)
+    #cripping_field(fix_fig)
