@@ -15,7 +15,6 @@ class Bluetooth:
         if self.ser.is_open:
             self.ser.close()
 
-
     def connect(self, port, baud=115200, timeout=5):
         """
         接続する
@@ -70,7 +69,7 @@ class Bluetooth:
 
 if __name__ == '__main__':
     bluetooth = Bluetooth()
-    bluetooth.connect("/dev/cu.MindstormsEV3PS5-Serial")
+    bluetooth.connect("/dev/cu.MindstormsEV301-SerialP")
     while True:
         write_data = random.randint(0, 9)
         bluetooth.write(write_data)
