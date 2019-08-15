@@ -1,5 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
+"""
+@file: Bluetooth.py
+@author: Tatsumi0000
+@brief: EV3とBluetooth通信をする
+"""
 import serial
 import random
 import time
