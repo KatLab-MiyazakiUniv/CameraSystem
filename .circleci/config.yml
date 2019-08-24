@@ -4,7 +4,7 @@ jobs:
   build:  # required for runs that don't use workflows
     working_directory: ~/workspace
     docker:
-      - image: circleci/python:3.7  # primary container for the build job
+      - image: circleci/python:3.6  # primary container for the build job
         environment:
           PIPENV_VENV_IN_PROJECT: true
     steps:
