@@ -9,10 +9,10 @@ cg.png
 *_labels.txt
 result
 
-source/numberDetection/training_scripts/test/*
-!source/numberDetection/training_scripts/test/README.md
-source/numberDetection/training_scripts/train/*
-!source/numberDetection/training_scripts/train/README.md
-source/numberDetection/training_scripts/valid/*
-!source/numberDetection/training_scripts/valid/README.md
+source/DetectionNumber/training_scripts/test/*
+!source/DetectionNumber/training_scripts/test/README.md
+source/DetectionNumber/training_scripts/train/*
+!source/DetectionNumber/training_scripts/train/README.md
+source/DetectionNumber/training_scripts/valid/*
+!source/DetectionNumber/training_scripts/valid/README.md
 .idea/
