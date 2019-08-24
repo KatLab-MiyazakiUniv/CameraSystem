@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 
 """
 @file: MLP.py
@@ -10,6 +10,7 @@
 import chainer.links as L
 import chainer.functions as F
 import chainer
+
 
 # Network definition
 class MLP(chainer.Chain):

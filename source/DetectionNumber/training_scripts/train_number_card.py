@@ -70,7 +70,7 @@ def main():
     optimizer.setup(model)
 
     # Load the MNIST dataset
-    #train, test = chainer.datasets.get_mnist()
+    # train, test = chainer.datasets.get_mnist()
     train = LabeledImageDataset(os.path.join(
         data_directory, 'train/train_labels.txt'), os.path.join(data_directory, 'train/images'))
     test = LabeledImageDataset(os.path.join(

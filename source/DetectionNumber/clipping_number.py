@@ -31,8 +31,8 @@ def captureImage(target_name=None, target_dir="./", url="http://192.168.11.25/?a
         キャプチャした静止画のファイル名
     """
     # VideoCaptureのインスタンスを作成する。
-    cap = cv2.VideoCapture(url) # カメラシステムを使う場合
-    #cap = cv2.VideoCapture(DEVICE_ID) # このpythonスクリプトを実行するPCのカメラを使う場合コメントアウトして下さい
+    cap = cv2.VideoCapture(url)  # カメラシステムを使う場合
+    # cap = cv2.VideoCapture(DEVICE_ID) # このpythonスクリプトを実行するPCのカメラを使う場合コメントアウトして下さい
 
     # カメラFPSを30FPSに設定
     cap.set(cv2.CAP_PROP_FPS, 30)
@@ -45,11 +45,11 @@ def captureImage(target_name=None, target_dir="./", url="http://192.168.11.25/?a
 
     # ピクセル配列をゼロ初期化
     img = np.zeros((720, 1280, 3), dtype=np.uint8)
-    
+
     if cap.isOpened():
         # 画像をキャプチャ
         ret, img = cap.read()
-        
+
         # 出力ファイル名を設定
         if target_name == None:
             target_name = 'snapshot_{0:%Y%m%d_%H%M%S}.jpg'.format(datetime.datetime.now())
@@ -106,7 +106,7 @@ def clipNumber(src_path, target_name, target_dir="./", output_size=[420, 297],
     """
     # ファイル読込み
     img = cv2.imread(src_path)
-    
+
     # 出力サイズを引数から取得
     h, w = output_size
 
@@ -114,7 +114,7 @@ def clipNumber(src_path, target_name, target_dir="./", output_size=[420, 297],
     # 座標指定の順序[[左上], [左下], [右上], [右下]]
     dst_pts = np.array([l_top, l_btm, r_top, r_btm], dtype=np.float32)
     mat = cv2.getPerspectiveTransform(dst_pts, src_pts)
-    
+
     # borderValueで色(R, G, B)256段階を指定すると、画像でない部分を指定した色で埋めてくれる
     # ２値化することを考慮し、画像でない部分は白色に設定
     perspective_img = cv2.warpPerspective(img, mat, (w, h), borderValue=(255, 255, 255))
@@ -124,12 +124,12 @@ def clipNumber(src_path, target_name, target_dir="./", output_size=[420, 297],
 
 
 if __name__ == '__main__':
-    imgs_dir = "imgs/" # 画像を保管するディレクトリ
+    imgs_dir = "imgs/"  # 画像を保管するディレクトリ
 
     # ラズパイから映像を受信し、保存する
     src_name = captureImage(target_dir=imgs_dir)
-    target_name = "_result_" + src_name # 切り取った画像の出力ファイル名
-    
+    target_name = "_result_" + src_name  # 切り取った画像の出力ファイル名
+
     # 画像を切り取り、保存する
     clipNumber(src_path=imgs_dir + src_name, target_name=target_name, target_dir=imgs_dir)
 
