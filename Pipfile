@@ -11,6 +11,9 @@ detectNumber = "bash -c \"cd source/PC/numberDetection && pwd && python detectio
 [dev-packages]
 autopep8 = "*"
 pytest-cov = "*"
+pytest = "*"
+coveralls = "*"
+coverage = "*"
 
 [packages]
 numpy = "*"
@@ -21,9 +24,7 @@ matplotlib = "*"
 pillow = "*"
 tqdm = "*"
 opencv-contrib-python = "*"
-pytest = "*"
-coveralls = "*"
-coverage = "*"
+
 
 [requires]
 python_version = "3.6.7"
