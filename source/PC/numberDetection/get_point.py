@@ -1,5 +1,7 @@
 # https://qiita.com/otakoma/items/04e525ac74b7191dffe6 より参照
 
+import sys
+
 import numpy as np
 import cv2
 
@@ -58,8 +60,14 @@ def get_point(event, x, y, flag, params):
 
 
 if __name__ == '__main__':
-    cap = cv2.VideoCapture("numberDetection/imgs/sample.jpg")
-    #img = cv2.imread()
+    url = "http://raspberrypi.local/?action=stream"
+    # VideoCaptureのインスタンスを作成する。
+    cap = cv2.VideoCapture(url) # カメラシステムを使う場合
+    if not cap.isOpened():
+        print("画像のキャプチャに失敗しました")
+        sys.exit()
+
+    # 画像をキャプチャ
     ret, img = cap.read()
     wname = "MouseEvent"
     cv2.namedWindow(wname)
