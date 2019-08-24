@@ -5,12 +5,14 @@
 """
 
 import datetime
+import sys
 
 import cv2
 import numpy as np
 
+from get_point import get_point, PointList
 
-def captureImage(target_name=None, target_dir="./", url="http://192.168.11.25/?action=stream"):
+def captureImage(target_name=None, target_dir="./", url="http://192.168.11.25/?action=stream", padding=0):
     """
     URLから流れてくる映像をキャプチャし、静止画として保存する
 
@@ -23,7 +25,10 @@ def captureImage(target_name=None, target_dir="./", url="http://192.168.11.25/?a
         キャプチャした静止画を保存するためのディレクトリ。デフォルトでは実行時のカレントディレクトリ。
 
     url: str
-         映像配信URL
+        映像配信URL
+    
+    padding: int
+        キャプチャした画像の余白（単位：px）。
 
     Returns
     -------
@@ -33,6 +38,10 @@ def captureImage(target_name=None, target_dir="./", url="http://192.168.11.25/?a
     # VideoCaptureのインスタンスを作成する。
     cap = cv2.VideoCapture(url) # カメラシステムを使う場合
     #cap = cv2.VideoCapture(DEVICE_ID) # このpythonスクリプトを実行するPCのカメラを使う場合コメントアウトして下さい
+    if not cap.isOpened():
+        print("On file {}".format(__file__))
+        print("画像のキャプチャに失敗しました")
+        sys.exit()
 
     # カメラFPSを30FPSに設定
     cap.set(cv2.CAP_PROP_FPS, 30)
@@ -45,17 +54,22 @@ def captureImage(target_name=None, target_dir="./", url="http://192.168.11.25/?a
 
     # ピクセル配列をゼロ初期化
     img = np.zeros((720, 1280, 3), dtype=np.uint8)
-    
-    if cap.isOpened():
-        # 画像をキャプチャ
-        ret, img = cap.read()
-        
-        # 出力ファイル名を設定
-        if target_name == None:
-            target_name = 'snapshot_{0:%Y%m%d_%H%M%S}.jpg'.format(datetime.datetime.now())
 
-        # 画像をJPEGファイルへ保存
-        cv2.imwrite(target_dir + target_name, img)
+    # 画像をキャプチャ
+    ret, img = cap.read()
+    
+    # 出力ファイル名を設定
+    if target_name == None:
+        target_name = 'snapshot_{0:%Y%m%d_%H%M%S}.jpg'.format(datetime.datetime.now())
+
+    # 余白を設定する
+    tmp = img[:, :]
+    height, width = img.shape[:2]
+    new_img = cv2.resize(np.full((1, 1, 3), fill_value=255, dtype=np.uint8), dsize=(width+padding*2, height+padding*2))
+    new_img[padding:height+padding, padding:width+padding] = tmp
+
+    # 画像をJPEGファイルへ保存
+    cv2.imwrite(target_dir + target_name, new_img)
 
     # キャプチャ終了
     cap.release()
@@ -126,17 +140,25 @@ if __name__ == '__main__':
     imgs_dir = "imgs/" # 画像を保管するディレクトリ
 
     # ラズパイから映像を受信し、保存する
-    src_name = captureImage(target_dir=imgs_dir, url="http://raspberrypi.local/?action=stream")
+    url = "http://raspberrypi.local/?action=stream"
+    src_name = captureImage(target_dir=imgs_dir, url=url, padding=100)
     target_name = "_result_" + src_name # 切り取った画像の出力ファイル名
-    
-    # 画像を切り取り、保存する
-    clipNumber(src_path=imgs_dir + src_name, target_name=target_name, target_dir=imgs_dir)
 
-    # 確認のために画像を表示しているだけ（何かキーを押すと終了）
     img = cv2.imread(imgs_dir + src_name)
-    cv2.imshow("color", img)
-    cv2.waitKey(0)
+    wname = "MouseEvent"
+    cv2.namedWindow(wname)
+    npoints = 4
+    ptlist = PointList(npoints)
+    cv2.setMouseCallback(wname, get_point, [wname, img, ptlist])
+    cv2.imshow(wname, img)
+    cv2.waitKey()
     cv2.destroyAllWindows()
+    ptlist.trans()
+
+    # 画像を切り取り、保存する
+    clipNumber(src_path=imgs_dir + src_name, target_name=target_name, target_dir=imgs_dir, 
+               l_top=ptlist.named_points["l_top"], l_btm=ptlist.named_points["l_btm"], 
+               r_btm=ptlist.named_points["r_top"], r_top=ptlist.named_points["r_btm"])
 
     # 台形補正の結果を表示（何かキーを押すと終了）
     img = cv2.imread(imgs_dir + target_name)
