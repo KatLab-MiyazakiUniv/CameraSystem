@@ -23,15 +23,8 @@ jobs:
           command: |  # use pipenv to install dependencies
             sudo pip install pipenv
             pipenv install --dev
-      - run: cd source && PYTHONPATH=. pipenv run pytest --cov . --cov-branch
+      - run: cd source && PYTHONPATH=. pipenv run pytest --cov . --cov=DetectionNumber --cov=detectionColorBlock --cov-branch
       - run: cd source && COVERALLS_REPO_TOKEN=brs6Jjqv1i5atmgyxgsPcxb0jj9dBt4FU pipenv run coveralls
-      - run: mkdir source/test-results
-      - run: cd source && PYTHONPATH=. pipenv run pytest --cov . --cov-branch --junitxml=./test-results/junit.xml
-      - store_test_results:
-          path: source/test-results
-      - store_artifacts:
-          path: source/test-results
-          destination: tr1
 
       - save_cache:
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
