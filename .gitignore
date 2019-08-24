@@ -14,3 +14,4 @@ data/test/images
 data/train/images
 data/valid/images
 
+.idea/
