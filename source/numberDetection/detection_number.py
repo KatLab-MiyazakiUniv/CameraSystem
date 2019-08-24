@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 from MLP import MLP
 from chainer import Chain, serializers
-import chainer.functions  as F
+import chainer.functions as F
 import chainer.links as L
 import chainer
 import glob
@@ -19,7 +19,7 @@ import os
 from clipping_number import clipNumber, captureImage
 
 data_directory = "data"
-imgs_directory = "imgs" # 画像を保管するディレクトリ
+imgs_directory = "imgs"  # 画像を保管するディレクトリ
 
 def preprocessing(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

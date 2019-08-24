@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
-from functools import reduce
 import struct
 import numpy
 import cv2
 import datetime
 
-from sample_types import CommandCode
-from sample_types import ResponseCode
-from sample_types import Color
-from SerialInterface import SerialInterface
+from source.sample_types import CommandCode
+from source.sample_types import ResponseCode
+from source.sample_types import Color
+from source.SerialInterface import SerialInterface
 
 port = "COM4" # 環境に合わせて変更して下さい
 baud = 115200
