@@ -2,7 +2,7 @@
 # coding: utf-8
 
 """
-@file: detection_number.py
+@file: DetectionNumber.py
 @author: korosuke613
 @brief: 数字カードを認識する
 """
