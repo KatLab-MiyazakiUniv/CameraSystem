@@ -22,6 +22,7 @@ pillow = "*"
 tqdm = "*"
 pytest = "*"
 coveralls = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.6.7"
