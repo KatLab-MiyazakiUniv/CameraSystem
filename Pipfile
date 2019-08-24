@@ -21,6 +21,7 @@ matplotlib = "*"
 pillow = "*"
 tqdm = "*"
 pytest = "*"
+coveralls = "*"
 
 [requires]
 python_version = "3.6.7"
