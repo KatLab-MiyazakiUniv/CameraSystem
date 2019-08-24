@@ -19,3 +19,16 @@ def test_detection():
     for i in range(1, 9):
         dn = create_detection(i)
         assert dn.get_detect_number() == i
+
+
+def test_file_not_found_raise():
+    dn = create_detection()
+    with pytest.raises(FileNotFoundError):
+        dn.get_detect_number()
+
+
+def test_set_img():
+    dn = create_detection()
+    img = cv2.imread("./training_scripts/original/1.jpg")
+    dn.set_img(img)
+    assert dn.get_detect_number(1)
