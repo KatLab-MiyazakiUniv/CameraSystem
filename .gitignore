@@ -18,3 +18,6 @@ source/DetectionNumber/training_scripts/valid/*
 .idea/
 
 .pytest_cache/
+
+preprocess.jpg
+

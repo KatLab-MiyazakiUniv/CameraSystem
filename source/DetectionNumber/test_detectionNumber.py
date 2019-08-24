@@ -2,14 +2,16 @@ import pytest
 from DetectionNumber import DetectionNumber
 import cv2
 
+model_path = './DetectionNumber/my_model.npz'
+
 
 def create_detection(number=None):
     if number is None:
-        dn = DetectionNumber()
+        dn = DetectionNumber(model_path=model_path)
         return dn
     if 1 <= number <= 8:
-        img = cv2.imread(f"./training_scripts/original/{number}.jpg")
-        dn = DetectionNumber(img)
+        img = cv2.imread(f"./DetectionNumber/training_scripts/original/{number}.jpg")
+        dn = DetectionNumber(img, model_path=model_path)
         return dn
     raise ValueError("1から8までの数字しかない！")
 
@@ -29,6 +31,6 @@ def test_file_not_found_raise():
 
 def test_set_img():
     dn = create_detection()
-    img = cv2.imread("./training_scripts/original/1.jpg")
+    img = cv2.imread("./DetectionNumber/training_scripts/original/1.jpg")
     dn.set_img(img)
     assert dn.get_detect_number(1)

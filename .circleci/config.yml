@@ -4,11 +4,17 @@ jobs:
   build:  # required for runs that don't use workflows
     working_directory: ~/workspace
     docker:
-      - image: circleci/python:3.6  # primary container for the build job
+      - image: circleci/python:3.6.7  # primary container for the build job
         environment:
           PIPENV_VENV_IN_PROJECT: true
     steps:
       - checkout  # checkout source code to working directory
+      - run:
+          command: |
+            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+            sudo apt-get install git-lfs
+            ssh git@github.com git-lfs-authenticate "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}" download
+            git lfs pull
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
       - restore_cache:  # ensure this step occurs *before* installing dependencies
@@ -17,10 +23,10 @@ jobs:
           command: |  # use pipenv to install dependencies
             sudo pip install pipenv
             pipenv install --dev
-      - run: PYTHONPATH=./src pipenv run pytest --cov src --cov-branch
+      - run: cd source && PYTHONPATH=. pipenv run pytest --cov . --cov-branch
       - run: COVERALLS_REPO_TOKEN=brs6Jjqv1i5atmgyxgsPcxb0jj9dBt4FU pipenv run coveralls
       - run: mkdir test-results
-      - run: PYTHONPATH=./src pipenv run pytest --cov src --cov-branch --junitxml=test-results/junit.xml
+      - run: cd source && PYTHONPATH=. pipenv run pytest --cov . --cov-branch --junitxml=../test-results/junit.xml
       - store_test_results:
           path: test-results
       - store_artifacts:

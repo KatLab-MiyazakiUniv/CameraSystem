@@ -16,11 +16,11 @@ import chainer
 
 
 class DetectionNumber:
-    def __init__(self, img=None):
+    def __init__(self, img=None, model_path='my_model.npz'):
         self.origin_img = img
         self.preprocess_img = None
         self.detected_number = None
-        self.number_model_path = 'my_model.npz'
+        self.number_model_path = model_path
         self.net = L.Classifier(MLP(1000, 10))
         self.data_directory = "data"
         self.img_directory = "imgs"  # 画像を保管するディレクトリ
