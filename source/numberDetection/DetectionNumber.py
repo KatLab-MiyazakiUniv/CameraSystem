@@ -11,12 +11,8 @@ import cv2
 import numpy as np
 from MLP import MLP
 from chainer import Chain, serializers
-import chainer.functions as F
 import chainer.links as L
 import chainer
-import glob
-import os
-from clipping_number import clipNumber, captureImage
 
 
 class DetectionNumber:
