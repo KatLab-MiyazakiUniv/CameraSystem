@@ -63,7 +63,6 @@ def captureImage(target_name=None, target_dir="./", url="http://192.168.11.25/?a
     # ファイル名を返す
     return target_name
 
-
 def clipNumber(src_path, target_name, target_dir="./", output_size=[420, 297],
                l_top=[-30, 460], l_btm=[190, 620],
                r_top=[400, 450], r_btm=[200, 360]):
@@ -127,7 +126,7 @@ if __name__ == '__main__':
     imgs_dir = "imgs/" # 画像を保管するディレクトリ
 
     # ラズパイから映像を受信し、保存する
-    src_name = captureImage(target_dir=imgs_dir)
+    src_name = captureImage(target_dir=imgs_dir, url="http://raspberrypi.local/?action=stream")
     target_name = "_result_" + src_name # 切り取った画像の出力ファイル名
     
     # 画像を切り取り、保存する

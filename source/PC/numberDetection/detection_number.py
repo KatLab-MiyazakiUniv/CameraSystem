@@ -17,6 +17,7 @@ import chainer
 import glob
 import os
 from clipping_number import clipNumber, captureImage
+from get_point import get_point, PointList
 
 data_directory = "data"
 imgs_directory = "imgs" # 画像を保管するディレクトリ
@@ -31,13 +32,15 @@ def preprocessing(img):
     img = np.array(img).reshape(1, 784)
     return img
 
-def get_image():
+def get_image(ptlist):
     # ラズパイから映像を受信し、保存する
-    src_name = captureImage(target_dir=imgs_directory)
+    src_name = captureImage(target_dir=imgs_directory, url="http://raspberrypi.local/?action=stream")
     target_name = "_result_" + src_name # 切り取った画像の出力ファイル名
     
     # 画像を切り取り、保存する
-    clipNumber(src_path=imgs_directory + src_name, target_name=target_name, target_dir=imgs_directory)
+    clipNumber(src_path=imgs_directory + src_name, target_name=target_name, target_dir=imgs_directory,
+               l_top=ptlist["l_top"], l_btm=ptlist["l_btm"],
+               r_top=ptlist["r_btm"], r_btm=ptlist["r_top"])
     img = cv2.imread(imgs_directory + target_name)
     return img
 
@@ -52,7 +55,17 @@ def get_detect_number(img):
 
 def main():
     #Webカメラの映像とりこみ
-    img = get_image()
+    img = cv2.imread("http://raspberrypi.local/?action=stream")
+    wname = "MouseEvent"
+    cv2.namedWindow(wname)
+    npoints = 4
+    ptlist = PointList(npoints)
+    cv2.setMouseCallback(wname, get_point, [wname, img, ptlist])
+    cv2.imshow(wname, img)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+    ptlist.trans()
+    img = get_image(ptlist.named_points)
     img = preprocessing(img)
     number = get_detect_number(img)
     print(number)

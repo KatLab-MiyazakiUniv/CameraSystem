@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append('../numberDetection')
 
-from clipping_number import clipNumber
+from clipping_number import clipNumber, captureImage
 
 data_directory = "data/original"
 
@@ -109,7 +109,10 @@ def cripping_field(file):
 
 
 if __name__ == '__main__':
-    none_fig = os.path.join(data_directory, "clip_field_none.png")
-    fix_fig = os.path.join(data_directory, "clip_field_fix.png")
+    #data_directory = "./"
+    src_name = captureImage(target_dir="./", url="http://raspberrypi.local/?action=stream")
+    cripping_field(src_name)
+    none_fig = os.path.join(data_directory, "clip_field_none_block.png")
+    fix_fig = os.path.join(data_directory, "clip_field_has_block.png")
     test(none_fig, fix_fig)
     #cripping_field(fix_fig)
