@@ -6,11 +6,13 @@ bitclient_sample
 *.docx
 cg.dot
 cg.png
-*.jpg
 *_labels.txt
 result
-data/test/images
-data/train/images
-data/valid/images
 
+source/numberDetection/training_scripts/test/*
+!source/numberDetection/training_scripts/test/README.md
+source/numberDetection/training_scripts/train/*
+!source/numberDetection/training_scripts/train/README.md
+source/numberDetection/training_scripts/valid/*
+!source/numberDetection/training_scripts/valid/README.md
 .idea/
