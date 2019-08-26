@@ -1,5 +1,5 @@
 """
-@file: Image.py
+@file: Camera.py
 @author: Takahiro55555, korosuke613
 @brief: カメラシステムから取得した画像から、数字カードの部分を切り抜き、台形補正する。
 """
