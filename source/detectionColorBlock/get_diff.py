@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append('../numberDetection')
 
-from clipping_number import clipNumber, captureImage
+from Image import clipNumber, captureImage
 
 data_directory = "data/original"
 
