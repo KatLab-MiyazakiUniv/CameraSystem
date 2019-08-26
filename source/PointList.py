@@ -30,14 +30,8 @@ class PointList:
         self.named_points["l_btm"] = self.ptlist[np.argmax(y_list)]
         print(self.named_points)
 
-    def add_point(self, img, wname="MouseEvent"):
-        cv2.setMouseCallback(wname, self._add_point, [wname, img, self])
-        cv2.imshow(wname, img)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
-
     @staticmethod
-    def _add_point(event, x, y, flag, params):
+    def add_point(event, x, y, flag, params):
         wname, img, ptlist = params
         if event == cv2.EVENT_MOUSEMOVE:  # マウスが移動したときにx線とy線を更新する
             img2 = np.copy(img)
