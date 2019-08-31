@@ -1,2 +1,11 @@
 [run]
 omit = */test_*
+       */sample_*
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Don't complain if non-runnable code isn't run:
+    def main
+    if __name__ == .__main__.:
+
