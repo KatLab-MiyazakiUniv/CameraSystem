@@ -6,7 +6,7 @@ color = Color.RED
 
 @pytest.fixture
 def red_circle():
-    return CrossCircle(color)
+    return CrossCircle(color, 0)
 
 
 @pytest.fixture
@@ -31,7 +31,7 @@ def test_remove_block(red_circle, blue_block):
 
 
 def test_default_line(red_circle):
-    assert red_circle.lines[0][1] is None
-    assert red_circle.lines[0][-1] is None
-    assert red_circle.lines[1][0] is None
-    assert red_circle.lines[-1][0] is None
+    assert red_circle.lines["up"] is None
+    assert red_circle.lines["down"] is None
+    assert red_circle.lines["right"] is None
+    assert red_circle.lines["left"] is None

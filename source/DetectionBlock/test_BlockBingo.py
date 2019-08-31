@@ -8,8 +8,8 @@ def block_bingo():
 
 
 def test_size(block_bingo):
-    assert len(block_bingo.crossCircles) == 4
-    assert len(block_bingo.crossCircles[0]) == 4
+    assert len(block_bingo.crossCircles) == 16
+
 
 """
 def test_line_direction(block_bingo):

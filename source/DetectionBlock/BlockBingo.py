@@ -18,21 +18,6 @@ class Color(Enum):
     BLACK = auto()
 
 
-class Line:
-    """
-    重み付きの辺
-    """
-
-    def __init__(self, cost=1):
-        self._cost = cost
-
-    def set_cost(self, cost: int):
-        self._cost = cost
-
-    def get_cost(self) -> int:
-        return self._cost
-
-
 class Block:
     def __init__(self, color=None):
         """
@@ -59,12 +44,13 @@ class CrossCircle:
     交点サークル
     """
 
-    def __init__(self, color):
+    def __init__(self, color, number):
         self._color = color  # 交点サークルの色
         self._block = Block()  # 交点サークルに置いてあるブロック
+        self.number = number
         # 交点サークルに繋がっているLine（辺）
         # self.lines[y][x]
-        self.lines = {0: {-1: None, 1: None}, 1: {0: None}, -1: {0: None}}
+        self.lines = {"left": None, "right": None, "up": None, "down": None}
 
     def get_color(self):
         """
@@ -101,26 +87,24 @@ class BlockBingo:
     def __init__(self):
         # 交点サークルの色の並び
         cross_circles_color = [
-            [Color.RED, Color.RED, Color.BLUE, Color.BLUE],
-            [Color.RED, Color.RED, Color.BLUE, Color.BLUE],
-            [Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN],
-            [Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN]
+            Color.RED, Color.RED, Color.BLUE, Color.BLUE,
+            Color.RED, Color.RED, Color.BLUE, Color.BLUE,
+            Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN,
+            Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN
         ]
         # 交点サークルを生成（コンストラクタで色を設定）
-        self.crossCircles = [[CrossCircle(cross_circles_color[y][x]) for x in range(4)] for y in range(4)]
+        self.crossCircles = [CrossCircle(cross_circles_color[i], i) for i in range(16)]
 
-        # 縦のラインを設定
-        for y in range(4):
-            for x in range(3):
-                tmp_line = Line()  # 参照渡し
-                self.crossCircles[y][x].lines[0][1] = tmp_line
-                self.crossCircles[y][x + 1].lines[0][-1] = tmp_line
-        # 横のラインを設定
-        for y in range(3):
-            for x in range(4):
-                tmp_line = Line()  # 参照渡し
-                self.crossCircles[y][x].lines[1][0] = tmp_line
-                self.crossCircles[y + 1][x].lines[-1][0] = tmp_line
+        for circle in self.crossCircles:
+            num = circle.number
+            if num % 4 != 0:            # いちばん左の列以外
+                circle.lines["left"] = self.crossCircles[num-1]     # 左
+            if num % 4 != 3:            # いちばん右の列以外
+                circle.lines["right"] = self.crossCircles[num+1]    # 右
+            if not (0 <= num <= 3):     # いちばん上の列以外
+                circle.lines["up"] = self.crossCircles[num-4]       # 上
+            if not (12 <= num <= 15):   # いちばん下の列以外
+                circle.lines["down"] = self.crossCircles[num+4]     # 下
 
 
 def main():
