@@ -1,4 +1,4 @@
-from DetectionBlock.BlockBingo import BlockBingo
+from detection_block.BlockBingo import BlockBingo
 import pytest
 
 

@@ -1,5 +1,5 @@
 import pytest
-from DetectionBlock.BlockBingo import CrossCircle, Color, Block
+from detection_block.BlockBingo import CrossCircle, Color, Block
 
 color = Color.RED
 
