@@ -5,6 +5,7 @@
 @brief: ブロックビンゴエリアのデータ構造
 """
 from enum import Enum, auto
+from typing import List
 
 
 class Color(Enum):
@@ -85,6 +86,15 @@ class BlockBingo:
     """
 
     def __init__(self):
+        self.crossCircles = None
+        self._create_network()
+
+    def _create_network(self):
+        def _update(num_key, direction_key):
+            circle.lines[num_key] = circle.lines[direction_key] = {"circle": self.crossCircles[num_key],
+                                                                   "direction": direction_key,
+                                                                   "num": num_key
+                                                                   }
         # 交点サークルの色の並び
         cross_circles_color = [
             Color.RED, Color.RED, Color.BLUE, Color.BLUE,
@@ -97,14 +107,42 @@ class BlockBingo:
 
         for circle in self.crossCircles:
             num = circle.number
-            if num % 4 != 0:            # いちばん左の列以外
-                circle.lines["left"] = self.crossCircles[num-1]     # 左
-            if num % 4 != 3:            # いちばん右の列以外
-                circle.lines["right"] = self.crossCircles[num+1]    # 右
-            if not (0 <= num <= 3):     # いちばん上の列以外
-                circle.lines["up"] = self.crossCircles[num-4]       # 上
-            if not (12 <= num <= 15):   # いちばん下の列以外
-                circle.lines["down"] = self.crossCircles[num+4]     # 下
+            if num % 4 != 0:  # いちばん左の列以外
+                _update(num - 1, "left")
+            if num % 4 != 3:  # いちばん右の列以外
+                _update(num + 1, "right")
+            if not (0 <= num <= 3):  # いちばん上の列以外
+                _update(num - 4, "up")
+            if not (12 <= num <= 15):  # いちばん下の列以外
+                _update(num + 4, "down")
+
+    def get_direction_route(self, route_list: List[int]) -> List[str]:
+        """
+        数字のルートを方角のルートに変換して取得する。
+        :param route_list: 数字のルート
+        :return: 方角のルート
+        """
+        directions = []
+        _route_list = list(route_list)
+        now_place = _route_list.pop(0)
+        for place in _route_list:
+            directions.append(self.crossCircles[now_place].lines[place]["direction"])
+            now_place = place
+        return directions
+
+    def get_num_route(self, route_list: List[str], now_place: int) -> List[int]:
+        """
+        方角のルートを数字のルートに変換して取得する。
+        :param route_list: 方角のルート
+        :param now_place: 現在地
+        :return: 数字のルート
+        """
+        nums = [now_place]
+        for direction in route_list:
+            num = self.crossCircles[now_place].lines[direction]["num"]
+            nums.append(num)
+            now_place = num
+        return nums
 
 
 def main():
