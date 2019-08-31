@@ -110,7 +110,7 @@ def create_labels(dir_name):
         f.write(text)
 
 
-def create_dataset(name, iteration=100):
+def create_dataset(name, iteration=100, is_change_brightness=True, is_binarization=True, is_change_angle=True):
     images = load_original()
     num = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
@@ -121,16 +121,33 @@ def create_dataset(name, iteration=100):
 
     for original_image in tqdm(images, desc='1st loop'):
         for i in trange(iteration, desc='2nd loop'):
-            image = change_brightness(original_image)
-            image = change_angle(image)
-            image = binaryzation(image)
+            image = original_image
+            if is_change_brightness:
+                image = change_brightness(image)
+            if is_change_angle:
+                image = change_angle(image)
+            if is_binarization:
+                image = binaryzation(image)
             name = num[num_key] + "_" + str(i)
             save_image(image, name, dir_name)
         num_key += 1
     create_labels(dir_name)
 
 
-if __name__ == "__main__":
+def main():
     create_dataset("train", 1000)
     create_dataset("valid", 10)
     create_dataset("test", 300)
+
+
+if __name__ == "__main__":
+    #main()
+    images = load_original()
+    three = images[4]
+    save_image(three, "4_original", "./")
+    #three = change_brightness(three)
+    #save_image(three, "3_brightness", "./")
+    #three = change_angle(three)
+    #save_image(three, "4_move", "./")
+    three = binaryzation(three)
+    save_image(three, "4_move_binaryzation", "./")

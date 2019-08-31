@@ -22,7 +22,7 @@ import os
 import matplotlib
 matplotlib.use('Agg')
 
-data_directory = 'data/'
+data_directory = './'
 
 
 def main():
