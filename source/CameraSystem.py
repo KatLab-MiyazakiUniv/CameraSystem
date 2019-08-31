@@ -6,7 +6,7 @@ class CameraSystem:
     def __init__(self):
         self.camera = Camera()
 
-    def main(self):
+    def start(self):
         self.camera.capture()
         number_card = self.camera.get_point()
         detection_number = DetectionNumber(img=number_card, model_path="./DetectionNumber/my_model.npz")
@@ -16,4 +16,4 @@ class CameraSystem:
 
 if __name__ == '__main__':
     cs = CameraSystem()
-    cs.main()
+    cs.start()
