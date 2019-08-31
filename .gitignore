@@ -22,3 +22,4 @@ source/DetectionNumber/training_scripts/valid/*
 preprocess.jpg
 .coverage
 
+snapshot_iter_*
