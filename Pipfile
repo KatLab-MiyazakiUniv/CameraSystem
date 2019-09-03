@@ -12,6 +12,10 @@ bluetooth = "bash -c \"cd source/PC/bluetooth && pwd && python Bluetooth.py\""
 
 [dev-packages]
 autopep8 = "*"
+pytest-cov = "*"
+pytest = "*"
+coveralls = "*"
+coverage = "*"
 
 [packages]
 numpy = "*"
@@ -21,6 +25,8 @@ chainer = "*"
 matplotlib = "*"
 pillow = "*"
 tqdm = "*"
+opencv-contrib-python = "*"
+
 
 [requires]
 python_version = "3.6.7"
