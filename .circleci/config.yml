@@ -22,8 +22,8 @@ jobs:
       - run:
           command: |  # use pipenv to install dependencies
             sudo pip install pipenv
-            pipenv install --dev
-      - run: cd source && PYTHONPATH=. pipenv run pytest --cov . --cov=DetectionNumber --cov=detectionColorBlock --cov-branch
+            pipenv install --ignore-pipfile --dev
+      - run: cd source && PYTHONPATH=. pipenv run pytest --cov . --cov=detection_number --cov=detection_block --cov-branch
       - run: cd source && COVERALLS_REPO_TOKEN=brs6Jjqv1i5atmgyxgsPcxb0jj9dBt4FU pipenv run coveralls
 
       - save_cache:

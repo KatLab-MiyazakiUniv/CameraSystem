@@ -5,6 +5,7 @@
 @brief: ブロックビンゴエリアのデータ構造
 """
 from enum import Enum, auto
+from typing import List
 
 
 class Color(Enum):
@@ -16,21 +17,6 @@ class Color(Enum):
     YELLO = auto()
     GREEN = auto()
     BLACK = auto()
-
-
-class Line:
-    """
-    重み付きの辺
-    """
-
-    def __init__(self, cost=1):
-        self._cost = cost
-
-    def set_cost(self, cost: int):
-        self._cost = cost
-
-    def get_cost(self) -> int:
-        return self._cost
 
 
 class Block:
@@ -59,12 +45,13 @@ class CrossCircle:
     交点サークル
     """
 
-    def __init__(self, color):
+    def __init__(self, color, number):
         self._color = color  # 交点サークルの色
         self._block = Block()  # 交点サークルに置いてあるブロック
+        self.number = number
         # 交点サークルに繋がっているLine（辺）
         # self.lines[y][x]
-        self.lines = {0: {-1: None, 1: None}, 1: {0: None}, -1: {0: None}}
+        self.lines = {"left": None, "right": None, "up": None, "down": None}
 
     def get_color(self):
         """
@@ -99,28 +86,63 @@ class BlockBingo:
     """
 
     def __init__(self):
+        self.crossCircles = None
+        self._create_network()
+
+    def _create_network(self):
+        def _update(num_key, direction_key):
+            circle.lines[num_key] = circle.lines[direction_key] = {"circle": self.crossCircles[num_key],
+                                                                   "direction": direction_key,
+                                                                   "num": num_key
+                                                                   }
         # 交点サークルの色の並び
         cross_circles_color = [
-            [Color.RED, Color.RED, Color.BLUE, Color.BLUE],
-            [Color.RED, Color.RED, Color.BLUE, Color.BLUE],
-            [Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN],
-            [Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN]
+            Color.RED, Color.RED, Color.BLUE, Color.BLUE,
+            Color.RED, Color.RED, Color.BLUE, Color.BLUE,
+            Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN,
+            Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN
         ]
         # 交点サークルを生成（コンストラクタで色を設定）
-        self.crossCircles = [[CrossCircle(cross_circles_color[y][x]) for x in range(4)] for y in range(4)]
+        self.crossCircles = [CrossCircle(cross_circles_color[i], i) for i in range(16)]
 
-        # 縦のラインを設定
-        for y in range(4):
-            for x in range(3):
-                tmp_line = Line()  # 参照渡し
-                self.crossCircles[y][x].lines[0][1] = tmp_line
-                self.crossCircles[y][x + 1].lines[0][-1] = tmp_line
-        # 横のラインを設定
-        for y in range(3):
-            for x in range(4):
-                tmp_line = Line()  # 参照渡し
-                self.crossCircles[y][x].lines[1][0] = tmp_line
-                self.crossCircles[y + 1][x].lines[-1][0] = tmp_line
+        for circle in self.crossCircles:
+            num = circle.number
+            if num % 4 != 0:  # いちばん左の列以外
+                _update(num - 1, "left")
+            if num % 4 != 3:  # いちばん右の列以外
+                _update(num + 1, "right")
+            if not (0 <= num <= 3):  # いちばん上の列以外
+                _update(num - 4, "up")
+            if not (12 <= num <= 15):  # いちばん下の列以外
+                _update(num + 4, "down")
+
+    def get_direction_route(self, route_list: List[int]) -> List[str]:
+        """
+        数字のルートを方角のルートに変換して取得する。
+        :param route_list: 数字のルート
+        :return: 方角のルート
+        """
+        directions = []
+        _route_list = list(route_list)
+        now_place = _route_list.pop(0)
+        for place in _route_list:
+            directions.append(self.crossCircles[now_place].lines[place]["direction"])
+            now_place = place
+        return directions
+
+    def get_num_route(self, route_list: List[str], now_place: int) -> List[int]:
+        """
+        方角のルートを数字のルートに変換して取得する。
+        :param route_list: 方角のルート
+        :param now_place: 現在地
+        :return: 数字のルート
+        """
+        nums = [now_place]
+        for direction in route_list:
+            num = self.crossCircles[now_place].lines[direction]["num"]
+            nums.append(num)
+            now_place = num
+        return nums
 
 
 def main():
