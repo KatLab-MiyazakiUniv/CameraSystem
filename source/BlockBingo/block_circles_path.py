@@ -1,3 +1,8 @@
+"""
+    File:   block_circles_path.py
+    Brief:  ブロックサークル内の黒ブロック運搬経路計算クラス
+    Author: T.Miyaji
+"""
 import unittest
 
 class BlockCirclesCoordinate():
@@ -18,7 +23,7 @@ class BlockCirclesCoordinate():
         circle_number : int
             ブロックサークル番号
         """
-        if circle_number <= 0 or 8 < circle_number:
+        if circle_number < 1 or 8 < circle_number:
             raise ValueError('Block circle number is invalid!')
         return self.block_circles[circle_number]
 
@@ -297,5 +302,11 @@ class BlockCirclesSolverTest(unittest.TestCase):
         goal = original.index(5) + 1
         self.assertEqual(original[start:goal], solver.subset_of_tracks(2, 5, original))
 
+def main():
+    solver = BlockCirclesSolver(1, 2, 3)
+    path = solver.solve()
+    print(path)
+
 if __name__ == '__main__':
     # unittest.main()
+    main()
