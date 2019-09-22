@@ -228,8 +228,32 @@ class BlackBlockCommandsTest(unittest.TestCase):
             2. 回転コマンドが連続することはない
             3. 末尾のコマンドは前進（サークル間移動）コマンドである
         """
-        pass
-    
+        for bonus in range(1, 8 + 1):
+            for black in range(1, 8 + 1):
+                for color in range(1, 8 + 1):
+                    # ブロックビンゴのルールによる制約
+                    if bonus == black or black == color:
+                        continue
+                    generator = BlackBlockCommands(bonus, black, color)
+                    commands = generator.gen_commands()
+                    # 確認事項1.のテスト
+                    self.assertTrue(commands[0] == generator.ENTER_4 or commands[0] == generator.ENTER_6)
+                    # 確認事項2.のテスト
+                    flag = False
+                    for comm in commands:
+                        before_flag = flag
+                        if comm == generator.TURN_180:
+                            flag = True
+                        elif comm == generator.TURN_LEFT_90:
+                            flag = True
+                        elif comm == generator.TURN_RIGHT_90:
+                            flag = True
+                        else:
+                            flag = False
+                        self.assertTrue((before_flag != flag) or (before_flag == False and flag == False))
+                    # 確認事項3.のテスト
+                    self.assertTrue(commands[-1] == generator.MOVE_CIRCLE)
+
     def test_coordinate_to_command(self):
         """
         coordinate_to_command()のテストコード
