@@ -224,9 +224,9 @@ class BlackBlockCommandsTest(unittest.TestCase):
         """
         gen_commands()のテストコード
         確認事項
-            1. 
-            2. 
-            3. 
+            1. 先頭のコマンドはブロックサークルへ侵入するコマンドである
+            2. 回転コマンドが連続することはない
+            3. 末尾のコマンドは前進（サークル間移動）コマンドである
         """
         pass
     
