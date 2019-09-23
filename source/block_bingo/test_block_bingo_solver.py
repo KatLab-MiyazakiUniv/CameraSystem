@@ -12,7 +12,8 @@ from block_bingo_solver import CrossCirclesCoordinate
 def create_block_bingo(path=[(1,0), (2,0), (2,1)]):
     is_left = True
     bonus = 5
-    return BlockBingoSolver(BlockCirclesCoordinate(is_left, bonus), CrossCirclesCoordinate(), path)
+    color = 3
+    return BlockBingoSolver(BlockCirclesCoordinate(is_left, bonus, color), CrossCirclesCoordinate(), path)
 
 
 def test_path():

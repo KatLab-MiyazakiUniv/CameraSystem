@@ -33,30 +33,6 @@ def test_init_block_circles_coordinate_right():
     """
     coordinate = create_block_circles()
     check_block_circles_size(coordinate)
-
-
-def test_circle_to_put():
-    """
-    運搬するブロックの色を指定して、ブロックサークルの座標が正しく返ってくることを確認する。
-    """
-    coordinate = create_block_circles()
-    # 黄色ブロックを運搬するブロックサークルの座標が返ることを確認する
-    block_circle = coordinate.circle_to_put(Color.YELLOW)
-    assert block_circle in [(0,0), (1,2)]
-
-    # 返却された座標に黄色ブロックを運搬する
-    coordinate.move_block(block_circle)
-    # 黄色ブロックを運搬するブロックサークルの座標が返ることを確認する
-    block_circle = coordinate.circle_to_put(Color.YELLOW)
-    assert block_circle in [(0,0), (1,2)]
-
-    # 返却された座標に黄色ブロックを運搬する
-    coordinate.move_block(block_circle)
-    # Noneが返ってくることを確認する
-    assert None == coordinate.circle_to_put(Color.YELLOW)
-
-    # 黒ブロックを運搬するブロックサークルの座標がボーナスサークルの座標であることを確認する
-    assert coordinate.get(bonus) == coordinate.circle_to_put(Color.BLACK)
     
 
 def test_get_block_circles_coordinate_error_right():
@@ -101,10 +77,8 @@ def test_goal_node():
     """
     走行体の初期位置とブロックサークルの座標を指定すると、ブロックを設置するための交点サークルの座標が正しく返ることを確認する。
     """
-    is_left = True
-    bonus = 5
     cross_circles = CrossCirclesCoordinate()
-    block_circles = BlockCirclesCoordinate(is_left, bonus)
+    block_circles = create_block_circles()
 
     assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(3))
     assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(5))

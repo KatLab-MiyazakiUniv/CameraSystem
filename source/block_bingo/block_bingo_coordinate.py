@@ -64,26 +64,6 @@ class BlockCirclesCoordinate():
         return self.block_circles[circle_number]
 
 
-    def circle_to_put(self, color):
-        """
-        指定した色と同じ色で、まだブロックが置かれていないブロックサークルの座標を返す。
-
-        Parameters
-        ----------
-        color : Color
-            ブロックの色
-        """
-        # 指定色が黒の場合は、ボーナスサークルを返す
-        if color == Color.BLACK:
-            return self.get(self.bonus)
-
-        for index in [i+1 for (i, e) in enumerate(self.block_circle_color) if e == color]:
-            if index in self.open:
-                return self.get(index)
-        # 指定色のブロックがすでに運搬されていた場合は、Noneを返す
-        return None
-
-
 class CrossCirclesCoordinate():
     """
     交点サークルの座標を表すクラス。
