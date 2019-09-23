@@ -6,7 +6,6 @@
 from enum import Enum, auto
 import numpy as np
 
-# TODO Colorクラスは他のファイルにもあるので、統合する
 class Color(Enum):
     """
     ブロック、ブロックサークルまたは交点サークルの色。
