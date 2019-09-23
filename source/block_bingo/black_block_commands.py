@@ -250,7 +250,7 @@ class BlackBlockCommandsTest(unittest.TestCase):
                             flag = True
                         else:
                             flag = False
-                        self.assertTrue((before_flag != flag) or (before_flag == False and flag == False))
+                        self.assertTrue((before_flag != flag) or (not before_flag and not flag))
                     # 確認事項3.のテスト
                     self.assertTrue(commands[-1] == generator.MOVE_CIRCLE)
 
