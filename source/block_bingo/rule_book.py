@@ -30,14 +30,24 @@ class RuleBook():
         """
         # カラーブロックが置かれたブロックサークル番号を取得する
         color_circle = self.block_circles.color_circle
-        if color_circle in [1, 2, 3]:
-            return list(set({1, 2, 3} - set([color_circle])))
-        if color_circle in [3, 5, 8]:
-            return list(set({3, 5, 8} - set([color_circle])))
-        if color_circle in [6, 7, 8]:
-            return list(set({6, 7, 8}) - set([color_circle]))
-        if color_circle in [1, 4, 6]:
-            return list(set({1, 4, 6}) - set([color_circle]))
+        candidates = [[1, 2, 3], [3, 5, 8], [6, 7, 8], [1, 4, 6]]
+
+        for candidate in candidates:
+            if color_circle in candidate:
+                return list(set(candidate) - set([color_circle]))
         raise ValueError('The number of block circle where color block is placed is wrong!')
 
 
+    def double_bingo(self):
+        """
+        ダブルビンゴを達成するためにブロックを設置するブロックサークルの番号を返す。
+        """
+        # カラーブロックが置かれたブロックサークル番号を取得する
+        color_circle = self.block_circles.color_circle
+        candidates = [[1, 2, 3, 5, 8], [1, 2, 3, 4, 5], 
+                      [3, 4, 8, 7, 6], [1, 4, 6, 7, 8]]
+
+        for candidate in candidates:
+            if color_circle in candidate:
+                return list(set(candidate) - set([color_circle]))
+        raise ValueError('The number of block circle where color block is placed is wrong!')
