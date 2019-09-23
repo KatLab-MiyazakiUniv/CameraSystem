@@ -29,3 +29,10 @@ def test_double_bingo():
         rule_book = create_rule_book(color)
         assert color not in rule_book.double_bingo()
         assert 4 == len(rule_book.double_bingo())
+
+
+def test_triple_bingo():
+    for color in range(1, 8+1):
+        rule_book = create_rule_book(color)
+        assert color not in rule_book.double_bingo()
+        assert 6 == len(rule_book.triple_bingo())

@@ -51,3 +51,18 @@ class RuleBook():
             if color_circle in candidate:
                 return list(set(candidate) - set([color_circle]))
         raise ValueError('The number of block circle where color block is placed is wrong!')
+
+    
+    def triple_bingo(self):
+        """
+        トリプルビンゴを達成するためにブロックを設置するブロックサークルの番号を返す。
+        """
+        # カラーブロックが置かれたブロックサークル番号を取得する
+        color_circle = self.block_circles.color_circle
+        candidates = [[1, 2, 3, 5, 8, 7, 6], [1, 2, 3, 4, 6, 7, 8],
+                      [3, 5, 8, 7, 6, 4, 1], [6, 4, 1, 2, 3, 5, 8]]
+        
+        for candidate in candidates:
+            if color_circle in candidate:
+                return list(set(candidate) - set([color_circle]))
+        ValueError('The number of block circle where color block is placed is wrong!')
