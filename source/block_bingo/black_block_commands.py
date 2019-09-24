@@ -4,6 +4,7 @@
     @brief: 黒ブロック運搬経路をコマンドへ変換するクラス
 """
 import math
+import itertools
 import unittest
 
 from block_circles_path import BlockCirclesSolver, BlockCirclesCoordinate
@@ -110,26 +111,8 @@ class BlackBlockCommands():
 
         tmp_commands = ""
         # 機体の向きを設定
-        if current_coor[0] == next_coor[0]:
-            # 横方向の移動
-            if current_coor[1] < next_coor[1]:
-                # 右へ移動
-                next_direction = (1, 0)
-                tmp_commands += self.direction_to_command(self.direction, next_direction)
-            else:
-                # 左へ移動
-                next_direction = (-1, 0)
-                tmp_commands += self.direction_to_command(self.direction, next_direction)
-        elif current_coor[1] == next_coor[1]:
-            # 縦方向の移動
-            if current_coor[0] < next_coor[0]:
-                # 下へ移動
-                next_direction = (0, 1)
-                tmp_commands += self.direction_to_command(self.direction, next_direction)
-            else:
-                # 上へ移動
-                next_direction = (0, -1)
-                tmp_commands += self.direction_to_command(self.direction, next_direction)
+        next_direction = (next_coor[0] - current_coor[0], next_coor[1] - current_coor[1])
+        tmp_commands += self.direction_to_command(direction, next_direction)
 
         # 機体の向きを更新
         self.direction = next_direction
@@ -151,7 +134,7 @@ class BlackBlockCommands():
         
         Returning
         ---------
-        None
+        command : str
         """
         # 値のチェック
         if len(robot_direction) != 2:
@@ -162,18 +145,18 @@ class BlackBlockCommands():
         # 機体の向きと移動方向が一致している場合
         if robot_direction == movement_direction:
             return ""
-        # 180度右回転
-        if robot_direction[0] == movement_direction[0]:
-            return self.TURN_180
-        if robot_direction[1] == movement_direction[1]:
-            return self.TURN_180
         # 90度回転
         direction = self.detect_direction(robot_direction, movement_direction)
         if direction == "r":
             return self.TURN_RIGHT_90
         if direction == "l":
             return self.TURN_LEFT_90
-    
+        # 180度右回転
+        if robot_direction[0] == movement_direction[0]:
+            return self.TURN_180
+        if robot_direction[1] == movement_direction[1]:
+            return self.TURN_180
+        return ""
 
     def detect_direction(self, pre_direction, next_direction):
         """
@@ -268,57 +251,49 @@ class BlackBlockCommandsTest(unittest.TestCase):
         # インデックスが増える方向に回転 => 右回転
         dx = (1, 0, -1, 0)
         dy = (0, 1, 0, -1)
-        for bonus in range(1, 8 + 1):
-            for black in range(1, 8 + 1):
-                for color in range(1, 8 + 1):
-                    # ブロックビンゴのルールによる制約
-                    if bonus == black or black == color:
-                        continue
-                    generator = BlackBlockCommands(bonus, black, color)
-                    next_coor = (0, 0)
-                    for x in range(3):
-                        for y in range(3):
-                            pre_coor = next_coor
-                            next_coor = (x, y)
-                            distance = math.sqrt((pre_coor[0] - next_coor[0])**2 + (pre_coor[1] - next_coor[1])**2)
-                            if distance == 0:
-                                # 移動しないことは無い
-                                continue
-                            elif distance != 1:
-                                with self.assertRaises(ValueError):
-                                    # 確認事項1.確認事項2.の確認
-                                    generator.coordinate_to_command(pre_coor, next_coor, (1, 0))
-                                continue
-                            next_direction = (next_coor[0]-pre_coor[1], next_coor[1]-pre_coor[1])
-                            # 回転後のインデックスを取得
-                            for next_index in range(4):
-                                tmp = (dx[next_index], dy[next_index])
-                                if next_direction == tmp:
-                                    break
-                            for pre_index in range(4):
-                                self_direction = (dx[pre_index], dy[pre_index])
-                                commands = generator.coordinate_to_command(pre_coor, next_coor, self_direction)
-                                if pre_index == next_index:
-                                    # 確認事項4.のテスト
-                                    self.assertEqual(commands, generator.MOVE_CIRCLE)
-                                elif  ((pre_index + 1) % 4) == next_index:
-                                    # 確認事項5.のテスト
-                                    # 右90度
-                                    self.assertEqual(commands[0], generator.TURN_RIGHT_90)
-                                    self.assertEqual(commands[1], generator.MOVE_CIRCLE)
-                                elif ((next_index + 1) % 4) == pre_index:
-                                    # 確認事項5.のテスト
-                                    # 左90度
-                                    self.assertEqual(commands[0], generator.TURN_LEFT_90)
-                                    self.assertEqual(commands[1], generator.MOVE_CIRCLE)
-                                else:
-                                    # 確認事項5.のテスト
-                                    # 180度
-                                    self.assertEqual(commands[0], generator.TURN_180)
-                                    self.assertEqual(commands[1], generator.MOVE_CIRCLE)
-
-
-        
+        generator = BlackBlockCommands(1, 2, 3)
+        next_coor = (0, 0)
+        # 座標の組み合わせを列挙
+        movement_coordinates = tuple(itertools.product(tuple(itertools.product((0, 1, 2), repeat=2)), repeat=2))
+        for coordinates in movement_coordinates:
+                pre_coor, next_coor = coordinates
+                distance = math.sqrt((pre_coor[0] - next_coor[0])**2 + (pre_coor[1] - next_coor[1])**2)
+                if distance == 0:
+                    # 移動しないことは無い
+                    continue
+                elif distance != 1:
+                    with self.assertRaises(ValueError):
+                        # 確認事項1.確認事項2.の確認
+                        generator.coordinate_to_command(pre_coor, next_coor, (1, 0))
+                    continue
+                next_direction = (next_coor[0]-pre_coor[0], next_coor[1]-pre_coor[1])
+                # 回転後のインデックスを取得
+                for next_index in range(4):
+                    tmp = (dx[next_index], dy[next_index])
+                    if next_direction == tmp:
+                        break
+                for pre_index in range(4):
+                    self_direction = (dx[pre_index], dy[pre_index])
+                    generator.direction = self_direction
+                    commands = generator.coordinate_to_command(pre_coor, next_coor, self_direction)
+                    if pre_index == next_index:
+                        # 確認事項4.のテスト
+                        self.assertEqual(commands, generator.MOVE_CIRCLE)
+                    elif  ((pre_index + 1) % 4) == next_index:
+                        # 確認事項5.のテスト
+                        # 右90度
+                        self.assertEqual(commands[0], generator.TURN_RIGHT_90)
+                        self.assertEqual(commands[1], generator.MOVE_CIRCLE)
+                    elif ((next_index + 1) % 4) == pre_index:
+                        # 確認事項5.のテスト
+                        # 左90度
+                        self.assertEqual(commands[0], generator.TURN_LEFT_90)
+                        self.assertEqual(commands[1], generator.MOVE_CIRCLE)
+                    else:
+                        # 確認事項5.のテスト
+                        # 180度
+                        self.assertEqual(commands[0], generator.TURN_180)
+                        self.assertEqual(commands[1], generator.MOVE_CIRCLE)
         # 確認事項3.のテスト
         with self.assertRaises(TypeError):
             generator.coordinate_to_command(1, 1, 1)
@@ -326,6 +301,7 @@ class BlackBlockCommandsTest(unittest.TestCase):
             generator.coordinate_to_command((1, 1), 1, 1)
         with self.assertRaises(TypeError):
             generator.coordinate_to_command((1, 1), (1, 0), 1)
+
 
     def test_direction_to_command(self):
         """
@@ -361,7 +337,6 @@ class BlackBlockCommandsTest(unittest.TestCase):
         self.assertEqual('', generator.detect_direction((1, 2), (3, 4)))
 
 def main():
-    #test = BlackBlockCommandsTest()
     unittest.main()
 
 if __name__ == "__main__":
