@@ -40,7 +40,7 @@ class Bluetooth:
                 print("すこし待ってね⊂二二二（ ＾ω＾）二⊃ﾌﾞｰﾝ")
                 time.sleep(3)  # 3秒後に接続リトライ
                 continue
-            except:
+            except Exception:
                 raise Exception("接続失敗m9(^Д^)ﾌﾟｷﾞｬｰ")
 
         print("接続成功ｷﾀ——(ﾟ∀ﾟ)——!!")
@@ -52,16 +52,17 @@ class Bluetooth:
         """
         return int.from_bytes(self.ser.read(), 'big')
 
-    def write(self, write_data):
+    def write(self, int_value):
         """
         シリアル通信でデータを送るメソッド
-        :param write_data: int
+        :param int_value: int
             送るデータ
         """
-        self.ser.write(self.convert_to_byte(write_data, 1, "big"))
-        print('{0}を送信'.format(write_data))
+        self.ser.write(self.convert_to_byte(int_value, 1, "big"))
+        print('{0}を送信'.format(int_value))
 
-    def convert_to_byte(self, convert_data, byte_size, byte_order):
+    @staticmethod
+    def convert_to_byte(convert_data, byte_size, byte_order):
         """
         バイト変換を楽にするメソッド
 

@@ -6,6 +6,7 @@
 import serial
 import serial.tools.list_ports
 
+
 def search_serial_port():
     """
     シリアルポートを探す（デバッグ用）
