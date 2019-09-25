@@ -205,6 +205,11 @@
                 "sha256:eb0fc4a492cb896346c9e2c7a22eae3e766d407df3eb20f4ce027f23f76e4c54",
                 "sha256:ec0c56eae6cee6299f41e780a0280318a93db519bbb2906103c43f3e2be1206c",
                 "sha256:f4e4612de60a4f1c4d06c8c2857cdcb2b8b5289189a12053f37d3f41f06c60d0"
+<<<<<<< HEAD
+            ],
+            "index": "pypi",
+            "version": "==1.17.0"
+=======
             ],
             "index": "pypi",
             "version": "==1.17.0"
@@ -241,6 +246,7 @@
             ],
             "index": "pypi",
             "version": "==4.1.0.25"
+>>>>>>> upstream/master
         },
         "opencv-python": {
             "hashes": [
@@ -397,11 +403,19 @@
         },
         "tqdm": {
             "hashes": [
+<<<<<<< HEAD
+                "sha256:1dc82f87a8726602fa7177a091b5e8691d6523138a8f7acd08e58088f51e389f",
+                "sha256:47220a4f2aeebbc74b0ab317584264ea44c745e1fd5ff316b675cd0aff8afad8"
+            ],
+            "index": "pypi",
+            "version": "==4.33.0"
+=======
                 "sha256:438d6a735167099d75e5fd9a55175c6727c4dbba345ae406b2886c2728fe3e80",
                 "sha256:ebc205051d79b49989140f5f6c73ec23fce5f590cbc4d9cd6e4c47f168fa0f10"
             ],
             "index": "pypi",
             "version": "==4.34.0"
+>>>>>>> upstream/master
         },
         "typing": {
             "hashes": [
