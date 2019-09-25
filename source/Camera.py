@@ -188,5 +188,18 @@ class Camera:
 if __name__ == '__main__':
     # ラズパイから映像を受信し、保存する
     camera = Camera()
-    camera.capture(padding=100)
-    camera.get_number_img()
+    # 余白を設定
+    camera.capture(padding=100)    
+    num_img = camera.get_number_img() # 数字カードの画像
+
+    bingo_img = camera.get_block_bingo_img() # ブロックビンゴエリアの画像
+    circle_coordinates = camera.get_circle_coordinates() # 上記の画像における各種サークルの座標
+
+    # 切り取った画像を表示
+    cv2.imshow("", num_img)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+
+    cv2.imshow("", bingo_img)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
