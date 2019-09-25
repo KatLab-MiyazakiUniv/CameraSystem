@@ -1,12 +1,11 @@
 """
 @file: Bluetooth.py
-@author: Tatsumi0000
+@author: Tatsumi0000, Futa HIRAKOBA
 @brief: EV3とBluetooth通信をする
 """
 import serial
 import random
 import time
-import struct
 
 
 class Bluetooth:
@@ -46,6 +45,13 @@ class Bluetooth:
 
         print("接続成功ｷﾀ——(ﾟ∀ﾟ)——!!")
 
+    def read(self):
+        """
+        シリアル通信でデータを受け取るメソッド
+        :return: 受け取ったデータ
+        """
+        return int(self.ser.read())
+
     def write(self, write_data):
         """
         シリアル通信でデータを送るメソッド
@@ -72,8 +78,9 @@ class Bluetooth:
 
 if __name__ == '__main__':
     bluetooth = Bluetooth()
-    bluetooth.connect("/dev/cu.MindstormsEV301-SerialP")
+    bluetooth.connect("/dev/cu.MindstormsEV3-SerialPor")
     while True:
         write_data = random.randint(0, 9)
         bluetooth.write(write_data)
+        print(bluetooth.read())
         time.sleep(3)  # sec

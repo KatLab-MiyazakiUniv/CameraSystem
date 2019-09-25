@@ -14,5 +14,6 @@ def search_serial_port():
     for com in coms:
         print('{0}'.format(com))
 
+
 if __name__ == '__main__':
     search_serial_port()
