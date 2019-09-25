@@ -50,7 +50,7 @@ class Bluetooth:
         シリアル通信でデータを受け取るメソッド
         :return: 受け取ったデータ
         """
-        return int(self.ser.read())
+        return int.from_bytes(self.ser.read(), 'big')
 
     def write(self, write_data):
         """
