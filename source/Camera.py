@@ -11,12 +11,16 @@ import cv2
 import numpy as np
 
 from PointList import PointList
-
+from BlockBingoPointList import BlockBingoPointList
 
 class Camera:
     def __init__(self, url="http://raspberrypi.local/?action=stream"):
         self.camera_url = url
-        self.original_img = None
+        # NOTE: 座標を指定すると点や線が入ってしまうため処理用と座標指定用を分けた
+        self.original_img = None # キャプチャしてきた元画像（処理用）
+        self.original_img_dummy = None # キャプチャしてきた元画像（座標指定用）        
+        self.block_bingo_img = None # 切り取ったブロックビンゴエリアの画像（処理用）
+        self.block_bingo_img_dummy = None #  切り取ったブロックビンゴエリアの画像（座標指定用）
 
     def capture(self, url=None, padding=0):
         """
@@ -55,9 +59,11 @@ class Camera:
 
         # ピクセル配列をゼロ初期化
         img = np.zeros((720, 1280, 3), dtype=np.uint8)
+        img_img = np.zeros((720, 1280, 3), dtype=np.uint8)
 
         # 画像をキャプチャ
         ret, img = cap.read()
+        ret_dummy, img_dummy = cap.read()
 
         # 余白を設定する
         tmp = img[:, :]
@@ -65,18 +71,25 @@ class Camera:
         new_img = cv2.resize(np.full((1, 1, 3), fill_value=255, dtype=np.uint8),
                              dsize=(width + padding * 2, height + padding * 2))
         new_img[padding:height + padding, padding:width + padding] = tmp
+        # 余白を設定する
+        tmp = img_dummy[:, :]
+        height, width = img_dummy.shape[:2]
+        new_img_dummy = cv2.resize(np.full((1, 1, 3), fill_value=255, dtype=np.uint8),
+                             dsize=(width + padding * 2, height + padding * 2))
+        new_img_dummy[padding:height + padding, padding:width + padding] = tmp
 
         # キャプチャ終了
         cap.release()
 
-        # ファイル名を返す
+        # 画像をメンバ変数に格納
         self.original_img = new_img
+        self.original_img_dummy = new_img_dummy
 
     def get_number_img(self, wname="CameraSystem", npoints=4, output_size=[420, 297]):
         ptlist = PointList(npoints)
         cv2.namedWindow(wname)
-        cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img, ptlist])
-        cv2.imshow(wname, self.original_img)
+        cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
+        cv2.imshow(wname, self.original_img_dummy)
         cv2.waitKey()
         cv2.destroyAllWindows()
         ptlist.trans()
@@ -90,6 +103,40 @@ class Camera:
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         return result_img
+
+    def get_block_bingo_img(self, wname="Clip 'Block Bingo' area", npoints=4, output_size = [640, 640]):
+        ptlist = PointList(npoints)
+        cv2.namedWindow(wname)
+        cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
+        cv2.imshow(wname, self.original_img_dummy)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+        ptlist.trans()
+        # 画像を切り取り、保存する
+        result_img = self.clip(self.original_img, output_size=output_size,
+                               l_top=ptlist.named_points["l_top"], l_btm=ptlist.named_points["l_btm"],
+                               r_btm=ptlist.named_points["r_btm"], r_top=ptlist.named_points["r_top"])
+        result_img_dummy = self.clip(self.original_img_dummy, output_size=output_size,
+                               l_top=ptlist.named_points["l_top"], l_btm=ptlist.named_points["l_btm"],
+                               r_btm=ptlist.named_points["r_btm"], r_top=ptlist.named_points["r_top"])
+
+        # 台形補正の結果を表示（何かキーを押すと終了）
+        cv2.imshow("color", result_img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        self.block_bingo_img = result_img
+        self.block_bingo_img_dummy = result_img_dummy
+        return result_img
+
+    def get_circle_coordinates(self, wname="Choose circles", npoints=24):
+        circle_ptlist = BlockBingoPointList(npoints)
+        cv2.namedWindow(wname)
+        cv2.setMouseCallback(wname, circle_ptlist.add_point, [wname, self.block_bingo_img_dummy, circle_ptlist])
+        cv2.imshow(wname, self.block_bingo_img_dummy)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+        circle_ptlist.trans()
+        return circle_ptlist.named_points
 
     def clip(self, img, output_size=[420, 297],
              l_top=[-30, 460], l_btm=[190, 620],
