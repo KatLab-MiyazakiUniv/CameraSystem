@@ -129,6 +129,9 @@ class Camera:
         return result_img
 
     def get_circle_coordinates(self, wname="Choose circles", npoints=24):
+        """
+        切り取ったブロックビンゴエリアの画像から各種サークルの座標を設定
+        """
         circle_ptlist = BlockBingoPointList(npoints)
         cv2.namedWindow(wname)
         cv2.setMouseCallback(wname, circle_ptlist.add_point, [wname, self.block_bingo_img_dummy, circle_ptlist])
