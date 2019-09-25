@@ -72,7 +72,7 @@ class Camera:
         # ファイル名を返す
         self.original_img = new_img
 
-    def get_point(self, wname="CameraSystem", npoints=4):
+    def get_number_img(self, wname="CameraSystem", npoints=4, output_size=[420, 297]):
         ptlist = PointList(npoints)
         cv2.namedWindow(wname)
         cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img, ptlist])
@@ -81,7 +81,7 @@ class Camera:
         cv2.destroyAllWindows()
         ptlist.trans()
         # 画像を切り取り、保存する
-        result_img = self.clip(self.original_img,
+        result_img = self.clip(self.original_img, output_size=output_size,
                                l_top=ptlist.named_points["l_top"], l_btm=ptlist.named_points["l_btm"],
                                r_btm=ptlist.named_points["r_btm"], r_top=ptlist.named_points["r_top"])
 
@@ -142,4 +142,4 @@ if __name__ == '__main__':
     # ラズパイから映像を受信し、保存する
     camera = Camera()
     camera.capture(padding=100)
-    camera.get_point()
+    camera.get_number_img()
