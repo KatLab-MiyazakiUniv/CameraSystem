@@ -162,7 +162,7 @@ class BlockCirclesSolver():
         path = self.subset_of_tracks(self.coordinate.get(self.black), self.coordinate.get(self.bonus), tracks.inner_tracks)
         
         # 選択した経路内にカラーブロックが置かれているサークルがあるかチェックする
-        if self.coordinate.get(self.color) in path:
+        if self.coordinate.get(self.color) in path[0:-1]:
             path = self.subset_of_tracks(self.coordinate.get(self.black), self.coordinate.get(self.bonus), tracks.outer_tracks)
         
         return path
