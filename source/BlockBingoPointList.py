@@ -2,7 +2,7 @@
     PointList.py より参照（ほぼコピペ）
 
     @file: BlockBingoPointList.py
-    @author: UEDA Takahiro
+    @author: Takahiro55555, korosuke613
     @brief: ブロックビンゴエリア画像の交点サークル、ブロックサークルの中心座標をマウスで設定する
 """
 
