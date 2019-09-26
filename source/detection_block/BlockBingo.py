@@ -14,7 +14,7 @@ class Color(Enum):
     """
     RED = auto()
     BLUE = auto()
-    YELLO = auto()
+    YELLOW = auto()
     GREEN = auto()
     BLACK = auto()
     WHITE = auto()
@@ -100,8 +100,8 @@ class BlockBingo:
         cross_circles_color = [
             Color.RED, Color.RED, Color.BLUE, Color.BLUE,
             Color.RED, Color.RED, Color.BLUE, Color.BLUE,
-            Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN,
-            Color.YELLO, Color.YELLO, Color.GREEN, Color.GREEN
+            Color.YELLOW, Color.YELLOW, Color.GREEN, Color.GREEN,
+            Color.YELLOW, Color.YELLOW, Color.GREEN, Color.GREEN
         ]
         # 交点サークルを生成（コンストラクタで色を設定）
         self.crossCircles = [CrossCircle(cross_circles_color[i], i) for i in range(16)]
@@ -182,9 +182,9 @@ def main():
     x, y = 0, 0
     blk_bingo.crossCircles[y][x].set_block(Color.BLACK)
     x, y = 0, 2
-    blk_bingo.crossCircles[y][x].set_block(Color.YELLO)
+    blk_bingo.crossCircles[y][x].set_block(Color.YELLOW)
     x, y = 1, 1
-    blk_bingo.crossCircles[y][x].set_block(Color.YELLO)
+    blk_bingo.crossCircles[y][x].set_block(Color.YELLOW)
     x, y = 1, 3
     blk_bingo.crossCircles[y][x].set_block(Color.RED)
     x, y = 2, 0
