@@ -80,7 +80,6 @@ class BlockBingoPointList:
 
         if event == cv2.EVENT_LBUTTONDOWN:  # レフトボタンをクリックしたとき、ptlist配列にx,y座標を格納する
             if ptlist.add(x, y):
-                print('[%d] ( %d, %d )' % (ptlist.pos - 1, x, y))
                 cv2.circle(img, (x, y), 3, (0, 0, 255), 3)
                 cv2.imshow(wname, img)
             else:
