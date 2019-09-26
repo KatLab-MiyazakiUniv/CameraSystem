@@ -23,3 +23,5 @@ preprocess.jpg
 .coverage
 
 snapshot_iter_*
+
+camera_settings.json
