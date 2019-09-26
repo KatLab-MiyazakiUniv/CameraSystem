@@ -1,9 +1,11 @@
 from DetectionNumber import DetectionNumber
 from Camera import Camera
 from bluetooth.Bluetooth import Bluetooth
+from detection_block.BlockRecognizer import BlockRecognizer
 from block_bingo.black_block_commands import BlackBlockCommands
 import time
-
+import threading
+from PrepareGarage import PrepareGarage
 
 class CameraSystem:
     def __init__(self):
@@ -16,16 +18,20 @@ class CameraSystem:
         self.bt = Bluetooth()
         self.port = "/dev/cu.MindstormsEV3-SerialPor"
         self.card_number = None
+        self.is_debug = False
+        self.route = None
 
     def _connect_to_ev3(self):
         """
         EV3とBT接続
         """
+        print("\nSYS: Connect EV3")
         self.bt.connect(self.port)
         while True:
             write_data = 0
-            self.bt.write(write_data)
+            self.bt.write(write_data, is_print=False)
             if self.bt.read() == 1:
+                print("SYS: Success! Connected ev3")
                 return
 
             time.sleep(1)  # sec
@@ -35,9 +41,9 @@ class CameraSystem:
         数字カードの切り取りと数字の識別
         :return: 数字カードの数字
         """
-        self.camera.capture()
-        number_card = self.camera.get_number_img()
-        detection_number = DetectionNumber(img=number_card, model_path="./DetectionNumber/my_model.npz")
+        self.camera.capture(padding=100)
+        number_card = self.camera.get_number_img(is_debug=self.is_debug)
+        detection_number = DetectionNumber(img=number_card, model_path="./detection_number/my_model.npz")
         return detection_number.get_detect_number()
 
     def _send_command(self, commands):
@@ -48,40 +54,90 @@ class CameraSystem:
         """
         for c in commands:
             self.bt.write(ord(c))
-            time.sleep(1)  # sec
+            time.sleep(0.5)  # sec
 
         # 終了コードを送信
-        self.bt.write(ord('z'))
+        self.bt.write(ord('#'))
+        print("SYS: command send complete")
+
+    def _detection_block(self):
+        while True:
+            # 領域、座標指定
+            block_bingo_img = self.camera.get_block_bingo_img(is_debug=self.is_debug)     # 領域指定して画像取得
+            circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
+            self.camera.save_settings()  # 座標ポチポチした結果を保存
+            # ブロックの識別が来る
+            recognizer = BlockRecognizer()
+            black_block_place, color_block_place = recognizer.recognize_block_circle(block_bingo_img, circles_coordinates)
+            print(black_block_place, color_block_place)
+
+            if black_block_place is not None and color_block_place is not None:
+                break
+            else:
+                self.camera.capture(padding=100)
+
+        # ボーナスサークル（int）
+        # 黒ブロックが置かれているブロックサークル（int）
+        # カラーブロックが置かれているブロックサークル（int）
+        black_block_commands = BlackBlockCommands(self.card_number, black_block_place, color_block_place)
+        commands_tmp = black_block_commands.gen_commands()
+        self.route = black_block_commands.route
+        print(self.route)
+        print(commands_tmp)
+        # 経路から命令に変換
+        return list(commands_tmp)
+
+    def _prepare_garage(self):
+        prepare_garage = PrepareGarage(self.route)
+        print(prepare_garage.get_path())
+        print(prepare_garage.move_58())
+        return prepare_garage.move_58()
 
     def start(self):
         """
         カメラシステムクラスのメイン関数
         :return:
         """
-        print("\nConnect EV3")
-        self._connect_to_ev3()
-        print("Success! Connected ev3")
 
-        print("\nDetection Number")
+        # スレッドを立てて、BT接続を始める。
+        connect_thread = threading.Thread(target=self._connect_to_ev3)
+        connect_thread.start()
+
+        time.sleep(3)
+
+        while True:
+            print("SYS: 本番ですか？")
+            print("     y: 本番モード")
+            print("     d: デバッグモードで実行")
+            is_start = input(">> ")
+            if is_start is 'y':
+                break
+            elif is_start is 'd':
+                self.is_debug = True
+                break
+
+        if not self.is_debug:
+            print('\nSYS: Wait start...')
+            connect_thread.join()
+            while True:
+                if self.bt.read() == 2:
+                    break
+
+        print("\nSYS: Detection Number")
         self.card_number = self._detection_number()
-        print(f"number is {self.card_number}")
+        print(f"SYS: number is {self.card_number}")
 
-        print("\nDetection Block")
-        # 領域、座標指定
-        block_bingo_img = self.camera.get_block_bingo_img()     # 領域指定して画像取得
-        circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
-        self.camera.save_settings() # 座標ポチポチした結果を保存
-        # TODO ブロックの識別が来る
-        bonus = 1 # ボーナスサークル（int）
-        black = 2 # 黒ブロックが置かれているブロックサークル（int）
-        color = 3 # カラーブロックが置かれているブロックサークル（int）
-        balck_block_commands = BlackBlockCommands(bonus, black, color)
-        commands_tmp = balck_block_commands.gen_commands()
+        print("\nSYS: Detection Block")
+        commands = self._detection_block()
 
-        # TODO 経路から命令に変換
-        commands = list(commands_tmp)
+        print("\nSYS: PrepareGarage")
+        commands.extend(self._prepare_garage())
+        print(f"SYS: Commands{commands}")
 
-        print("\nSend Command")
+        if self.is_debug:
+            connect_thread.join()
+
+        print("\nSYS: Send Command")
         self._send_command(commands)
         # TODO これから
 

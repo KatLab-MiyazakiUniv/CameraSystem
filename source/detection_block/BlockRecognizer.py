@@ -20,7 +20,7 @@ class BlockRecognizer:
     def detect_color(self, img):        
         # 各色のHue最小値と最大値
         hue_list = {Color.RED:[0, 15], Color.BLUE:[90, 110],
-                      Color.YELLO:[15, 30], Color.GREEN:[60, 90]}
+                      Color.YELLOW:[15, 30], Color.GREEN:[60, 90]}
         (h, s, v) = self.convert_to_hsv(img)
         
         # 黒色の識別
@@ -39,14 +39,17 @@ class BlockRecognizer:
     def recognize_block_circle(self, img, circles_coordinates):
         # ブロックサークルの数字を削除する。画像の周辺のノイズも削除する。
         img = self.extractor.remove_circle_number(img)
-        black = None # 黒ブロックが置かれているブロックサークル番号
-        color = None # カラーブロックが置かれているブロックサークル番号
+        black = None  # 黒ブロックが置かれているブロックサークル番号
+        color = None  # カラーブロックが置かれているブロックサークル番号
         
         # サークル座標のデータ構造からブロックサークルの座標だけ抽出する
         points = self.extract_block_circles_point(circles_coordinates)
         
         for (idx, point) in enumerate(points):
             crop = self.extractor.trim(img, point)
+            #cv2.imshow("crop", crop)
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
             if Color.BLACK == self.detect_color(self.extractor.closing(crop)):
                 black = idx + 1
             elif Color.WHITE != self.detect_color(self.extractor.closing(crop)):

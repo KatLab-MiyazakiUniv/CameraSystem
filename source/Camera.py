@@ -94,7 +94,7 @@ class Camera:
         self.original_img = new_img
         self.original_img_dummy = new_img_dummy
 
-    def get_number_img(self, wname="CameraSystem", npoints=4, output_size=[420, 297]):
+    def get_number_img(self, wname="CameraSystem", npoints=4, output_size=[420, 297], is_debug=True):
         # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
         if self.number_img_range == None:
             ptlist = PointList(npoints)
@@ -113,12 +113,13 @@ class Camera:
                                l_top=self.number_img_range["l_top"], l_btm=self.number_img_range["l_btm"],
                                r_btm=self.number_img_range["r_btm"], r_top=self.number_img_range["r_top"])
         # 台形補正の結果を表示（何かキーを押すと終了）
-        cv2.imshow("color", result_img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        if is_debug:
+            cv2.imshow("color", result_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
         return result_img
 
-    def get_block_bingo_img(self, wname="Clip 'Block Bingo' area", npoints=4, output_size = [640, 640]):
+    def get_block_bingo_img(self, wname="Clip 'Block Bingo' area", npoints=4, output_size = [640, 640], is_debug=True):
         # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
         if self.block_bingo_img_range == None:
             ptlist = PointList(npoints)
@@ -140,9 +141,10 @@ class Camera:
                                l_top=self.block_bingo_img_range["l_top"], l_btm=self.block_bingo_img_range["l_btm"],
                                r_btm=self.block_bingo_img_range["r_btm"], r_top=self.block_bingo_img_range["r_top"])
         # 台形補正の結果を表示（何かキーを押すと終了）
-        cv2.imshow("color", result_img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        if is_debug:
+            cv2.imshow("color", result_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
         self.block_bingo_img = result_img
         self.block_bingo_img_dummy = result_img_dummy
         return result_img

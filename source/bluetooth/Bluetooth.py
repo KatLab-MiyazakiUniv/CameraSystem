@@ -33,17 +33,18 @@ class Bluetooth:
         self.ser.timeout = timeout
 
         # 接続していない場合
+        print("BT: ちょいまちこ")
         while not self.ser.is_open:
             try:
                 self.ser.open()
             except serial.SerialException:
-                print("すこし待ってね⊂二二二（ ＾ω＾）二⊃ﾌﾞｰﾝ")
+                # print("すこし待ってね⊂二二二（ ＾ω＾）二⊃ﾌﾞｰﾝ")
                 time.sleep(3)  # 3秒後に接続リトライ
                 continue
             except Exception:
-                raise Exception("接続失敗m9(^Д^)ﾌﾟｷﾞｬｰ")
+                raise Exception("BT: 接続失敗m9(^Д^)ﾌﾟｷﾞｬｰ")
 
-        print("接続成功ｷﾀ——(ﾟ∀ﾟ)——!!")
+        print("BT: 接続成功ｷﾀ——(ﾟ∀ﾟ)——!!")
 
     def read(self):
         """
@@ -52,14 +53,17 @@ class Bluetooth:
         """
         return int.from_bytes(self.ser.read(), 'big')
 
-    def write(self, int_value):
+    def write(self, int_value, is_print=True):
         """
         シリアル通信でデータを送るメソッド
         :param int_value: int
+        :param is_print: bool
             送るデータ
         """
         self.ser.write(self.convert_to_byte(int_value, 1, "big"))
-        print('{0}を送信'.format(int_value))
+
+        if is_print:
+            print(f'{chr(int_value)}({int_value})を送信')
 
     @staticmethod
     def convert_to_byte(convert_data, byte_size, byte_order):
