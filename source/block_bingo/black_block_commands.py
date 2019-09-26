@@ -47,16 +47,16 @@ class BlackBlockCommands():
         ### コマンドの初期化（定義） ###
         # HACK: 別ファイルから読み込んだほうが良いかも
         # ブロックビンゴエリアへの侵入
-        self.ENTER_4 = '4'
-        self.ENTER_6 = '6'
+        self.ENTER_4 = 'a'
+        self.ENTER_6 = 'b'
         # ブロックサークル間移動
-        self.MOVE_CIRCLE = 'm'
+        self.MOVE_CIRCLE = 'c'
         # 90度右回転
-        self.TURN_RIGHT_90 = 'r'
+        self.TURN_RIGHT_90 = 'd'
         # 90度左回転
-        self.TURN_LEFT_90 = 'l'
+        self.TURN_LEFT_90 = 'e'
         # 180度回転
-        self.TURN_180 = 'v'
+        self.TURN_180 = 'f'
 
 
     def gen_commands(self):
