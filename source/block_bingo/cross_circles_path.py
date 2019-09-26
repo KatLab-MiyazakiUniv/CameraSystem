@@ -1,5 +1,16 @@
 import heapq
-from detection_block.BlockBingo import Color
+from enum import Enum, auto
+
+
+class Color(Enum):
+    """
+    ブロックやラインの色
+    """
+    RED = auto()
+    BLUE = auto()
+    YELLOW = auto()
+    GREEN = auto()
+    BLACK = auto()
 
 
 class Node():
@@ -38,10 +49,9 @@ class Node():
 
 
 class CrossCircleCoordinate():
-    '''
-    交点サークル、中点、ブロックサークルの全体を表す。
+    '''交点サークル、中点、ブロックサークルの全体を表す。
 
-    属性:
+    Attributes:
         node_list: (list) Nodeクラスのリスト
     '''
     def __init__(self, block_coordinate):
@@ -153,26 +163,103 @@ class CrossCircleSolver():
         self.crossCircleCoordinate = CrossCircleCoordinate(block_coordinate)
         self.direction = direction
 
+        # コマンドの初期化
+        # 90度右回転
+        self.TURN_RIGHT_90 = 'd'
+        # 90度左回転
+        self.TURN_LEFT_90 = 'e'
+        # 180度回転
+        self.TURN_180 = 'f'
+        # 右に45度回頭する
+        self.TURN_RIGHT_45 = 'q'
+        # 左にに45度回頭する
+        self.TURN_LEFT_45 = 'r'
+        # 右に135度回頭する
+        self.TURN_RIGHT_135 = 's'
+        # 左に135度回頭する
+        self.TURN_LEFT_135 = 't'
+        # 黒線上を直進する
+        self.MOVE_BLACK = 'u'
+        # 黒線上を直進する
+        self.MOVE_DIAGONAL = 'v'
+
 
     def solve_cross_circle(self, num_first_block_circle, current_coordinate):
         bingo_circle_list = self.select_bingo(num_first_block_circle)
         goal_coordinate_list = self.convert_to_goal_coordinate(bingo_circle_list)
 
         start = current_coordinate
-        for i,block_circle in enumerate(bingo_circle_list):
+        commands = ''
+        for i, block_circle in enumerate(bingo_circle_list):
+            # ブロックサークルの色を取得
             color = self.get_circle_color(block_circle)
+            # ブロックサークルの色と同じ色のカラーブロックがある場所の座標を取得する
             block_coordinate = self.select_block_coordinate(color, start)
             goal = block_coordinate
+            # 現在地からカラーブロックがある場所への経路を取得する
             route = self.aster(start, goal)
-            print(route)
+            commands += self.route_to_commands(route)
+            # print(route)
+            # print(commands)
 
+            # カラーブロックがある場所からブロックサークルの左の中点までの経路を取得する
             start = goal
             goal = goal_coordinate_list[i]
             route = self.aster(start, goal)
-            print(route)
+            commands += self.route_to_commands(route)
+            # commands += self.ブロック設置コマンド
+            # print(route)
+            # print(commands)
 
+            # カラーブロックの左の中点を現在地にする
             start = goal
+        return commands
 
+
+    def route_to_commands(self, route):
+        '''ルートをコマンドに変換する
+        '''
+        commands = ''
+        # 経路を元にコマンドを作成する
+        for i in range(1, len(route)):
+            # 現在地から見た場合の次の座標の方角
+            next_direction = self.get_next_direction(route[i-1], route[i])
+            # 現在の方角から次の座標の方角を向くのに必要な回頭角度を取得
+            rotation_angel = self.get_rotation_angle(self.direction, next_direction)
+            
+            # 回頭角度に応じたコマンドを追加する
+            if rotation_angel != 0:
+                commands += self.get_rotation_command(rotation_angel)
+            
+            if next_direction in [0,2,4,6]:
+                # 黒線上を直進するコマンドを追加する
+                commands += self.MOVE_BLACK
+            else:
+                # 斜め移動
+                commands += self.MOVE_DIAGONAL
+
+            # 走行体の向きを更新
+            self.direction = next_direction
+        
+        return commands
+
+
+    def get_rotation_command(self, rotation_angel):
+        if rotation_angel == 45:
+            return self.TURN_RIGHT_45
+        elif rotation_angel == 90:
+            return self.TURN_RIGHT_90
+        elif rotation_angel == 135:
+            return self.TURN_RIGHT_135
+        elif rotation_angel == -45:
+            return self.TURN_LEFT_45
+        elif rotation_angel == -90:
+            return self.TURN_LEFT_90
+        elif rotation_angel == -135:
+            return self.TURN_LEFT_135
+        elif abs(rotation_angel) == 180:
+            return self.TURN_180
+            
 
     def get_circle_color(self, num_block_circle):
         BLOCK_CIRCLE_COLOR = {
@@ -233,6 +320,12 @@ class CrossCircleSolver():
 
 
     def convert_to_goal_coordinate(self, bingo_list):
+        '''ブロックサークル番号をブロックサークルの左側の中点の座標に変換する
+        Args:
+            (list) ビンゴにするブロックサークル番号のリスト
+        Returns:
+            (list) 各ブロックサークルの左側の中点の座標
+        '''
         GOAL_COORDINATE = {
             1: (1,0),
             2: (1,2),
@@ -292,6 +385,7 @@ class CrossCircleSolver():
                     # 探索ヒープにスコアと経路リストを格納
                     checked[node.coordinate] = tmp_cost
                     heapq.heappush(searching_heap, (tmp_cost, tmp_passed_list))
+
         return []
 
 
@@ -304,116 +398,83 @@ class CrossCircleSolver():
         COST_2 = 2
         COST_3 = 3
         COST_4 = 4
+        COST_5 = 5
         move_cost = 0
         current_direction = self.direction
-        for i, coordinate in enumerate(route):
-            if i == 0:
-                pre_coordinate = coordinate
+        current_coor = route[0]
+        # print(route)
+        for i in range(1, len(route)):
+            next_coor = route[i]
+            if current_coor == next_coor:
+                continue
+
+            next_direction = self.get_next_direction(current_coor, next_coor)
+            rotation_angle = self.get_rotation_angle(current_direction, next_direction)
+
+            abs_rotation_angle = abs(rotation_angle)
+            if abs_rotation_angle == 0:
+                move_cost += COST_1
+            elif abs_rotation_angle == 45:
+                move_cost += COST_2
+            elif abs_rotation_angle == 90:
+                move_cost += COST_3
+            elif abs_rotation_angle == 135:
+                move_cost += COST_4
             else:
-                x_diff = coordinate[1] - pre_coordinate[1]
-                y_diff = coordinate[0] - pre_coordinate[0]
-                if current_direction == 0:
-                    if x_diff == 0:
-                        if y_diff > 0:
-                            # 上、正面
-                            move_cost += COST_1
-                        elif y_diff < 0:
-                            # 下、後ろ
-                            move_cost += COST_3
-                            current_direction = 2
-                    elif y_diff == 0:
-                        if x_diff > 0:
-                            # 右、90
-                            move_cost += COST_2
-                            current_direction = 1
-                        elif x_diff < 0:
-                            # 左、90
-                            move_cost += COST_2
-                            current_direction = 3
-                    else:
-                        # 斜めとか
-                        move_cost += COST_4
-                elif current_direction == 1:
-                    if x_diff == 0:
-                        if y_diff > 0:
-                            # 上
-                            move_cost += COST_2
-                            current_direction = 0
-                        elif y_diff < 0:
-                            # 下
-                            move_cost += COST_2
-                            current_direction = 2
-                    elif y_diff == 0:
-                        if x_diff > 0:
-                            # 右
-                            move_cost += COST_1
-                        elif x_diff < 0:
-                            # 左
-                            move_cost += COST_3
-                            current_direction = 3
-                    else:
-                        # 斜めとか
-                        move_cost += COST_4
-                elif current_direction == 2:
-                    if x_diff == 0:
-                        if y_diff > 0:
-                            # 上
-                            move_cost += COST_3
-                            current_direction = 0
-                        elif y_diff < 0:
-                            # 下
-                            move_cost += COST_1
-                    elif y_diff == 0:
-                        if x_diff > 0:
-                            # 右
-                            move_cost += COST_2
-                            current_direction = 1
-                        elif x_diff < 0:
-                            # 左
-                            move_cost += COST_2
-                            current_direction = 3
-                    else:
-                        # 斜めとか
-                        move_cost += COST_4
-                elif current_direction == 3:
-                    if x_diff == 0:
-                        if y_diff > 0:
-                            # 上
-                            move_cost += COST_2
-                            current_direction = 0
-                        elif y_diff < 0:
-                            # 下
-                            move_cost += COST_2
-                            current_direction = 2
-                    elif y_diff == 0:
-                        if x_diff > 0:
-                            # 右
-                            move_cost += COST_3
-                            current_direction = 1
-                        elif x_diff < 0:
-                            # 左
-                            move_cost += COST_1
-                            current_direction = 3
-                    else:
-                        # 斜めとか
-                        move_cost += COST_4
+                move_cost += COST_5
+
+            current_direction = next_direction
+
         return move_cost
 
 
+    def get_next_direction(self, current, next):
+        dx = next[1] - current[1]
+        dy = next[0] - current[0]
+        if dx == 0 and dy < 0:
+            return 0
+        elif dx > 0 and dy < 0:
+            return 1
+        elif dx > 0 and dy == 0:
+            return 2
+        elif dx > 0 and dy > 0:
+            return 3
+        elif dx == 0 and dy > 0:
+            return 4
+        elif dx < 0 and dy > 0:
+            return 5
+        elif dx < 0 and dy == 0:
+            return 6
+        elif dx < 0 and dy < 0:
+            return 7
+        else:
+            raise ValueError('Same coordinate.')
+
+
+    def get_rotation_angle(self, robot_direction, next_direction):
+        '''走行体の方角と次の座標がある方角から、回頭する角度を求める
+        Args:
+            robot_direction: (int) 走行体が向いている方角
+            next_direction: (int) 現在の座標から見て次の座標がある方角
+
+        Returns:
+            (int) 回頭する角度。0,45,90,135,180,-180,-135,-90,-45のいずれか
+        '''
+        angle = 0
+
+        # 時計回り、反時計回りで回頭角度が小さくなる方を選ぶように色々している
+        if next_direction - robot_direction < -4:
+            angle = 8 + (next_direction - robot_direction)
+        elif next_direction - robot_direction > 4:
+            angle = (next_direction - robot_direction) - 8
+        else:
+            angle = next_direction - robot_direction
+
+        return angle * 45
+
+
 if __name__ == '__main__':
-    # route = [Node(False, (0, 0)), Node(False, (0, 1)), Node(False, (0, 2)), Node(False, (1, 2)), Node(False, (2, 2)), Node(False, (3, 2)), Node(False, (2, 3)), Node(False, (2, 4))]
-    # print(cost_g(route, 1))
-
-    # bingoArea = BingoArea()
-    # for e in bingoArea.node_list:
-    #     print(e.coordinate)
-    #     if len(e.connected_node) > 0:
-    #         for c in e.connected_node:
-    #             if c != None:
-    #                 print(c.coordinate)
-    #     print("--------")
-
     block_coordinate = {(0,0): Color.BLUE, (0,4): Color.BLACK, (2,2): Color.GREEN, (2,6): Color.RED, (4,0): Color.RED, (4,4): Color.YELLOW, (6,2): Color.BLUE, (6,6): Color.GREEN}
     crossCircleSolver = CrossCircleSolver(1, block_coordinate)
-    crossCircleSolver.solve_cross_circle(5, (0,6))
+    print(crossCircleSolver.solve_cross_circle(5, (0,6)))
     # print(crossCircleSolver.aster((6,2), (0,2)))

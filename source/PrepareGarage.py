@@ -14,24 +14,24 @@ class PrepareGarage():
         self.route = route
 
         # コマンドの初期化
-        # ブロックサークル間移動
-        self.MOVE_CIRCLE = 'm'
         # 90度右回転
-        self.TURN_RIGHT_90 = 'r'
+        self.TURN_RIGHT_90 = 'd'
         # 90度左回転
-        self.TURN_LEFT_90 = 'l'
+        self.TURN_LEFT_90 = 'e'
         # 180度回転
-        self.TURN_180 = 'v'
+        self.TURN_180 = 'f'
         # 右に45度回頭する
-        self.TURN_RIGHT_45 = 'tr45'
-        # 右に135度回頭する
-        self.TURN_RIGHT_135 = 'tr135'
+        self.TURN_RIGHT_45 = 'q'
         # 左にに45度回頭する
-        self.TURN_LEFT_45 = 'tl45'
+        self.TURN_LEFT_45 = 'r'
+        # 右に135度回頭する
+        self.TURN_RIGHT_135 = 's'
         # 左に135度回頭する
-        self.TURN_LEFT_135 = 'tl135'
-        # ノード間を直進する
-        self.MOVE_NODE = 'mn'
+        self.TURN_LEFT_135 = 't'
+        # 黒線上を直進する
+        self.MOVE_BLACK = 'u'
+        # 黒線上を直進する
+        self.MOVE_DIAGONAL = 'v'
 
 
     def move_58(self):
@@ -62,8 +62,12 @@ class PrepareGarage():
             if rotation_angel != 0:
                 commands += self.get_rotation_command(rotation_angel)
             
-            # ノード間を直進するコマンドを追加する
-            commands += self.MOVE_NODE
+            if next_direction in [0,2,4,6]:
+                # 黒線上を直進するコマンドを追加する
+                commands += self.MOVE_BLACK
+            else:
+                # 斜め移動
+                commands += self.MOVE_DIAGONAL
 
             # 走行体の向きを更新
             robot_direction = next_direction
@@ -186,6 +190,8 @@ class PrepareGarage():
             return 6
         elif dx < 0 and dy < 0:
             return 7
+        else:
+            raise ValueError('Same coordinate.')
 
 
     def get_rotation_angle(self, robot_direction, next_direction):
@@ -336,7 +342,6 @@ class PrepareGarageTest(unittest.TestCase):
                 angle = prepare_garage.get_rotation_angle(robot_direction, next_direction)
                 self.assertEqual(angle, expect[cnt] * 45)
                 cnt += 1
-                
 
 
 if __name__ == '__main__':
@@ -368,6 +373,7 @@ if __name__ == '__main__':
     for route in route_all:
         prepare_garage = PrepareGarage(route)
         print(route)
+        print(prepare_garage.get_path())
         print(f'{prepare_garage.move_58()}\n')
 
 
