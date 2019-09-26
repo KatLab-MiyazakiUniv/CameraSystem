@@ -16,11 +16,16 @@ from BlockBingoPointList import BlockBingoPointList
 class Camera:
     def __init__(self, url="http://raspberrypi.local/?action=stream"):
         self.camera_url = url
-        # NOTE: 座標を指定すると点や線が入ってしまうため処理用と座標指定用を分けた
+        # NOTE: 座標を指定すると画像に点や線が入ってしまうため処理用と座標指定用を分けた
         self.original_img = None # キャプチャしてきた元画像（処理用）
         self.original_img_dummy = None # キャプチャしてきた元画像（座標指定用）        
         self.block_bingo_img = None # 切り取ったブロックビンゴエリアの画像（処理用）
         self.block_bingo_img_dummy = None #  切り取ったブロックビンゴエリアの画像（座標指定用）
+
+        # 以下ファイルへ保存するデータ
+        self.number_img_range = None # 数字カードを切り取るための座標情報
+        self.block_bingo_img_range = None # ブロックビンゴエリアを切り取るための座標情報
+        self.block_bingo_circle_coordinates = None # ブロックビンゴエリアの各種サークルの座標情報
 
     def capture(self, url=None, padding=0):
         """
@@ -86,18 +91,22 @@ class Camera:
         self.original_img_dummy = new_img_dummy
 
     def get_number_img(self, wname="CameraSystem", npoints=4, output_size=[420, 297]):
-        ptlist = PointList(npoints)
-        cv2.namedWindow(wname)
-        cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
-        cv2.imshow(wname, self.original_img_dummy)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
-        ptlist.trans()
-        # 画像を切り取り、保存する
+        # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
+        if self.number_img_range == None:
+            ptlist = PointList(npoints)
+            cv2.namedWindow(wname)
+            cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
+            cv2.imshow(wname, self.original_img_dummy)
+            cv2.waitKey()
+            cv2.destroyAllWindows()
+            ptlist.trans()
+            # 切り取りのための座標情報をメンバ変数に格納
+            self.number_img_range = ptlist.named_points
+        
+        # 画像を切り取る
         result_img = self.clip(self.original_img, output_size=output_size,
-                               l_top=ptlist.named_points["l_top"], l_btm=ptlist.named_points["l_btm"],
-                               r_btm=ptlist.named_points["r_btm"], r_top=ptlist.named_points["r_top"])
-
+                               l_top=self.number_img_range["l_top"], l_btm=self.number_img_range["l_btm"],
+                               r_btm=self.number_img_range["r_btm"], r_top=self.number_img_range["r_top"])
         # 台形補正の結果を表示（何かキーを押すと終了）
         cv2.imshow("color", result_img)
         cv2.waitKey(0)
@@ -105,21 +114,25 @@ class Camera:
         return result_img
 
     def get_block_bingo_img(self, wname="Clip 'Block Bingo' area", npoints=4, output_size = [640, 640]):
-        ptlist = PointList(npoints)
-        cv2.namedWindow(wname)
-        cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
-        cv2.imshow(wname, self.original_img_dummy)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
-        ptlist.trans()
+        # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
+        if self.block_bingo_img_range == None:
+            ptlist = PointList(npoints)
+            cv2.namedWindow(wname)
+            cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
+            cv2.imshow(wname, self.original_img_dummy)
+            cv2.waitKey()
+            cv2.destroyAllWindows()
+            ptlist.trans()
+            # 切り取りのための座標情報をメンバ変数に格納
+            self.block_bingo_img_range = ptlist.named_points
+
         # 画像を切り取り、保存する
         result_img = self.clip(self.original_img, output_size=output_size,
-                               l_top=ptlist.named_points["l_top"], l_btm=ptlist.named_points["l_btm"],
-                               r_btm=ptlist.named_points["r_btm"], r_top=ptlist.named_points["r_top"])
+                               l_top=self.block_bingo_img_range["l_top"], l_btm=self.block_bingo_img_range["l_btm"],
+                               r_btm=self.block_bingo_img_range["r_btm"], r_top=self.block_bingo_img_range["r_top"])
         result_img_dummy = self.clip(self.original_img_dummy, output_size=output_size,
-                               l_top=ptlist.named_points["l_top"], l_btm=ptlist.named_points["l_btm"],
-                               r_btm=ptlist.named_points["r_btm"], r_top=ptlist.named_points["r_top"])
-
+                               l_top=self.block_bingo_img_range["l_top"], l_btm=self.block_bingo_img_range["l_btm"],
+                               r_btm=self.block_bingo_img_range["r_btm"], r_top=self.block_bingo_img_range["r_top"])
         # 台形補正の結果を表示（何かキーを押すと終了）
         cv2.imshow("color", result_img)
         cv2.waitKey(0)
@@ -130,16 +143,20 @@ class Camera:
 
     def get_circle_coordinates(self, wname="Choose circles", npoints=24):
         """
-        切り取ったブロックビンゴエリアの画像から各種サークルの座標を設定
+        切り取ったブロックビンゴエリアの画像から各種サークルの座標を指定
         """
-        circle_ptlist = BlockBingoPointList(npoints)
-        cv2.namedWindow(wname)
-        cv2.setMouseCallback(wname, circle_ptlist.add_point, [wname, self.block_bingo_img_dummy, circle_ptlist])
-        cv2.imshow(wname, self.block_bingo_img_dummy)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
-        circle_ptlist.trans()
-        return circle_ptlist.named_points
+        # ファイルから座標データを読み込んでいない場合は、各種サークルの座標を設定する
+        if self.block_bingo_circle_coordinates == None:
+            circle_ptlist = BlockBingoPointList(npoints)
+            cv2.namedWindow(wname)
+            cv2.setMouseCallback(wname, circle_ptlist.add_point, [wname, self.block_bingo_img_dummy, circle_ptlist])
+            cv2.imshow(wname, self.block_bingo_img_dummy)
+            cv2.waitKey()
+            cv2.destroyAllWindows()
+            circle_ptlist.trans()
+            self.block_bingo_circle_coordinates = circle_ptlist.named_points
+        # FIX: ここでは座標を返さずに、座標の指定のみを行うべきかもしれない
+        return self.block_bingo_circle_coordinates
 
     def clip(self, img, output_size=[420, 297],
              l_top=[-30, 460], l_btm=[190, 620],
