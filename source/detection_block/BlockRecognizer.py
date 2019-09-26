@@ -47,6 +47,9 @@ class BlockRecognizer:
         
         for (idx, point) in enumerate(points):
             crop = self.extractor.trim(img, point)
+            #cv2.imshow("crop", crop)
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
             if Color.BLACK == self.detect_color(self.extractor.closing(crop)):
                 black = idx + 1
             elif Color.WHITE != self.detect_color(self.extractor.closing(crop)):

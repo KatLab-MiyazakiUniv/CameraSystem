@@ -7,7 +7,6 @@ import time
 import threading
 
 
-
 class CameraSystem:
     def __init__(self):
         self.camera = Camera()
@@ -19,18 +18,19 @@ class CameraSystem:
         self.bt = Bluetooth()
         self.port = "/dev/cu.MindstormsEV3-SerialPor"
         self.card_number = None
+        self.is_debug = False
 
     def _connect_to_ev3(self):
         """
         EV3とBT接続
         """
-        print("\nConnect EV3")
+        print("\nSYS: Connect EV3")
         self.bt.connect(self.port)
         while True:
             write_data = 0
-            self.bt.write(write_data)
+            self.bt.write(write_data, is_print=False)
             if self.bt.read() == 1:
-                print("Success! Connected ev3")
+                print("SYS: Success! Connected ev3")
                 return
 
             time.sleep(1)  # sec
@@ -40,8 +40,8 @@ class CameraSystem:
         数字カードの切り取りと数字の識別
         :return: 数字カードの数字
         """
-        self.camera.capture()
-        number_card = self.camera.get_number_img()
+        self.camera.capture(padding=100)
+        number_card = self.camera.get_number_img(is_debug=self.is_debug)
         detection_number = DetectionNumber(img=number_card, model_path="./detection_number/my_model.npz")
         return detection_number.get_detect_number()
 
@@ -53,16 +53,16 @@ class CameraSystem:
         """
         for c in commands:
             self.bt.write(ord(c))
-            time.sleep(3)  # sec
+            time.sleep(0.5)  # sec
 
         # 終了コードを送信
         self.bt.write(ord('#'))
-        print("send complete")
+        print("SYS: command send complete")
 
     def _detection_block(self):
         while True:
             # 領域、座標指定
-            block_bingo_img = self.camera.get_block_bingo_img()     # 領域指定して画像取得
+            block_bingo_img = self.camera.get_block_bingo_img(is_debug=self.is_debug)     # 領域指定して画像取得
             circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
             self.camera.save_settings()  # 座標ポチポチした結果を保存
             # ブロックの識別が来る
@@ -89,18 +89,34 @@ class CameraSystem:
         カメラシステムクラスのメイン関数
         :return:
         """
+
+        # スレッドを立てて、BT接続を始める。
         connect_thread = threading.Thread(target=self._connect_to_ev3)
         connect_thread.start()
 
-        print("\nDetection Number")
-        self.card_number = self._detection_number()
-        print(f"number is {self.card_number}")
+        time.sleep(3)
 
-        print("\nDetection Block")
+        while True:
+            print("SYS: スタートしましたか？")
+            print("     y: スタート")
+            print("     n: まだよん")
+            print("     d: デバッグモードで実行")
+            is_start = input(">> ")
+            if is_start is 'y':
+                break
+            elif is_start is 'd':
+                self.is_debug = True
+                break
+
+        print("\nSYS: Detection Number")
+        self.card_number = self._detection_number()
+        print(f"SYS: number is {self.card_number}")
+
+        print("\nSYS: Detection Block")
         commands = self._detection_block()
 
         connect_thread.join()
-        print("\nSend Command")
+        print("\nSYS: Send Command")
         self._send_command(commands)
         # TODO これから
 
