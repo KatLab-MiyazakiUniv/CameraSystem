@@ -1,5 +1,3 @@
-import pprint
-
 from DetectionNumber import DetectionNumber
 from Camera import Camera
 from bluetooth.Bluetooth import Bluetooth
@@ -9,6 +7,7 @@ import time
 class CameraSystem:
     def __init__(self):
         self.camera = Camera()
+        self.camera.load_settings()
         self.bt = Bluetooth()
         self.port = "/dev/cu.MindstormsEV3-SerialPor"
         self.card_number = None
@@ -33,9 +32,6 @@ class CameraSystem:
         """
         self.camera.capture()
         number_card = self.camera.get_number_img()
-        block_bingo_img = self.camera.get_block_bingo_img()
-        circles_coordinates = self.camera.get_circle_coordinates()
-        pprint.pprint(circles_coordinates)
         detection_number = DetectionNumber(img=number_card, model_path="./DetectionNumber/my_model.npz")
         return detection_number.get_detect_number()
 
@@ -66,7 +62,13 @@ class CameraSystem:
         print(f"number is {self.card_number}")
 
         print("\nDetection Block")
-        # TODO これから
+        # 領域、座標指定
+        block_bingo_img = self.camera.get_block_bingo_img()     # 領域指定して画像取得
+        circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
+        self.camera.save_settings()
+        # TODO ブロックの識別が来る
+
+        # TODO 経路から命令に変換
         commands = ['b', 'c', 'd']
 
         print("\nSend Command")
