@@ -6,6 +6,8 @@
 
 import datetime
 import sys
+import os
+import json
 
 import cv2
 import numpy as np
@@ -21,6 +23,8 @@ class Camera:
         self.original_img_dummy = None # キャプチャしてきた元画像（座標指定用）        
         self.block_bingo_img = None # 切り取ったブロックビンゴエリアの画像（処理用）
         self.block_bingo_img_dummy = None #  切り取ったブロックビンゴエリアの画像（座標指定用）
+        self.loaded_settings_file = False
+        self.modified_settings = False
 
         # 以下ファイルへ保存するデータ
         self.number_img_range = None # 数字カードを切り取るための座標情報
@@ -102,6 +106,7 @@ class Camera:
             ptlist.trans()
             # 切り取りのための座標情報をメンバ変数に格納
             self.number_img_range = ptlist.named_points
+            self.modified_settings = True
         
         # 画像を切り取る
         result_img = self.clip(self.original_img, output_size=output_size,
@@ -125,6 +130,7 @@ class Camera:
             ptlist.trans()
             # 切り取りのための座標情報をメンバ変数に格納
             self.block_bingo_img_range = ptlist.named_points
+            self.modified_settings = True
 
         # 画像を切り取り、保存する
         result_img = self.clip(self.original_img, output_size=output_size,
@@ -155,8 +161,70 @@ class Camera:
             cv2.destroyAllWindows()
             circle_ptlist.trans()
             self.block_bingo_circle_coordinates = circle_ptlist.named_points
+            self.modified_settings = True
         # FIX: ここでは座標を返さずに、座標の指定のみを行うべきかもしれない
         return self.block_bingo_circle_coordinates
+
+    def load_settings(self, file_name="camera_settings.json"):
+        """
+        切り取るための座標情報や、各種サークルの座標情報をファイルから読み込む
+        ファイルを読み込んだ後、以下の関数を呼び出しても領域選択画面は出てこない
+            get_circle_coordinates
+            get_block_bingo_img
+            get_number_img
+        """
+        # ファイルが存在するかを確かめる
+        if not os.path.exists(file_name):
+            print("ファイル（{}）が存在しません".format(file_name))
+            return
+
+        # ファイル読み込み
+        with open(file_name, mode='r') as fp:
+            tmp = json.load(fp)
+        
+        # ファイルのデータが不十分な場合
+        if not "number_img_range" in tmp:
+            raise ValueError("データが不十分です（数字カード切り取り用）")
+            return
+        if not "block_bingo_img_range" in tmp:
+            raise ValueError("データが不十分です（ブロックビンゴエリア切り取り用）")
+            return
+        if not "block_bingo_circle_coordinates" in tmp:
+            raise ValueError("データが不十分です（各種サークルの座標）")
+            return
+
+        self.number_img_range = tmp["number_img_range"]
+        self.block_bingo_img_range = tmp["block_bingo_img_range"] 
+        self.block_bingo_circle_coordinates = tmp["block_bingo_circle_coordinates"]
+        self.loaded_settings_file = True
+
+    def save_settings(self, file_name="camera_settings.json"):
+        """
+        切り取るための座標情報や、各種サークルの座標情報をファイルへ保存する
+        """
+        if not self.modified_settings:
+            print("[{}.{}] 設定の変更がないため保存は行いません".format(self.__class__.__name__, sys._getframe().f_code.co_name))
+            return
+        settings = {}
+        settings["number_img_range"] = self.array_to_list(self.number_img_range)
+        settings["block_bingo_img_range"] = self.array_to_list(self.block_bingo_img_range)
+        settings["block_bingo_circle_coordinates"] = self.block_bingo_circle_coordinates
+        with open(file_name, mode="w") as fp:
+            print(settings)
+            json.dump(settings, fp, indent=4)
+        print("[{}.{}]設定を保存しました".format(self.__class__.__name__, sys._getframe().f_code.co_name))
+    
+    @staticmethod
+    def array_to_list(src_dict):
+        """
+        ptlist.named_listの座標(array)をリストに変換する
+        """
+        target_dict = {}
+        for key in src_dict:
+            if type(src_dict[key]) != type(np.array([])):
+                continue
+            target_dict[key] = src_dict[key].tolist()
+        return target_dict
 
     def clip(self, img, output_size=[420, 297],
              l_top=[-30, 460], l_btm=[190, 620],
@@ -204,22 +272,20 @@ class Camera:
 
         return clipped_img
 
-
 if __name__ == '__main__':
+    edit_settings = False # 設定ファイルの内容を上書きするかどうか（設定ファイルが存在しない場合は関係ない）
+    if len(sys.argv) != 1:
+        if sys.argv[1] == "-e":
+            edit_settings = True
+
     # ラズパイから映像を受信し、保存する
     camera = Camera()
+    if not edit_settings:
+        camera.load_settings()
     # 余白を設定
     camera.capture(padding=100)    
     num_img = camera.get_number_img() # 数字カードの画像
 
     bingo_img = camera.get_block_bingo_img() # ブロックビンゴエリアの画像
     circle_coordinates = camera.get_circle_coordinates() # 上記の画像における各種サークルの座標
-
-    # 切り取った画像を表示
-    cv2.imshow("", num_img)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
-
-    cv2.imshow("", bingo_img)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+    camera.save_settings()
