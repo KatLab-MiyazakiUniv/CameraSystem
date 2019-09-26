@@ -71,8 +71,10 @@ class BlackBlockCommands():
         コマンドの文字列
         """
         commands = ""
+        # 座標系の相違を吸収
+        tmp_trans = (self.block_circles_coordinate.block_circles[4][1], self.block_circles_coordinate.block_circles[4][0])
         # ブロックビンゴエリアへの侵入先を決定
-        if self.route[0] == self.block_circles_coordinate.block_circles[4]:
+        if self.route[0] == tmp_trans:
             commands += self.ENTER_4
         else:
             commands += self.ENTER_6
