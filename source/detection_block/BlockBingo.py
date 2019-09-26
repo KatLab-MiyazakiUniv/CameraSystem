@@ -4,7 +4,7 @@
 @author: UEDA Takahiro
 @brief: ブロックビンゴエリアのデータ構造
 """
-from enum import Enum
+from enum import Enum, auto
 from typing import List
 
 
@@ -12,12 +12,12 @@ class Color(Enum):
     """
     ブロックやラインの色
     """
-    RED = 0
-    BLUE = 1
-    YELLO = 2
-    GREEN = 3
-    BLACK = 4
-    WHITE = 5
+    RED = auto()
+    BLUE = auto()
+    YELLO = auto()
+    GREEN = auto()
+    BLACK = auto()
+    WHITE = auto()
 
 
 class Block:
