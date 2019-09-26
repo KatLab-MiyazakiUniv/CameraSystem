@@ -7,7 +7,11 @@ import time
 class CameraSystem:
     def __init__(self):
         self.camera = Camera()
+        
+        # NOTE: 以前に座標ポチポチしたデータを読み込む（ファイルが存在場合は何もしない）
+        #       座標ポチポチをやり直したい場合は、camera.load_settings()を呼び出さなければOK
         self.camera.load_settings()
+
         self.bt = Bluetooth()
         self.port = "/dev/cu.MindstormsEV3-SerialPor"
         self.card_number = None
@@ -65,7 +69,7 @@ class CameraSystem:
         # 領域、座標指定
         block_bingo_img = self.camera.get_block_bingo_img()     # 領域指定して画像取得
         circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
-        self.camera.save_settings()
+        self.camera.save_settings() # 座標ポチポチした結果を保存
         # TODO ブロックの識別が来る
 
         # TODO 経路から命令に変換
