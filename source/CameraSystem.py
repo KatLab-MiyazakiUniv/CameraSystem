@@ -1,6 +1,7 @@
 from DetectionNumber import DetectionNumber
 from Camera import Camera
 from bluetooth.Bluetooth import Bluetooth
+from detection_block.BlockRecognizer import BlockRecognizer
 import time
 
 
@@ -66,7 +67,9 @@ class CameraSystem:
         block_bingo_img = self.camera.get_block_bingo_img()     # 領域指定して画像取得
         circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
         self.camera.save_settings()
-        # TODO ブロックの識別が来る
+        # ブロックの識別が来る
+        recognizer = BlockRecognizer()
+        black_block_place, color_block_place = recognizer.recognize_block_circle(block_bingo_img, circles_coordinates)
 
         # TODO 経路から命令に変換
         commands = ['b', 'c', 'd']
