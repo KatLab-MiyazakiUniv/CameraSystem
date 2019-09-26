@@ -5,7 +5,7 @@ from detection_block.BlockRecognizer import BlockRecognizer
 from block_bingo.black_block_commands import BlackBlockCommands
 import time
 import threading
-
+from PrepareGarage import PrepareGarage
 
 class CameraSystem:
     def __init__(self):
@@ -19,6 +19,7 @@ class CameraSystem:
         self.port = "/dev/cu.MindstormsEV3-SerialPor"
         self.card_number = None
         self.is_debug = False
+        self.route = None
 
     def _connect_to_ev3(self):
         """
@@ -73,17 +74,24 @@ class CameraSystem:
             if black_block_place is not None and color_block_place is not None:
                 break
             else:
-                self.camera.capture()
+                self.camera.capture(padding=100)
 
         # ボーナスサークル（int）
         # 黒ブロックが置かれているブロックサークル（int）
         # カラーブロックが置かれているブロックサークル（int）
         black_block_commands = BlackBlockCommands(self.card_number, black_block_place, color_block_place)
         commands_tmp = black_block_commands.gen_commands()
-        print(black_block_commands.route)
+        self.route = black_block_commands.route
+        print(self.route)
         print(commands_tmp)
         # 経路から命令に変換
         return list(commands_tmp)
+
+    def _prepare_garage(self):
+        prepare_garage = PrepareGarage(self.route)
+        print(prepare_garage.get_path())
+        print(prepare_garage.move_58())
+        return prepare_garage.move_58()
 
     def start(self):
         """
@@ -121,6 +129,10 @@ class CameraSystem:
 
         print("\nSYS: Detection Block")
         commands = self._detection_block()
+
+        print("\nSYS: PrepareGarage")
+        commands.extend(self._prepare_garage())
+        print(f"SYS: Commands{commands}")
 
         if self.is_debug:
             connect_thread.join()

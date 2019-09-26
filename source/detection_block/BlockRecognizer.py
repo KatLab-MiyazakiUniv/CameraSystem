@@ -20,7 +20,7 @@ class BlockRecognizer:
     def detect_color(self, img):        
         # 各色のHue最小値と最大値
         hue_list = {Color.RED:[0, 15], Color.BLUE:[90, 110],
-                      Color.YELLO:[15, 30], Color.GREEN:[60, 90]}
+                      Color.YELLOW:[15, 30], Color.GREEN:[60, 90]}
         (h, s, v) = self.convert_to_hsv(img)
         
         # 黒色の識別
