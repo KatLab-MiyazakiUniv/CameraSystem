@@ -30,6 +30,7 @@ class BlackBlockCommands():
         # 経路を計算
         route_tmp = self.block_circles_solver.solve()
         # 経路の軸の相違を吸収
+        self.reverse_route = route_tmp
         self.route = list(map(lambda x: (x[1], x[0]), route_tmp))
 
         """

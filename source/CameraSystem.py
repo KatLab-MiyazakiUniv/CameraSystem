@@ -20,6 +20,7 @@ class CameraSystem:
         self.card_number = None
         self.is_debug = False
         self.route = None
+        self.reverse_route = None
 
     def _connect_to_ev3(self):
         """
@@ -82,13 +83,14 @@ class CameraSystem:
         black_block_commands = BlackBlockCommands(self.card_number, black_block_place, color_block_place)
         commands_tmp = black_block_commands.gen_commands()
         self.route = black_block_commands.route
+        self.reverse_route = black_block_commands.reverse_route
         print(self.route)
         print(commands_tmp)
         # 経路から命令に変換
         return list(commands_tmp)
 
     def _prepare_garage(self):
-        prepare_garage = PrepareGarage(self.route)
+        prepare_garage = PrepareGarage(self.reverse_route)
         print(prepare_garage.get_path())
         print(prepare_garage.move_58())
         return prepare_garage.move_58()
@@ -129,6 +131,7 @@ class CameraSystem:
 
         print("\nSYS: Detection Block")
         commands = self._detection_block()
+        commands.append('g')
 
         print("\nSYS: PrepareGarage")
         commands.extend(self._prepare_garage())
