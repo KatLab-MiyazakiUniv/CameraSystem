@@ -17,6 +17,7 @@ class Color(Enum):
     YELLOW = auto()
     GREEN = auto()
     BLACK = auto()
+    WHITE = auto()
 
 
 class Block:

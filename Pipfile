@@ -7,6 +7,8 @@ verify_ssl = true
 trainNumber = "bash -c \"cd source/PC/numberDetection && pwd && python train_number_card.py\""
 createNumberData = "bash -c \"cd source/PC/numberDetection/data && pwd && python create_data.py\""
 detectNumber = "bash -c \"cd source/PC/numberDetection && pwd && python detection_number.py\""
+search_serial_port = "bash -c \"cd source/PC/bluetooth && pwd && python search_serial_port.py\""
+bluetooth = "bash -c \"cd source/PC/bluetooth && pwd && python Bluetooth.py\""
 
 [dev-packages]
 autopep8 = "*"
