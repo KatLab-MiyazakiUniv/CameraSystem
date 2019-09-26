@@ -26,8 +26,11 @@ class BlackBlockCommands():
         # インスタンス生成
         self.block_circles_solver = BlockCirclesSolver(bonus, black, color)
         self.block_circles_coordinate = BlockCirclesCoordinate()
+
         # 経路を計算
-        self.route = self.block_circles_solver.solve()
+        route_tmp = self.block_circles_solver.solve()
+        # 経路の軸の相違を吸収
+        self.route = list(map(lambda x: (x[1], x[0]), route_tmp))
 
         """
         機体の向きの表現方法

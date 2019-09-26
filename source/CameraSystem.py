@@ -80,6 +80,7 @@ class CameraSystem:
         # カラーブロックが置かれているブロックサークル（int）
         black_block_commands = BlackBlockCommands(self.card_number, black_block_place, color_block_place)
         commands_tmp = black_block_commands.gen_commands()
+        print(black_block_commands.route)
         print(commands_tmp)
         # 経路から命令に変換
         return list(commands_tmp)
@@ -97,9 +98,8 @@ class CameraSystem:
         time.sleep(3)
 
         while True:
-            print("SYS: スタートしましたか？")
-            print("     y: スタート")
-            print("     n: まだよん")
+            print("SYS: 本番ですか？")
+            print("     y: 本番モード")
             print("     d: デバッグモードで実行")
             is_start = input(">> ")
             if is_start is 'y':
@@ -108,6 +108,13 @@ class CameraSystem:
                 self.is_debug = True
                 break
 
+        if not self.is_debug:
+            print('\nSYS: Wait start...')
+            connect_thread.join()
+            while True:
+                if self.bt.read() == 2:
+                    break
+
         print("\nSYS: Detection Number")
         self.card_number = self._detection_number()
         print(f"SYS: number is {self.card_number}")
@@ -115,7 +122,9 @@ class CameraSystem:
         print("\nSYS: Detection Block")
         commands = self._detection_block()
 
-        connect_thread.join()
+        if self.is_debug:
+            connect_thread.join()
+
         print("\nSYS: Send Command")
         self._send_command(commands)
         # TODO これから
