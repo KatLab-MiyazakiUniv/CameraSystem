@@ -27,7 +27,10 @@ class BlackBlockCommands():
         self.block_circles_solver = BlockCirclesSolver(bonus, black, color)
         self.block_circles_coordinate = BlockCirclesCoordinate()
         # 経路を計算
-        self.route = self.block_circles_solver.solve()
+        route_tmp = self.block_circles_solver.solve()
+        self.route = list(map(lambda x: (x[1], x[0]), route_tmp))
+        print("以下座標返還後の経路:(列, 行)")
+        print(self.route)
 
         """
         機体の向きの表現方法
@@ -47,16 +50,16 @@ class BlackBlockCommands():
         ### コマンドの初期化（定義） ###
         # HACK: 別ファイルから読み込んだほうが良いかも
         # ブロックビンゴエリアへの侵入
-        self.ENTER_4 = '4'
-        self.ENTER_6 = '6'
+        self.ENTER_4 = 'a'
+        self.ENTER_6 = 'b'
         # ブロックサークル間移動
-        self.MOVE_CIRCLE = 'm'
+        self.MOVE_CIRCLE = 'c'
         # 90度右回転
-        self.TURN_RIGHT_90 = 'r'
+        self.TURN_RIGHT_90 = 'd'
         # 90度左回転
-        self.TURN_LEFT_90 = 'l'
+        self.TURN_LEFT_90 = 'e'
         # 180度回転
-        self.TURN_180 = 'v'
+        self.TURN_180 = 'f'
 
 
     def gen_commands(self):
@@ -68,8 +71,10 @@ class BlackBlockCommands():
         コマンドの文字列
         """
         commands = ""
+        # 座標系の相違を吸収
+        tmp_trans = (self.block_circles_coordinate.block_circles[4][1], self.block_circles_coordinate.block_circles[4][0])
         # ブロックビンゴエリアへの侵入先を決定
-        if self.route[0] == self.block_circles_coordinate.block_circles[4]:
+        if self.route[0] == tmp_trans:
             commands += self.ENTER_4
         else:
             commands += self.ENTER_6
