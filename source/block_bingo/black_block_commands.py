@@ -331,7 +331,8 @@ class BlackBlockCommandsTest(unittest.TestCase):
         self.assertEqual('', generator.detect_direction((1, 2), (3, 4)))
 
 def main():
-    unittest.main()
+    #unittest.main()
+    pass
 
 if __name__ == "__main__":
     main()
