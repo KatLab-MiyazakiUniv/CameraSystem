@@ -39,8 +39,8 @@ class BlockRecognizer:
     def recognize_block_circle(self, img, circles_coordinates):
         # ブロックサークルの数字を削除する。画像の周辺のノイズも削除する。
         img = self.extractor.remove_circle_number(img)
-        black = None # 黒ブロックが置かれているブロックサークル番号
-        color = None # カラーブロックが置かれているブロックサークル番号
+        black = None  # 黒ブロックが置かれているブロックサークル番号
+        color = None  # カラーブロックが置かれているブロックサークル番号
         
         # サークル座標のデータ構造からブロックサークルの座標だけ抽出する
         points = self.extract_block_circles_point(circles_coordinates)

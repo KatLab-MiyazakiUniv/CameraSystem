@@ -59,7 +59,7 @@ class Bluetooth:
             送るデータ
         """
         self.ser.write(self.convert_to_byte(int_value, 1, "big"))
-        print('{0}を送信'.format(int_value))
+        print(f'{chr(int_value)}({int_value})を送信')
 
     @staticmethod
     def convert_to_byte(convert_data, byte_size, byte_order):

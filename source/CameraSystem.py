@@ -4,6 +4,8 @@ from bluetooth.Bluetooth import Bluetooth
 from detection_block.BlockRecognizer import BlockRecognizer
 from block_bingo.black_block_commands import BlackBlockCommands
 import time
+import threading
+
 
 
 class CameraSystem:
@@ -22,11 +24,13 @@ class CameraSystem:
         """
         EV3とBT接続
         """
+        print("\nConnect EV3")
         self.bt.connect(self.port)
         while True:
             write_data = 0
             self.bt.write(write_data)
             if self.bt.read() == 1:
+                print("Success! Connected ev3")
                 return
 
             time.sleep(1)  # sec
@@ -38,7 +42,7 @@ class CameraSystem:
         """
         self.camera.capture()
         number_card = self.camera.get_number_img()
-        detection_number = DetectionNumber(img=number_card, model_path="./DetectionNumber/my_model.npz")
+        detection_number = DetectionNumber(img=number_card, model_path="./detection_number/my_model.npz")
         return detection_number.get_detect_number()
 
     def _send_command(self, commands):
@@ -49,32 +53,27 @@ class CameraSystem:
         """
         for c in commands:
             self.bt.write(ord(c))
-            time.sleep(1)  # sec
+            time.sleep(3)  # sec
 
         # 終了コードを送信
-        self.bt.write(ord('z'))
+        self.bt.write(ord('#'))
+        print("send complete")
 
-    def start(self):
-        """
-        カメラシステムクラスのメイン関数
-        :return:
-        """
-        print("\nConnect EV3")
-        self._connect_to_ev3()
-        print("Success! Connected ev3")
+    def _detection_block(self):
+        while True:
+            # 領域、座標指定
+            block_bingo_img = self.camera.get_block_bingo_img()     # 領域指定して画像取得
+            circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
+            self.camera.save_settings()  # 座標ポチポチした結果を保存
+            # ブロックの識別が来る
+            recognizer = BlockRecognizer()
+            black_block_place, color_block_place = recognizer.recognize_block_circle(block_bingo_img, circles_coordinates)
+            print(black_block_place, color_block_place)
 
-        print("\nDetection Number")
-        self.card_number = self._detection_number()
-        print(f"number is {self.card_number}")
-
-        print("\nDetection Block")
-        # 領域、座標指定
-        block_bingo_img = self.camera.get_block_bingo_img()     # 領域指定して画像取得
-        circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
-        self.camera.save_settings()  # 座標ポチポチした結果を保存
-        # ブロックの識別が来る
-        recognizer = BlockRecognizer()
-        black_block_place, color_block_place = recognizer.recognize_block_circle(block_bingo_img, circles_coordinates)
+            if black_block_place is not None and color_block_place is not None:
+                break
+            else:
+                self.camera.capture()
 
         # ボーナスサークル（int）
         # 黒ブロックが置かれているブロックサークル（int）
@@ -82,10 +81,25 @@ class CameraSystem:
         black_block_commands = BlackBlockCommands(self.card_number, black_block_place, color_block_place)
         commands_tmp = black_block_commands.gen_commands()
         print(commands_tmp)
-
         # 経路から命令に変換
-        commands = list(commands_tmp)
+        return list(commands_tmp)
 
+    def start(self):
+        """
+        カメラシステムクラスのメイン関数
+        :return:
+        """
+        connect_thread = threading.Thread(target=self._connect_to_ev3)
+        connect_thread.start()
+
+        print("\nDetection Number")
+        self.card_number = self._detection_number()
+        print(f"number is {self.card_number}")
+
+        print("\nDetection Block")
+        commands = self._detection_block()
+
+        connect_thread.join()
         print("\nSend Command")
         self._send_command(commands)
         # TODO これから
