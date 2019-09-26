@@ -2,13 +2,18 @@ from DetectionNumber import DetectionNumber
 from Camera import Camera
 from bluetooth.Bluetooth import Bluetooth
 from detection_block.BlockRecognizer import BlockRecognizer
+from block_bingo.black_block_commands import BlackBlockCommands
 import time
 
 
 class CameraSystem:
     def __init__(self):
         self.camera = Camera()
+        
+        # NOTE: 以前に座標ポチポチしたデータを読み込む（ファイルが存在場合は何もしない）
+        #       座標ポチポチをやり直したい場合は、camera.load_settings()を呼び出さなければOK
         self.camera.load_settings()
+
         self.bt = Bluetooth()
         self.port = "/dev/cu.MindstormsEV3-SerialPor"
         self.card_number = None
@@ -66,13 +71,20 @@ class CameraSystem:
         # 領域、座標指定
         block_bingo_img = self.camera.get_block_bingo_img()     # 領域指定して画像取得
         circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
-        self.camera.save_settings()
+        self.camera.save_settings()  # 座標ポチポチした結果を保存
         # ブロックの識別が来る
         recognizer = BlockRecognizer()
         black_block_place, color_block_place = recognizer.recognize_block_circle(block_bingo_img, circles_coordinates)
 
-        # TODO 経路から命令に変換
-        commands = ['b', 'c', 'd']
+        # ボーナスサークル（int）
+        # 黒ブロックが置かれているブロックサークル（int）
+        # カラーブロックが置かれているブロックサークル（int）
+        black_block_commands = BlackBlockCommands(self.card_number, black_block_place, color_block_place)
+        commands_tmp = black_block_commands.gen_commands()
+        print(commands_tmp)
+
+        # 経路から命令に変換
+        commands = list(commands_tmp)
 
         print("\nSend Command")
         self._send_command(commands)
