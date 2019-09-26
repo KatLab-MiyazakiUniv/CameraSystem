@@ -29,6 +29,8 @@ class BlackBlockCommands():
         # 経路を計算
         route_tmp = self.block_circles_solver.solve()
         self.route = list(map(lambda x: (x[1], x[0]), route_tmp))
+        print("以下座標返還後の経路:(列, 行)")
+        print(self.route)
 
         """
         機体の向きの表現方法
