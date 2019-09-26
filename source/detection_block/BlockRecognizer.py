@@ -37,12 +37,15 @@ class BlockRecognizer:
     def recognize_block_circle(self, img, points):
         img = self.extractor.remove_circle_number(img)
         black = None
+        color = None
         for (idx, point) in enumerate(points):
             crop = self.extractor.trim(img, point)
             if Color.BLACK == self.detect_color(self.extractor.closing(crop)):
                 black = idx + 1
+            elif Color.WHITE != self.detect_color(self.extractor.closing(crop)):
+                color = idx + 1
         
-        return black      
+        return (black, color)   
 
 class BlockExtractor():
     def trim(self, img, point, margin = 5):
