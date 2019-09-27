@@ -7,7 +7,7 @@ import serial
 import serial.tools.list_ports
 
 
-def search_serial_port():
+def search_com_ports():
     """
     シリアルポートを探す（デバッグ用）
     """
@@ -16,5 +16,18 @@ def search_serial_port():
         print('{0}'.format(com))
 
 
+def search_enabled_com_port():
+    # 有効なCOMポートを自動的に探して返す
+    coms = serial.tools.list_ports.comports()
+    comlist = []
+    for com in coms:
+        comlist.append(com.device)
+    print('Connected COM ports: ' + str(comlist))
+    use_port = comlist[0]
+    print('Use COM port: ' + use_port)
+    return use_port
+
+
 if __name__ == '__main__':
-    search_serial_port()
+    search_com_ports()
+    search_enabled_com_port()
