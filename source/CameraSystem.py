@@ -16,7 +16,7 @@ class CameraSystem:
         self.camera.load_settings()
 
         self.bt = Bluetooth()
-        self.port = "/dev/cu.MindstormsEV3-SerialPor"
+        self.port = "COM3"
         self.card_number = None
         self.is_debug = False
         self.route = None
@@ -30,7 +30,7 @@ class CameraSystem:
         self.bt.connect(self.port)
         while True:
             write_data = 0
-            self.bt.write(write_data, is_print=False)
+            self.bt.write(write_data, is_print=self.is_debug)
             if self.bt.read() == 1:
                 print("SYS: Success! Connected ev3")
                 return
