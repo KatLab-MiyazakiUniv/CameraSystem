@@ -140,10 +140,10 @@ class BlockCirclesSolver():
         
         Parameters
         ----------
-        inner_tracks : list
-            内回りの取得経路
-        outer_tracks : list
-            外回りの取得経路
+        enter : tuple
+            進入するサークルの座標
+        tracks : list
+            経路
         """
         # 原則として内回りの経路を選択する
         path = self.subset_of_tracks(enter, self.coordinate.get(self.black), tracks.inner_tracks)
@@ -157,18 +157,27 @@ class BlockCirclesSolver():
     def path_to_bonus_circle(self, tracks):
         """
         黒ブロックが置かれたサークルからボーナスサークルまでの経路を計算する。
+        
+        Parameters
+        ----------
+        tracks : list
+            経路
         """
         # 原則として内回りの経路を選択する
         path = self.subset_of_tracks(self.coordinate.get(self.black), self.coordinate.get(self.bonus), tracks.inner_tracks)
+        outer_path = self.subset_of_tracks(self.coordinate.get(self.black), self.coordinate.get(self.bonus), tracks.outer_tracks)
         
         # 選択した経路内にカラーブロックが置かれているサークルがあるかチェックする
         if self.coordinate.get(self.color) in path[0:-1]:
             path = self.subset_of_tracks(self.coordinate.get(self.black), self.coordinate.get(self.bonus), tracks.outer_tracks)
-        
+        # 内回り、外回りの両方にもゴールを除いてカラーブロックが置かれていないとき
+        elif self.coordinate.get(self.color) not in outer_path[0:-1]:
+            # 内回りよりも外回りの方が早い場合は、外回りを採用する
+            path = outer_path if len(outer_path) < len(path) else path
         return path
 
 def main():
-    solver = BlockCirclesSolver(1, 2, 3)
+    solver = BlockCirclesSolver(5, 3, 5)
     path = solver.solve()
     print(path)
 
@@ -308,5 +317,5 @@ class BlockCirclesSolverTest(unittest.TestCase):
         self.assertEqual(original[start:goal], solver.subset_of_tracks(2, 5, original))
 
 if __name__ == '__main__':
-    # unittest.main()
+    #unittest.main()
     main()
