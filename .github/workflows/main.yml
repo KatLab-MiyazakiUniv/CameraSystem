@@ -9,7 +9,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        python-version: [3.6]
+        python-version: [3.6.7]
 
     steps:
     - uses: actions/checkout@master
@@ -26,7 +26,7 @@ jobs:
         pip install pipenv
     - name: Install dependencies
       run: |
-        pipenv install --python python --dev
+        pipenv install --ignore-pipfile --dev
     - name: Test with pytest
       run: PYTHONPATH=./source pipenv run pytest --cov=./ source --cov-branch --cov-report=xml
     - name: Upload coverage to Codecov
