@@ -186,33 +186,3 @@ class BlockCirclesSolver():
             # 内回りよりも外回りの方が早い場合は、外回りを採用する
             path = outer_path if len(outer_path) < len(path) else path
         return path
-
-def left_course():
-    """
-    Lコース版のテストコード
-    """
-    bonus = 5
-    black = 3
-    color = 5
-
-    solver = BlockCirclesSolver(bonus, black, color)
-    # solve関数を呼び出して運搬経路を計算させる(デフォルトでLeftコースの場合になる)
-    path = solver.solve(True)
-    print(path)
-
-def right_course():
-    """
-    Rコース版のテストコード
-    """
-    bonus = 4
-    black = 8
-    color = 6
-
-    solver = BlockCirclesSolver(bonus, black, color)
-    # solve関数を呼び出して運搬経路を計算させる(Rightコースの場合)
-    path = solver.solve(False)
-    print(path)
-
-if __name__ == '__main__':
-    left_course()
-    right_course()
