@@ -134,15 +134,15 @@ class BlockCirclesSolver():
         # 原則としてLコースのときは、4番サークルに進入する (Rコースのときは、5番サークル)
         enter = self.coordinate.get(4) if is_left else self.coordinate.get(5)
         # 代替策としてLコースのときは、6版サークルに進入する (Rコースのときは、8番サークル)
-        planB = self.coordinate.get(6) if is_left else self.coordinate.get(8)
+        plan_b = self.coordinate.get(6) if is_left else self.coordinate.get(8)
         
         # 進入サークルにカラーブロックが置いてあるかチェックする
         if enter == self.coordinate.get(self.color):
-            enter = planB
+            enter = plan_b
         
         # 代替策のサークルに黒ブロックが置いてあるかチェックする
-        if planB == self.coordinate.get(self.black):
-            enter = planB
+        if plan_b == self.coordinate.get(self.black):
+            enter = plan_b
         
         return enter
 
