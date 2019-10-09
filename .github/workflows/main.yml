@@ -1,4 +1,4 @@
-name: Pytest & Report coverage
+name: Pytest and Report coverage
 
 on: [push, pull_request]
 
