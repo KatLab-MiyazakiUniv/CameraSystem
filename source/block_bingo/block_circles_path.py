@@ -67,7 +67,7 @@ class BlockCirclesSolver():
         self.color = color
         self.coordinate = BlockCirclesCoordinate()
     
-    def solve(self, is_left = True):
+    def solve(self, is_left):
         """
         ブロックサークル内の黒ブロック運搬経路を計算する。
         
@@ -197,7 +197,7 @@ def left_course():
 
     solver = BlockCirclesSolver(bonus, black, color)
     # solve関数を呼び出して運搬経路を計算させる(デフォルトでLeftコースの場合になる)
-    path = solver.solve()
+    path = solver.solve(True)
     print(path)
 
 def right_course():
