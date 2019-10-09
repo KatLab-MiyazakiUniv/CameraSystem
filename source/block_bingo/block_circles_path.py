@@ -68,14 +68,19 @@ class BlockCirclesSolver():
         self.color = color
         self.coordinate = BlockCirclesCoordinate()
     
-    def solve(self):
+    def solve(self, is_left = True):
         """
         ブロックサークル内の黒ブロック運搬経路を計算する。
+        
+        Parameters
+        ----------
+        is_left : bool
+            LコースならばTrue, RコースならばFalse
         """
         tracks = BlockCirclesTracks(self.coordinate)
         
         # ブロックサークルに進入するサークル番号を計算する
-        enter = self.enter_block_circle()
+        enter = self.enter_block_circle(is_left)
         
         # 黒ブロックを取得するための経路を計算する
         catch_path = self.path_to_catch_block(enter, tracks)
@@ -117,20 +122,27 @@ class BlockCirclesSolver():
             
         return tracks[(start_index) % len(tracks) : goal_index]
     
-    def enter_block_circle(self):
+    def enter_block_circle(self, is_left):
         """
         ブロックサークルに進入するサークル番号を計算する。
+        
+        Parameters
+        ----------
+        is_left : bool
+            LコースならばTrue, RコースならばFalse
         """
-        # 原則として4番サークルに進入する
-        enter = self.coordinate.get(4)
+        # 原則としてLコースのときは、4番サークルに進入する (Rコースのときは、5番サークル)
+        enter = self.coordinate.get(4) if is_left else self.coordinate.get(5)
+        # 代替策としてLコースのときは、6番サークルに進入する (Rコースのときは、8番サークル)
+        plan_b = self.coordinate.get(6) if is_left else self.coordinate.get(8)
         
-        # 4番サークルにカラーブロックが置いてあるかチェックする
-        if self.coordinate.get(4) == self.coordinate.get(self.color):
-            enter = self.coordinate.get(6)
+        # 進入サークルにカラーブロックが置いてあるかチェックする
+        if enter == self.coordinate.get(self.color):
+            enter = plan_b
         
-        # 6番サークルに黒ブロックが置いてあるかチェックする
-        if self.coordinate.get(6) == self.coordinate.get(self.black):
-            enter = self.coordinate.get(6)
+        # 代替策のサークルに黒ブロックが置いてあるかチェックする
+        if plan_b == self.coordinate.get(self.black):
+            enter = plan_b
         
         return enter
 
@@ -176,12 +188,31 @@ class BlockCirclesSolver():
             path = outer_path if len(outer_path) < len(path) else path
         return path
 
-def main():
-    solver = BlockCirclesSolver(5, 3, 5)
+def left_course():
+    """
+    Lコース版のテストコード
+    """
+    bonus = 5
+    black = 3
+    color = 5
+
+    solver = BlockCirclesSolver(bonus, black, color)
+    # solve関数を呼び出して運搬経路を計算させる(デフォルトでLeftコースの場合になる)
     path = solver.solve()
     print(path)
 
+def right_course():
+    """
+    Rコース版のテストコード
+    """
+    bonus = 4
+    black = 8
+    color = 6
 
+    solver = BlockCirclesSolver(bonus, black, color)
+    # solve関数を呼び出して運搬経路を計算させる(Rightコースの場合)
+    path = solver.solve(False)
+    print(path)
 class BlockCirclesSolverTest(unittest.TestCase):
     """
     BlockCirclesSolverのテストクラス
@@ -200,7 +231,7 @@ class BlockCirclesSolverTest(unittest.TestCase):
                 if black == 4 or bonus == black:
                     continue
                 solver = BlockCirclesSolver(bonus, black, 4)
-                self.assertEqual((2, 0), solver.enter_block_circle())
+                self.assertEqual((2, 0), solver.enter_block_circle(True))
         
         # 確認事項2.のテスト
         for bonus in range(1, 8 + 1):
@@ -208,7 +239,7 @@ class BlockCirclesSolverTest(unittest.TestCase):
                 if bonus == 6 or color == 6:
                     continue
                 solver = BlockCirclesSolver(bonus, 6, color)
-                self.assertEqual((2, 0), solver.enter_block_circle())
+                self.assertEqual((2, 0), solver.enter_block_circle(True))
         
         # 確認事項3.のテスト
         for bonus in range(1, 8 + 1):
@@ -220,7 +251,43 @@ class BlockCirclesSolverTest(unittest.TestCase):
                         if color == 4 or black == 6:
                             continue
                         solver = BlockCirclesSolver(bonus, black, color)
-                        self.assertEqual((1, 0), solver.enter_block_circle())
+                        self.assertEqual((1, 0), solver.enter_block_circle(True))
+
+    def test_enter_block_circle_right(self):
+        """
+        enter_block_circle()のテストコード Rコース版
+        確認事項
+            1. 5番サークルにカラーブロックが置かれている場合、8番に進入すること
+            2. 8番サークルに黒ブロックが置かれている場合、8番に進入すること
+            3. 上記2条件に当てはまらない場合、5番に進入すること
+        """
+        # 確認事項1. のテスト
+        for bonus in range(1, 8 + 1):
+            for black in range(1, 8 + 1):
+                if black == 5 or bonus == black:
+                    continue
+                solver = BlockCirclesSolver(bonus, black, 5)
+                self.assertEqual((2, 2), solver.enter_block_circle(False))
+        
+        # 確認事項2. のテスト
+        for bonus in range(1, 8 + 1):
+            for color in range(1, 8 + 1):
+                if bonus == 8 or color == 8:
+                    continue
+                solver = BlockCirclesSolver(bonus, 8, color)
+                self.assertEqual((2, 2), solver.enter_block_circle(False))
+        
+        # 確認事項3. のテスト
+        for bonus in range(1, 8 + 1):
+            for black in range(1, 8 + 1):
+                for color in range(1, 8 + 1):
+                    # ブロックビンゴのルールによる制約
+                    if bonus == black or black == color:
+                        # 例外的な2条件を省くための制約
+                        if color == 5 or black == 8:
+                            continue
+                        solver = BlockCirclesSolver(bonus, black, color)
+                        self.assertEqual((1, 2), solver.enter_block_circle(False))
 
 
     def test_path_to_catch_block(self):
@@ -237,7 +304,7 @@ class BlockCirclesSolverTest(unittest.TestCase):
                     if bonus == black or black == color:
                         continue
                     solver = BlockCirclesSolver(bonus, black, color)
-                    enter = solver.enter_block_circle()
+                    enter = solver.enter_block_circle(True)
                     path = solver.path_to_catch_block(enter, BlockCirclesTracks(solver.coordinate))
                     # 確認事項1.のテスト
                     self.assertTrue(solver.coordinate.get(color) not in path)
@@ -279,7 +346,7 @@ class BlockCirclesSolverTest(unittest.TestCase):
                     if bonus == black or black == color:
                         continue
                     solver = BlockCirclesSolver(bonus, black, color)
-                    enter = solver.enter_block_circle()
+                    enter = solver.enter_block_circle(True)
                     path = solver.solve()
                     # 確認事項1.のテスト
                     self.assertEqual(enter, path[0])
@@ -318,4 +385,5 @@ class BlockCirclesSolverTest(unittest.TestCase):
 
 if __name__ == '__main__':
     #unittest.main()
-    main()
+    left_course()
+    right_course()
