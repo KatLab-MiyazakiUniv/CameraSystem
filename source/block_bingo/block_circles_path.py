@@ -189,12 +189,28 @@ class BlockCirclesSolver():
         return path
 
 def left_course():
-    solver = BlockCirclesSolver(5, 3, 5)
+    """
+    Lコース版のテストコード
+    """
+    bonus = 5
+    black = 3
+    color = 5
+
+    solver = BlockCirclesSolver(bonus, black, color)
+    # solve関数を呼び出して運搬経路を計算させる(デフォルトでLeftコースの場合になる)
     path = solver.solve()
     print(path)
 
 def right_course():
-    solver = BlockCirclesSolver(4, 8, 6)
+    """
+    Rコース版のテストコード
+    """
+    bonus = 4
+    black = 8
+    color = 6
+
+    solver = BlockCirclesSolver(bonus, black, color)
+    # solve関数を呼び出して運搬経路を計算させる(Rightコースの場合)
     path = solver.solve(False)
     print(path)
 
