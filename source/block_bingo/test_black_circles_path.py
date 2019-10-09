@@ -120,7 +120,7 @@ class BlockCirclesSolverTest(unittest.TestCase):
                     # 確認事項2.のテスト
                     self.assertTrue(solver.coordinate.get(color) not in path[0:-1])
 
-    def test_solve(self):
+    def solve(self, is_left):
         """
         solve()のテストコード
         確認事項
@@ -135,14 +135,20 @@ class BlockCirclesSolverTest(unittest.TestCase):
                     if bonus == black or black == color:
                         continue
                     solver = BlockCirclesSolver(bonus, black, color)
-                    enter = solver.enter_block_circle(True)
-                    path = solver.solve()
+                    enter = solver.enter_block_circle(is_left)
+                    path = solver.solve(is_left)
                     # 確認事項1.のテスト
                     self.assertEqual(enter, path[0])
                     # 確認事項2.のテスト
                     self.assertEqual(solver.coordinate.get(bonus), path[-1])
                     # 確認事項3.のテスト
                     self.assertTrue(solver.coordinate.get(color) not in path[0:-1])
+
+    def test_solve_left(self):
+        self.solve(True)
+
+    def test_solve_right(self):
+        self.solve(False)
 
     def test_subset_of_tracks(self):
         """
