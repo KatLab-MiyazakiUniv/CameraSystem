@@ -26,7 +26,7 @@ jobs:
         pip install pipenv
     - name: Install dependencies
       run: |
-        pipenv install --python --ignore-pipfile --dev
+        pipenv install --python python --ignore-pipfile --dev
     - name: Test with pytest
       run: PYTHONPATH=./source pipenv run pytest --cov=./ source --cov-branch --cov-report=xml
     - name: Upload coverage to Codecov
