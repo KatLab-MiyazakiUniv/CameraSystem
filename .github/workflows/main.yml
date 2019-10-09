@@ -19,6 +19,9 @@ jobs:
         version: ${{ matrix.python-version }}
     - name: LFS pull
       run: |
+        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+        sudo apt-get install git-lfs
+        ssh git@github.com git-lfs-authenticate "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}" download
         git lfs pull
     - name: Install pipenv
       run: |
