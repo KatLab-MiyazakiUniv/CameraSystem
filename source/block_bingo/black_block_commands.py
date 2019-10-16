@@ -10,7 +10,7 @@ import unittest
 from block_circles_path import BlockCirclesSolver, BlockCirclesCoordinate
 
 class BlackBlockCommands():
-    def __init__(self, bonus, black, color):
+    def __init__(self, bonus, black, color, is_left=True):
         """
         ブロックサークル内の黒ブロックを運搬する経路を計算するための情報を登録する。
         
@@ -22,13 +22,17 @@ class BlackBlockCommands():
             ブロックサークル内の黒ブロックが置かれているサークル番号
         color : int
             ブロックサークル内のカラーブロックが置かれているサークル番号
+        is_left : bool
+            コース設定のためのフラグ
         """
+        self.is_left = is_left
+
         # インスタンス生成
         self.block_circles_solver = BlockCirclesSolver(bonus, black, color)
         self.block_circles_coordinate = BlockCirclesCoordinate()
 
         # 経路を計算
-        route_tmp = self.block_circles_solver.solve()
+        route_tmp = self.block_circles_solver.solve(is_left)
         # 経路の軸の相違を吸収
         self.reverse_route = route_tmp
         self.route = list(map(lambda x: (x[1], x[0]), route_tmp))
@@ -46,13 +50,18 @@ class BlackBlockCommands():
         左下　　　　　　　　　右下
         """
         # 機体の向きを初期化
-        self.direction = (1, 0)
+        if self.is_left:
+            self.direction = (1, 0)
+        else:
+            self.direction = (-1, 0)
 
         ### コマンドの初期化（定義） ###
         # HACK: 別ファイルから読み込んだほうが良いかも
         # ブロックビンゴエリアへの侵入
-        self.ENTER_4 = 'a'
-        self.ENTER_6 = 'b'
+        self.ENTER_4 = 'a' # Lコース
+        self.ENTER_6 = 'b' # Lコース
+        self.ENTER_5 = 'w' # Rコース
+        self.ENTER_8 = 'x' # Rコース
         # ブロックサークル間移動
         self.MOVE_CIRCLE = 'c'
         # 90度右回転
@@ -72,13 +81,21 @@ class BlackBlockCommands():
         コマンドの文字列
         """
         commands = ""
-        # 座標系の相違を吸収
-        tmp_trans = (self.block_circles_coordinate.block_circles[4][1], self.block_circles_coordinate.block_circles[4][0])
         # ブロックビンゴエリアへの侵入先を決定
-        if self.route[0] == tmp_trans:
-            commands += self.ENTER_4
+        if self.is_left:
+            # 座標系の相違を吸収
+            tmp_trans = (self.block_circles_coordinate.block_circles[4][1], self.block_circles_coordinate.block_circles[4][0])
+            if self.route[0] == tmp_trans:
+                commands += self.ENTER_4
+            else:
+                commands += self.ENTER_6
         else:
-            commands += self.ENTER_6
+            # 座標系の相違を吸収
+            tmp_trans =  (self.block_circles_coordinate.block_circles[5][1], self.block_circles_coordinate.block_circles[5][0])
+            if self.route[0] == tmp_trans:
+                commands += self.ENTER_5
+            else:
+                commands += self.ENTER_8
         current_coordinate = self.route[0]
         for i in range(1, len(self.route)):
             commands += self.coordinate_to_command(current_coordinate, self.route[i], self.direction)
