@@ -230,31 +230,37 @@ class BlackBlockCommandsTest(unittest.TestCase):
             2. 回転コマンドが連続することはない
             3. 末尾のコマンドは前進（サークル間移動）コマンドである
         """
-        for bonus in range(1, 8 + 1):
-            for black in range(1, 8 + 1):
-                for color in range(1, 8 + 1):
-                    # ブロックビンゴのルールによる制約
-                    if bonus == black or black == color:
-                        continue
-                    generator = BlackBlockCommands(bonus, black, color)
-                    commands = generator.gen_commands()
-                    # 確認事項1.のテスト
+        # ブロック配置の組み合わせを列挙
+        block_products = tuple(itertools.product((1, 2, 3, 4, 5, 6, 7, 8), repeat=3))
+        for is_left in [True, False]:
+            for product in block_products:
+                bonus, color, black = product
+                # ブロックビンゴのルールによる制約
+                if bonus == black or black == color:
+                    continue
+                generator = BlackBlockCommands(bonus, black, color, is_left=is_left)
+                commands = generator.gen_commands()
+                # 確認事項1.のテスト
+                if is_left:
                     self.assertTrue(commands[0] == generator.ENTER_4 or commands[0] == generator.ENTER_6)
-                    flag = False
-                    for comm in commands:
-                        before_flag = flag
-                        if comm == generator.TURN_180:
-                            flag = True
-                        elif comm == generator.TURN_LEFT_90:
-                            flag = True
-                        elif comm == generator.TURN_RIGHT_90:
-                            flag = True
-                        else:
-                            flag = False
-                        # 確認事項2.のテスト
-                        self.assertTrue((before_flag != flag) or (not before_flag and not flag))
-                    # 確認事項3.のテスト
-                    self.assertTrue(commands[-1] == generator.MOVE_CIRCLE)
+                else:
+                    self.assertTrue(commands[0] == generator.ENTER_5 or commands[0] == generator.ENTER_8)
+
+                flag = False
+                for comm in commands:
+                    before_flag = flag
+                    if comm == generator.TURN_180:
+                        flag = True
+                    elif comm == generator.TURN_LEFT_90:
+                        flag = True
+                    elif comm == generator.TURN_RIGHT_90:
+                        flag = True
+                    else:
+                        flag = False
+                    # 確認事項2.のテスト
+                    self.assertTrue((before_flag != flag) or (not before_flag and not flag))
+                # 確認事項3.のテスト
+                self.assertTrue(commands[-1] == generator.MOVE_CIRCLE)
 
     def test_coordinate_to_command(self):
         """
@@ -354,7 +360,7 @@ class BlackBlockCommandsTest(unittest.TestCase):
         self.assertEqual('', generator.detect_direction((1, 2), (3, 4)))
 
 def main():
-    #unittest.main()
+    unittest.main()
     pass
 
 if __name__ == "__main__":
