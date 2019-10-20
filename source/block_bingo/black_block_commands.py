@@ -83,15 +83,17 @@ class BlackBlockCommands():
         commands = ""
         # ブロックビンゴエリアへの侵入先を決定
         if self.is_left:
+            tmp_trans = list(self.block_circles_coordinate.get(4))
             # 座標系の相違を吸収
-            tmp_trans = (self.block_circles_coordinate.block_circles[4][1], self.block_circles_coordinate.block_circles[4][0])
+            tmp_trans[0], tmp_trans[1] = tmp_trans[1], tmp_trans[0]
             if self.route[0] == tmp_trans:
                 commands += self.ENTER_4
             else:
                 commands += self.ENTER_6
         else:
+            tmp_trans = list(self.block_circles_coordinate.get(5))
             # 座標系の相違を吸収
-            tmp_trans =  (self.block_circles_coordinate.block_circles[5][1], self.block_circles_coordinate.block_circles[5][0])
+            tmp_trans[0], tmp_trans[1] = tmp_trans[1], tmp_trans[0]
             if self.route[0] == tmp_trans:
                 commands += self.ENTER_5
             else:
