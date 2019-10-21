@@ -4,6 +4,8 @@
 @brief:
 """
 
+from source.decision_points import GetCirclePoint as gcp
+from source.decision_points.module import calcPoints as cp
 import cv2
 import numpy as np
 
@@ -44,11 +46,13 @@ def onMouse(event, x, y, flags, param) -> None:
             print("座標取得の終了")
 
 
-ix = iy = -1
+ix = iy = 0
 mode = False
+
+
 def dragAndDropSquare(event, x, y, flags, param) -> None:
     """
-    画像上でドラッグアンドドロップ範囲に対して四角形を描画する
+    画像上でドラッグアンドドロップした範囲に対して四角形を描画する
     :param event: CV_EVENT_* の内の1つ
     :param x: 画像座標系におけるマウスポインタのX座標
     :param y: 画像座標系におけるマウスポインタのY座標
@@ -56,7 +60,7 @@ def dragAndDropSquare(event, x, y, flags, param) -> None:
     :param param: コールバック関数に渡される，ユーザ定義パラメータ
     :return: None
     """
-    window_name, img,  = param
+    window_name, img, cc_points, bc_points = param
     if event == cv2.EVENT_MOUSEMOVE:  # マウスが動いたとき
         global ix, iy, mode
         img_copy = np.copy(img)
@@ -74,10 +78,36 @@ def dragAndDropSquare(event, x, y, flags, param) -> None:
         ix, iy = x, y
         print('起点の座標：({0}, {1})'.format(ix, iy))
         mode = True  # ドラッグ・アンド・ドロップで範囲指定モードをON
-    if event == cv2.EVENT_LBUTTONUP:  # 左ボタンを上げたとき
-        cv2.rectangle(img, (ix, iy), (x, y), (255, 0, 0), thickness=2)
+    if event == cv2.EVENT_LBUTTONUP:  # マウスの左ボタンを上げたとき
+        cv2.rectangle(img, (ix, iy), (x, y), (255, 0, 0), thickness=2)  # 四角形を描画
+        drawPoints(img, ix, iy)  # 始点の頂点
+        drawPoints(img, x, iy)  # 始点の横の頂点
+        drawPoints(img, ix, y)  # 終点の横の頂点
+        drawPoints(img, x, y)  # 終点の頂点
+        square_points = np.array([
+            [ix, iy],
+            [x, iy],
+            [ix, y],
+            [x, y]
+        ])
         print('終点の座標：({0}, {1})'.format(x, y))
+        print('各頂点の座標：({0})'.format(square_points))
+        cp.calcPoints(square_points)
         mode = False  # ドラッグ・アンド・ドロップで範囲指定モードをOFF
+
+
+def drawPoints(img, x, y):
+    """
+    座標を描画する
+    :param img: 画像
+    :type img: ndarray
+    :param x: x座標
+    :type x: int
+    :param y: y座標
+    :param y: int
+    :return None:
+    """
+    cv2.putText(img, '({0}, {1})'.format(x, y), (x - 15, y - 15), cv2.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255))
 
 
 if __name__ == '__main__':
