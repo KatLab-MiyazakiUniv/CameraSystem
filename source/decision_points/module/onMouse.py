@@ -46,7 +46,7 @@ def onMouse(event, x, y, flags, param) -> None:
             print("座標取得の終了")
 
 
-ix = iy = 0
+ix = iy = h = w = 0
 mode = False
 
 
@@ -62,7 +62,7 @@ def dragAndDropSquare(event, x, y, flags, param) -> None:
     """
     window_name, img, cc_points, bc_points = param
     if event == cv2.EVENT_MOUSEMOVE:  # マウスが動いたとき
-        global ix, iy, mode
+        global ix, iy, h, w, mode
         img_copy = np.copy(img)
         h = img_copy.shape[0]  # 画像の高さを取る
         w = img_copy.shape[1]  # 画像の幅を取る
@@ -84,15 +84,21 @@ def dragAndDropSquare(event, x, y, flags, param) -> None:
         drawPoints(img, x, iy)  # 始点の横の頂点
         drawPoints(img, ix, y)  # 終点の横の頂点
         drawPoints(img, x, y)  # 終点の頂点
-        square_points = np.array([
-            [ix, iy],
-            [x, iy],
-            [ix, y],
-            [x, y]
-        ])
+        square_points = np.empty((4, 2))
+        if w/2 <= ix and h/2 >= iy:  # 起点の座標が第一象限のとき
+            print('{}'. format('第一象限'))
+            square_points = np.array([[x, iy], [ix, iy], [x, y], [ix, y]])
+        elif w/2 >= ix and h/2 >= iy:  # 起点の座標が第二象限のとき
+            print('{}'.format('第二象限'))
+            square_points = np.array([[ix, iy], [x, iy], [ix, y], [x, y]])
+        elif w/2 >= ix and h/2 <= iy:  # 起点の座標が第三象限のとき
+            print('{}'.format('第三象限'))
+            square_points = np.array([[ix, y], [x, y], [ix, iy], [x, iy]])
+        else:  # それ以外（起点の座標が第四象限のとき）
+            print('{}'.format('第四象限'))
+            square_points = np.array([[x, y], [ix, y], [x, iy], [ix, iy]])
         print('終点の座標：({0}, {1})'.format(x, y))
         print('各頂点の座標：({0})'.format(square_points))
-        cp.calcPoints(square_points)
         mode = False  # ドラッグ・アンド・ドロップで範囲指定モードをOFF
 
 
