@@ -105,6 +105,24 @@ def test_get_block_circles_coordinate_error_right():
         coordinate.get(9)
 
 
+def test_move_block_of_block_circle():
+    """
+    ブロックサークルにブロックを設置したとき、データ構造に正しく登録されていることを確認する。
+    """
+    is_left = True
+    bonus = 5
+    coordinate = BlockCirclesCoordinate(is_left, bonus)
+    
+    # 設置前のopenリストの要素数を取得する
+    assert 8 == len(coordinate.open)
+
+    # 1番サークルにブロックを運搬する
+    coordinate.move_block(coordinate.get(1))
+
+    assert 7 == len(coordinate.open)
+    assert 0 == coordinate.open.count(1)
+
+
 def test_init_cross_circle_corrdinate():
     """
     交点サークルの座標を格納するデータ構造を作成したとき、はじめは配置ブロックの色がすべてNONEになっていることを確認する。
