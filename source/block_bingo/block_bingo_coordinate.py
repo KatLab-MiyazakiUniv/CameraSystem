@@ -4,6 +4,7 @@
     @brief  ブロックビンゴ攻略に使用するブロックサークルおよび交点サークルの座標を提供する。
 """
 from enum import Enum, auto
+import numpy as np
 
 # TODO Colorクラスは他のファイルにもあるので、統合する
 class Color(Enum):
@@ -94,3 +95,17 @@ class BlockCirclesCoordinate():
                 return self.get(index)
         # 指定色のブロックがすでに運搬されていた場合は、Noneを返す
         return None
+
+
+class CrossCirclesCoordinate():
+    """
+    交点サークルの座標を表すクラス。
+    """
+    def __init__(self):
+        """
+        交点サークルの座標を登録する。
+        """
+        # 交点サークルの座標を表す4x4行列を作成する(配列の要素は、配置されたブロックの色を表す)
+        self.cross_circles = np.full((4, 4), Color.NONE)
+        # 初期位置としてブロックが置かれている交点サークルの座標をリスト化する
+        self.open = [(0,0), (1,1), (0,2), (1,3), (2,0), (3,1), (2,2), (3,3)]
