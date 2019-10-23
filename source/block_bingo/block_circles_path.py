@@ -40,6 +40,8 @@ class BlockCirclesSolver():
             ブロックサークル内の黒ブロックが置かれているサークル番号
         color : int
             ブロックサークル内のカラーブロックが置かれているサークル番号
+        is_left : bool
+            Lコースかどうか
         """
         self.bonus = bonus
         self.black = black
@@ -50,11 +52,6 @@ class BlockCirclesSolver():
     def solve(self):
         """
         ブロックサークル内の黒ブロック運搬経路を計算する。
-        
-        Parameters
-        ----------
-        is_left : bool
-            LコースならばTrue, RコースならばFalse
         """
         tracks = BlockCirclesTracks(self.coordinate)
         
