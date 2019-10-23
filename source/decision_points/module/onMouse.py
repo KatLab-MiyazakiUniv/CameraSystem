@@ -12,7 +12,7 @@ import numpy as np
 
 def onMouse(event, x, y, flags, param) -> None:
     """
-    マウスでポチポチするやつ．
+    マウスでポチポチするやつ．仕様変更によりいらない子になった．
     参考：http://opencv.jp/opencv-2svn/py/highgui_user_interface.html?highlight=setmousecallback#SetMouseCallback
         http://labs.eecs.tottori-u.ac.jp/sd/Member/oyamada/OpenCV/html/py_tutorials/py_gui/py_drawing_functions/py_drawing_functions.html
     :param event: CV_EVENT_* の内の1つ
@@ -32,7 +32,7 @@ def onMouse(event, x, y, flags, param) -> None:
         cv2.line(img_copy, (0, y), (w, y), (0, 0, 255))  # 横の線
         cv2.imshow(window_name, img_copy)
 
-    if event == cv2.EVENT_LBUTTONDOWN:  # 左ボタンをクリックしたとき（5回まで）
+    if event == cv2.EVENT_LBUTTONDOWN:  # 左ボタンをクリックしたとき
         if len(mouse_point) < mouse_count:  # 配列のサイズが5以下の場合
             # cv2.circle(画像, (円の中心), 半径, (r, g, b), 負の場合塗りつぶし)
             img = cv2.circle(img, (x, y), 5, (255, 255, 0), -1)
@@ -84,21 +84,30 @@ def dragAndDropSquare(event, x, y, flags, param) -> None:
         drawPoints(img, x, iy)  # 始点の横の頂点
         drawPoints(img, ix, y)  # 終点の横の頂点
         drawPoints(img, x, y)  # 終点の頂点
-        square_points = np.empty((4, 2))
+        square_points = np.empty((4, 2))  # 0行目左上．1行目左下．2行目右上．3行目右下
         if w/2 <= ix and h/2 >= iy:  # 起点の座標が第一象限のとき
             print('{}'. format('第一象限'))
-            square_points = np.array([[x, iy], [ix, iy], [x, y], [ix, y]])
+            square_points = np.array([[x, iy], [x, y], [ix, iy], [ix, y]])
         elif w/2 >= ix and h/2 >= iy:  # 起点の座標が第二象限のとき
             print('{}'.format('第二象限'))
-            square_points = np.array([[ix, iy], [x, iy], [ix, y], [x, y]])
+            square_points = np.array([[ix, iy], [ix, y], [x, iy], [x, y]])
         elif w/2 >= ix and h/2 <= iy:  # 起点の座標が第三象限のとき
             print('{}'.format('第三象限'))
-            square_points = np.array([[ix, y], [x, y], [ix, iy], [x, iy]])
+            square_points = np.array([[ix, y], [ix, iy], [x, y], [x, iy]])
         else:  # それ以外（起点の座標が第四象限のとき）
             print('{}'.format('第四象限'))
-            square_points = np.array([[x, y], [ix, y], [x, iy], [ix, iy]])
+            square_points = np.array([[x, y], [x, iy], [ix, y], [ix, iy]])
         print('終点の座標：({0}, {1})'.format(x, y))
         print('各頂点の座標：({0})'.format(square_points))
+        print("")
+        calc_cc_points = cp.calcPoints(square_points, cc_points)
+        for i in range(calc_cc_points.shape[0]):
+            # print("({0}, {1})" .format(cc_points[i, 0], cc_points[i, 1]))
+            # drawPoints(img, cc_points[i, 0], cc_points[i, 1])
+            img = cv2.circle(img, (cc_points[i, 0], cc_points[i, 1]), 5, (255, 255, 0), -1)
+            cv2.imshow(window_name, img)
+        # print("{0}" .format(cp.calcPoints(square_points, cc_points)))
+
         mode = False  # ドラッグ・アンド・ドロップで範囲指定モードをOFF
 
 
@@ -113,7 +122,7 @@ def drawPoints(img, x, y):
     :param y: int
     :return None:
     """
-    cv2.putText(img, '({0}, {1})'.format(x, y), (x - 15, y - 15), cv2.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255))
+    cv2.putText(img, '({0}, {1})'.format(x, y), (x, y), cv2.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255))
 
 
 if __name__ == '__main__':
