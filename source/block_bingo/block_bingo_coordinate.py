@@ -60,3 +60,33 @@ class BlockCirclesCoordinate():
         if circle_number < 1 or 8 < circle_number:
             raise ValueError('Block circle number is invalid!')
         return self.block_circles[circle_number]
+
+
+    def move_block(self, coordinate):
+        """
+        ブロックサークルにブロックが設置されたことをデータ構造に登録する。
+
+        Parameters
+        ----------
+        coordinate : tuple
+            ブロックサークルの座標
+        """
+        # openリストのうち引数の座標をキーにもつ要素を削除する
+        for key in [i for (i, e) in self.block_circles.items() if e == coordinate]:
+            self.open.remove(key)
+
+
+    def circle_to_put(self, color):
+        """
+        指定した色と同じ色で、まだブロックが置かれていないブロックサークルの座標を返す。
+
+        Parameters
+        ----------
+        color : Color
+            ブロックの色
+        """
+        for index in [i+1 for (i, e) in enumerate(self.block_circle_color) if e == color]:
+            if index in self.open:
+                return self.get(index)
+        # 指定色のブロックがすでに運搬されていた場合は、Noneを返す
+        return None
