@@ -88,4 +88,7 @@ def test_circle_to_put():
     coordinate.move_block(block_circle)
     # Noneが返ってくることを確認する
     assert None == coordinate.circle_to_put(Color.YELLOW)
+
+    # 黒ブロックを運搬するブロックサークルの座標がボーナスサークルの座標であることを確認する
+    assert coordinate.get(bonus) == coordinate.circle_to_put(Color.BLACK)
     

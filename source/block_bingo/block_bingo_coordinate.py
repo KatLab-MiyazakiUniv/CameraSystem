@@ -44,7 +44,7 @@ class BlockCirclesCoordinate():
         # ブロックが設置されていないブロックサークルの座標を登録する
         self.open = [i+1 for i in range(8)]
         # ボーナスサークルの座標を登録する
-        self.bonus = self.get(bonus)
+        self.bonus = bonus
     
 
     def get(self, circle_number):
@@ -85,6 +85,10 @@ class BlockCirclesCoordinate():
         color : Color
             ブロックの色
         """
+        # 指定色が黒の場合は、ボーナスサークルを返す
+        if color == Color.BLACK:
+            return self.get(self.bonus)
+
         for index in [i+1 for (i, e) in enumerate(self.block_circle_color) if e == color]:
             if index in self.open:
                 return self.get(index)
