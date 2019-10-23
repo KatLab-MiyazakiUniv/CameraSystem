@@ -109,3 +109,34 @@ class CrossCirclesCoordinate():
         self.cross_circles = np.full((4, 4), Color.NONE)
         # 初期位置としてブロックが置かれている交点サークルの座標をリスト化する
         self.open = [(0,0), (1,1), (0,2), (1,3), (2,0), (3,1), (2,2), (3,3)]
+    
+
+    def color(self, coordinate):
+        """
+        指定した交点サークルの座標に置かれているブロックの色を取得する。
+
+        Parameters
+        ----------
+        coordinate : tuple
+            交点サークルの座標
+        """
+        return self.cross_circles[coordinate[0], coordinate[1]]
+
+
+    def set_block_color(self, coordinate, color):
+        """
+        指定した交点サークルの座標に置かれたブロックの色を設定する。
+
+        Parameters
+        ----------
+        coordinate : tuple
+            交点サークルの座標
+        color : Color
+            配置ブロックの色
+        """
+        if coordinate[0] < 0 or 3 < coordinate[0]:
+            raise ValueError('x-coordinate of cross circles is invalid!')
+        if coordinate[1] < 0 or 3 < coordinate[1]:
+            raise ValueError('y-coordinate of cross circles is invalid!')
+        
+        self.cross_circles[coordinate[0], coordinate[1]] = color
