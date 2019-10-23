@@ -140,3 +140,27 @@ class CrossCirclesCoordinate():
             raise ValueError('y-coordinate of cross circles is invalid!')
         
         self.cross_circles[coordinate[0], coordinate[1]] = color
+    
+
+    def goal_node(self, current, block_circle):
+        """
+        設置するブロックサークル番号の周辺にある交点サークルのうち、走行体に最も近い距離にある座標を返す。
+
+        Parameters
+        ----------
+        current : tuple
+            走行体の現在地
+        block_circle : tuple
+            ブロックサークルの座標
+        """
+        # ブロックサークルの周辺にある4つの交点サークルの座標を取得する
+        coordinates = [block_circle,
+                       (block_circle[0], block_circle[1]+1),
+                       (block_circle[0]+1, block_circle[1]),
+                       (block_circle[0]+1, block_circle[1]+1)]
+        # ブロックが置かれた交点サークルの座標を取り除く
+        coordinates = list(set(coordinates) - set(self.open))
+        # 交点サークルの座標と現在地の距離を計算する
+        distance = list(map(lambda x: abs(x[0]-current[0]) + abs(x[1]-current[1]), coordinates))
+
+        return coordinates[distance.index(min(distance))]

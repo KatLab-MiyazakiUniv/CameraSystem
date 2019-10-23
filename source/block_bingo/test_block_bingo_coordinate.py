@@ -132,3 +132,18 @@ def test_set_block_color_error():
     with pytest.raises(ValueError):
         coordinate = CrossCirclesCoordinate()
         coordinate.set_block_color((-1,0), Color.BLUE)
+
+
+def test_goal_node():
+    """
+    走行体の初期位置とブロックサークルの座標を指定すると、ブロックを設置するための交点サークルの座標が正しく返ることを確認する。
+    """
+    is_left = True
+    bonus = 5
+    cross_circles = CrossCirclesCoordinate()
+    block_circles = BlockCirclesCoordinate(is_left, bonus)
+
+    assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(3))
+    assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(5))
+    assert (3,2) == cross_circles.goal_node((2,3), block_circles.get(7))
+    assert (1,0) == cross_circles.goal_node((3,0), block_circles.get(1))
