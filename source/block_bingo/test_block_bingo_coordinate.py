@@ -147,3 +147,16 @@ def test_goal_node():
     assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(5))
     assert (3,2) == cross_circles.goal_node((2,3), block_circles.get(7))
     assert (1,0) == cross_circles.goal_node((3,0), block_circles.get(1))
+
+
+def test_move_block_of_cross_circle():
+    """
+    交点サークルに置かれたブロックを移動させたとき、データ構造の要素がNONEになることを確認する。
+    """
+    coordinate = CrossCirclesCoordinate()
+    point = (0,0)
+    coordinate.set_block_color(point, Color.BLUE)
+    assert coordinate.color(point) == Color.BLUE
+
+    coordinate.move_block(point)
+    assert coordinate.color(point) == Color.NONE

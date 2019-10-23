@@ -164,3 +164,18 @@ class CrossCirclesCoordinate():
         distance = list(map(lambda x: abs(x[0]-current[0]) + abs(x[1]-current[1]), coordinates))
 
         return coordinates[distance.index(min(distance))]
+
+
+    def move_block(self, coordinate):
+        """
+        交点サークルからブロックを取得して移動したことをデータ構造に登録する。
+
+        Parameters
+        ----------
+        coordinate : tuple
+            交点サークルの座標
+        """
+        # 引数の交点サークルの座標に置いてあるブロックの色をNONEに設定する
+        self.set_block_color(coordinate, Color.NONE)
+        # openリストから削除する
+        self.open.remove(coordinate)
