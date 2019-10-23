@@ -3,7 +3,8 @@
     @author: Takahiro55555
     @brief: 黒ブロック運搬経路をコマンドへ変換するクラス
 """
-from block_circles_path import BlockCirclesSolver, BlockCirclesCoordinate
+from block_circles_path import BlockCirclesSolver
+from block_bingo_coordinate import BlockCirclesCoordinate
 
 class BlackBlockCommands():
     def __init__(self, bonus, black, color, is_left=True):
@@ -24,11 +25,11 @@ class BlackBlockCommands():
         self.is_left = is_left
 
         # インスタンス生成
-        self.block_circles_solver = BlockCirclesSolver(bonus, black, color)
-        self.block_circles_coordinate = BlockCirclesCoordinate()
+        self.block_circles_solver = BlockCirclesSolver(bonus, black, color, is_left)
+        self.block_circles_coordinate = BlockCirclesCoordinate(is_left, bonus)
 
         # 経路を計算
-        route_tmp = self.block_circles_solver.solve(is_left)
+        route_tmp = self.block_circles_solver.solve()
         # 経路の軸の相違を吸収
         self.reverse_route = route_tmp
         self.route = list(map(lambda x: (x[1], x[0]), route_tmp))

@@ -3,28 +3,7 @@
     @author: T.Miyaji
     @brief: ブロックサークル内の黒ブロックを運搬する経路計算クラス
 """
-
-class BlockCirclesCoordinate():
-    def __init__(self):
-        """
-        1 ~ 8までのサークル番号を辞書に格納する。
-        """
-        self.block_circles = { 1: (0, 0), 2: (0, 1), 3: (0, 2),
-                               4: (1, 0),            5: (1, 2),
-                               6: (2, 0), 7: (2, 1), 8: (2, 2)}
-    
-    def get(self, circle_number):
-        """
-        ブロックサークル番号に関連するサークルの座標を返す。
-        
-        Parameters
-        ----------
-        circle_number : int
-            ブロックサークル番号
-        """
-        if circle_number <= 0 or 8 < circle_number:
-            raise ValueError('Block circle number is invalid!')
-        return self.block_circles[circle_number]
+from block_bingo_coordinate import BlockCirclesCoordinate
 
 class BlockCirclesTracks():
     def __init__(self, coordinate):
@@ -49,7 +28,7 @@ class BlockCirclesTracks():
                              coordinate.get(6), coordinate.get(4)]
 
 class BlockCirclesSolver():
-    def __init__(self, bonus, black, color):
+    def __init__(self, bonus, black, color, is_left):
         """
         ブロックサークル内の黒ブロックを運搬する経路を計算するための情報を登録する。
         
@@ -65,9 +44,10 @@ class BlockCirclesSolver():
         self.bonus = bonus
         self.black = black
         self.color = color
-        self.coordinate = BlockCirclesCoordinate()
+        self.is_left = is_left
+        self.coordinate = BlockCirclesCoordinate(is_left, bonus)
     
-    def solve(self, is_left):
+    def solve(self):
         """
         ブロックサークル内の黒ブロック運搬経路を計算する。
         
@@ -79,7 +59,7 @@ class BlockCirclesSolver():
         tracks = BlockCirclesTracks(self.coordinate)
         
         # ブロックサークルに進入するサークル番号を計算する
-        enter = self.enter_block_circle(is_left)
+        enter = self.enter_block_circle()
         
         # 黒ブロックを取得するための経路を計算する
         catch_path = self.path_to_catch_block(enter, tracks)
@@ -121,19 +101,14 @@ class BlockCirclesSolver():
             
         return tracks[(start_index) % len(tracks) : goal_index]
     
-    def enter_block_circle(self, is_left):
+    def enter_block_circle(self):
         """
         ブロックサークルに進入するサークル番号を計算する。
-        
-        Parameters
-        ----------
-        is_left : bool
-            LコースならばTrue, RコースならばFalse
         """
         # 原則としてLコースのときは、4番サークルに進入する (Rコースのときは、5番サークル)
-        enter = self.coordinate.get(4) if is_left else self.coordinate.get(5)
+        enter = self.coordinate.get(4) if self.is_left else self.coordinate.get(5)
         # 代替策としてLコースのときは、6番サークルに進入する (Rコースのときは、8番サークル)
-        plan_b = self.coordinate.get(6) if is_left else self.coordinate.get(8)
+        plan_b = self.coordinate.get(6) if self.is_left else self.coordinate.get(8)
         
         # 進入サークルにカラーブロックが置いてあるかチェックする
         if enter == self.coordinate.get(self.color):

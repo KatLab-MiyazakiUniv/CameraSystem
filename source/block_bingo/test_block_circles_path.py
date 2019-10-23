@@ -19,16 +19,16 @@ class BlockCirclesSolverTest(unittest.TestCase):
             for black in range(1, 8 + 1):
                 if black == 4 or bonus == black:
                     continue
-                solver = BlockCirclesSolver(bonus, black, 4)
-                self.assertEqual((2, 0), solver.enter_block_circle(True))
+                solver = BlockCirclesSolver(bonus, black, 4, True)
+                self.assertEqual((2, 0), solver.enter_block_circle())
         
         # 確認事項2.のテスト
         for bonus in range(1, 8 + 1):
             for color in range(1, 8 + 1):
                 if bonus == 6 or color == 6:
                     continue
-                solver = BlockCirclesSolver(bonus, 6, color)
-                self.assertEqual((2, 0), solver.enter_block_circle(True))
+                solver = BlockCirclesSolver(bonus, 6, color, True)
+                self.assertEqual((2, 0), solver.enter_block_circle())
         
         # 確認事項3.のテスト
         for bonus in range(1, 8 + 1):
@@ -39,8 +39,8 @@ class BlockCirclesSolverTest(unittest.TestCase):
                         # 例外的な2条件を省くための制約
                         if color == 4 or black == 6:
                             continue
-                        solver = BlockCirclesSolver(bonus, black, color)
-                        self.assertEqual((1, 0), solver.enter_block_circle(True))
+                        solver = BlockCirclesSolver(bonus, black, color, True)
+                        self.assertEqual((1, 0), solver.enter_block_circle())
 
     def test_enter_block_circle_right(self):
         """
@@ -55,16 +55,16 @@ class BlockCirclesSolverTest(unittest.TestCase):
             for black in range(1, 8 + 1):
                 if black == 5 or bonus == black:
                     continue
-                solver = BlockCirclesSolver(bonus, black, 5)
-                self.assertEqual((2, 2), solver.enter_block_circle(False))
+                solver = BlockCirclesSolver(bonus, black, 5, False)
+                self.assertEqual((2, 2), solver.enter_block_circle())
         
         # 確認事項2. のテスト
         for bonus in range(1, 8 + 1):
             for color in range(1, 8 + 1):
                 if bonus == 8 or color == 8:
                     continue
-                solver = BlockCirclesSolver(bonus, 8, color)
-                self.assertEqual((2, 2), solver.enter_block_circle(False))
+                solver = BlockCirclesSolver(bonus, 8, color, False)
+                self.assertEqual((2, 2), solver.enter_block_circle())
         
         # 確認事項3. のテスト
         for bonus in range(1, 8 + 1):
@@ -75,8 +75,8 @@ class BlockCirclesSolverTest(unittest.TestCase):
                         # 例外的な2条件を省くための制約
                         if color == 5 or black == 8:
                             continue
-                        solver = BlockCirclesSolver(bonus, black, color)
-                        self.assertEqual((1, 2), solver.enter_block_circle(False))
+                        solver = BlockCirclesSolver(bonus, black, color, False)
+                        self.assertEqual((1, 2), solver.enter_block_circle())
 
 
     def test_path_to_catch_block(self):
@@ -92,8 +92,8 @@ class BlockCirclesSolverTest(unittest.TestCase):
                     # ブロックビンゴのルールによる制約
                     if bonus == black or black == color:
                         continue
-                    solver = BlockCirclesSolver(bonus, black, color)
-                    enter = solver.enter_block_circle(True)
+                    solver = BlockCirclesSolver(bonus, black, color, True)
+                    enter = solver.enter_block_circle()
                     path = solver.path_to_catch_block(enter, BlockCirclesTracks(solver.coordinate))
                     # 確認事項1.のテスト
                     self.assertTrue(solver.coordinate.get(color) not in path)
@@ -113,7 +113,7 @@ class BlockCirclesSolverTest(unittest.TestCase):
                     # ブロックビンゴのルールによる制約
                     if bonus == black or black == color:
                         continue
-                    solver = BlockCirclesSolver(bonus, black, color)
+                    solver = BlockCirclesSolver(bonus, black, color, True)
                     path = solver.path_to_bonus_circle(BlockCirclesTracks(solver.coordinate))
                     # 確認事項1.のテスト
                     self.assertTrue(solver.coordinate.get(black) not in path)
@@ -134,9 +134,9 @@ class BlockCirclesSolverTest(unittest.TestCase):
                     # ブロックビンゴのルールによる制約
                     if bonus == black or black == color:
                         continue
-                    solver = BlockCirclesSolver(bonus, black, color)
-                    enter = solver.enter_block_circle(is_left)
-                    path = solver.solve(is_left)
+                    solver = BlockCirclesSolver(bonus, black, color, is_left)
+                    enter = solver.enter_block_circle()
+                    path = solver.solve()
                     # 確認事項1.のテスト
                     self.assertEqual(enter, path[0])
                     # 確認事項2.のテスト
@@ -161,7 +161,7 @@ class BlockCirclesSolverTest(unittest.TestCase):
             5. 4.の条件を除いて部分集合は、元のリストの順序を保った状態の部分集合となっていること
         """
         original = [i + 1 for i in range(0, 5)] # [1, 2, 3, 4, 5]
-        solver = BlockCirclesSolver(0, 1, 2) # 引数の値は適当
+        solver = BlockCirclesSolver(0, 1, 2, True) # 引数の値は適当
         # 確認事項1.のテスト
         self.assertIsNone(solver.subset_of_tracks(0, 3, original))
         self.assertIsNone(solver.subset_of_tracks(2, 6, original))
