@@ -74,3 +74,10 @@ def test_get_robot_direction_south():
     assert 4 == solver.direction
 
 
+def test_Manhattan_distance():
+    solver = create_block_bingo([(2,2), (2,1), (2,0)])
+    assert 4 == solver.Manhattan_distance((3,1), (0,2))
+    assert 2 == solver.Manhattan_distance((3,1), (2,0))
+    assert 2 == solver.Manhattan_distance((3,1), (1,1))
+    assert 5 == solver.Manhattan_distance((3,1), (0,3))
+    assert 3.5 == solver.Manhattan_distance((3,1), (1, 2.5))

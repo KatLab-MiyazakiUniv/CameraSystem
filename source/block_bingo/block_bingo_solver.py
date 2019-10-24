@@ -172,3 +172,17 @@ class BlockBingoSolver():
         if subtraction == (0, -1) or subtraction == (0, -0.5):
             return 6    # 西向き
         raise ValueError('could not calculate direction')
+
+
+    def Manhattan_distance(self, src, dst):
+        """
+        2点間のマンハッタン距離を計算して返す。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        """
+        return abs(dst[0]-src[0]) + abs(dst[1]-src[1])
