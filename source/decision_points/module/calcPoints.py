@@ -22,12 +22,19 @@ def calcPoints(points, circle_points) -> np.ndarray:
     # y_distance = points[]
     x_distance = points[2, 0] - points[0, 0]
     y_distance = points[3, 1] - points[0, 1]
-    print('前{0}' .format(circle_points))
-    circle_points[0:4, 0], circle_points[0:13:4, 1] = points[0, 0], points[0, 1]
-    circle_points[4:8, 0], circle_points[1:14:4, 1] = x_distance * 1//3, y_distance * 1//3
-    circle_points[8:12, 0], circle_points[2:15:4, 1] = x_distance * 2//3, y_distance * 2//3
-    circle_points[12:, 0], circle_points[3:16:4, 1] = points[3, 0], points[3, 1]
-    print("座標計算結果：{}" .format(circle_points))
+    print('前{0}'.format(circle_points))
+    # X座標
+    circle_points[0:4, 0] = points[0, 0]
+    circle_points[4:8, 0] = x_distance * 1 // 3 + points[0, 0]
+    circle_points[8:12, 0] = x_distance * 2 // 3 + points[0, 0]
+    circle_points[12:, 0] = points[3, 0]
+    # Y座標
+    circle_points[0:13:4, 1] = points[0, 1]
+    circle_points[1:14:4, 1] = y_distance * 1 // 3 + points[0, 1]
+    circle_points[2:15:4, 1] = y_distance * 2 // 3 + + points[0, 1]
+    circle_points[3:16:4, 1] = points[3, 1]
+
+    print("座標計算結果：{}".format(circle_points))
     return circle_points
 
 
@@ -40,4 +47,4 @@ if __name__ == '__main__':
     ])
     cc_points = np.zeros((16, 2))
     # print('足す前{}'.format(points))
-    print('足した後{}' .format(calcPoints(points, cc_points)))
+    print('足した後{}'.format(calcPoints(points, cc_points)))

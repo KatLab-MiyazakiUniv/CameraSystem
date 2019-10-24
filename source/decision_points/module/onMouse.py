@@ -103,7 +103,7 @@ def dragAndDropSquare(event, x, y, flags, param) -> None:
         calc_cc_points = cp.calcPoints(square_points, cc_points)
         for i in range(calc_cc_points.shape[0]):
             # print("({0}, {1})" .format(cc_points[i, 0], cc_points[i, 1]))
-            # drawPoints(img, cc_points[i, 0], cc_points[i, 1])
+            drawPoints(img, cc_points[i, 0], cc_points[i, 1])
             img = cv2.circle(img, (cc_points[i, 0], cc_points[i, 1]), 5, (255, 255, 0), -1)
             cv2.imshow(window_name, img)
         # print("{0}" .format(cp.calcPoints(square_points, cc_points)))
