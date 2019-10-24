@@ -81,3 +81,19 @@ def test_Manhattan_distance():
     assert 2 == solver.Manhattan_distance((3,1), (1,1))
     assert 5 == solver.Manhattan_distance((3,1), (0,3))
     assert 3.5 == solver.Manhattan_distance((3,1), (1, 2.5))
+
+
+def test_current_direction():
+    solver = create_block_bingo([(1,0), (2,0), (2,1)])
+    # 走行体の現在地と向きを確認する
+    assert (3,1) == solver.position
+    assert 4 == solver.direction
+
+    # (3,1) => (3,2) => (2,2)に移動する
+    path = Path()
+    path.set_path((3,1), (3,2))
+    # 走行体の向きが東向きになっていることを確認する
+    assert 2 == solver.current_direction((3,2), path)
+    path.set_path((3,2), (2,2))
+    # 走行体の向きが北向きになっていることを確認する
+    assert 0 == solver.current_direction((2,2), path)

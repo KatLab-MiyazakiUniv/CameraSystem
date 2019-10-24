@@ -66,6 +66,7 @@ class Path():
  
         return path[::-1]
 
+
 class BlockBingoSolver():
     def __init__(self, block_circles, cross_circles, block_circles_path):
         """
@@ -186,3 +187,20 @@ class BlockBingoSolver():
             終点の座標
         """
         return abs(dst[0]-src[0]) + abs(dst[1]-src[1])
+    
+
+    def current_direction(self, current, path):
+        """
+        走行体の現在地から走行体の向きを返す。
+
+        Parameters
+        ---------
+        current : tuple
+            走行体の現在地
+        """
+        last = path.get(current)
+
+        # 走行体の初期位置から移動していない場合は、初期の走行体の向きを返す
+        if last is None:
+            return self.direction
+        return self.get_robot_direction(last, current)
