@@ -60,7 +60,7 @@ def dragAndDropSquare(event, x, y, flags, param) -> None:
     :param param: コールバック関数に渡される，ユーザ定義パラメータ
     :return: None
     """
-    window_name, img, cc_points, bc_points = param
+    window_name, img = param
     if event == cv2.EVENT_MOUSEMOVE:  # マウスが動いたとき
         global ix, iy, h, w, mode
         img_copy = np.copy(img)
@@ -85,26 +85,27 @@ def dragAndDropSquare(event, x, y, flags, param) -> None:
         drawPoints(img, ix, y)  # 終点の横の頂点
         drawPoints(img, x, y)  # 終点の頂点
         square_points = np.empty((4, 2))  # 0行目左上．1行目左下．2行目右上．3行目右下
-        if w/2 <= ix and h/2 >= iy:  # 起点の座標が第一象限のとき
-            print('{}'. format('第一象限'))
-            square_points = np.array([[x, iy], [x, y], [ix, iy], [ix, y]])
-        elif w/2 >= ix and h/2 >= iy:  # 起点の座標が第二象限のとき
+        if w / 2 <= ix and h / 2 >= iy:  # 起点の座標が第一象限のとき
+            print('{}'.format('第一象限'))
+            square_points = np.array([[x, iy], [ix, iy], [x, y], [ix, y]])
+        elif w / 2 >= ix and h / 2 >= iy:  # 起点の座標が第二象限のとき
             print('{}'.format('第二象限'))
-            square_points = np.array([[ix, iy], [ix, y], [x, iy], [x, y]])
-        elif w/2 >= ix and h/2 <= iy:  # 起点の座標が第三象限のとき
+            square_points = np.array([[ix, iy], [x, iy], [ix, y], [x, y]])
+        elif w / 2 >= ix and h / 2 <= iy:  # 起点の座標が第三象限のとき
             print('{}'.format('第三象限'))
-            square_points = np.array([[ix, y], [ix, iy], [x, y], [x, iy]])
+            square_points = np.array([[ix, y], [x, y], [ix, iy], [x, iy]])
         else:  # それ以外（起点の座標が第四象限のとき）
             print('{}'.format('第四象限'))
-            square_points = np.array([[x, y], [x, iy], [ix, y], [ix, iy]])
+            square_points = np.array([[x, y], [ix, y], [x, iy], [ix, iy]])
         print('終点の座標：({0}, {1})'.format(x, y))
         print('各頂点の座標：({0})'.format(square_points))
         print("")
-        calc_cc_points = cp.calcPoints(square_points, cc_points)
+        calc_cc_points = cp.calcPoints(points=square_points, column=8)  # ここ
         for i in range(calc_cc_points.shape[0]):
             # print("({0}, {1})" .format(cc_points[i, 0], cc_points[i, 1]))
-            drawPoints(img, cc_points[i, 0], cc_points[i, 1])
-            img = cv2.circle(img, (cc_points[i, 0], cc_points[i, 1]), 5, (255, 255, 0), -1)
+            drawPoints(img, calc_cc_points[i, 0], calc_cc_points[i, 1])
+            print("{},{}" .format(calc_cc_points[i, 0], calc_cc_points[i, 1]))
+            img = cv2.circle(img, (calc_cc_points[i, 0], calc_cc_points[i, 1]), 5, (255, 255, 0), -1)
             cv2.imshow(window_name, img)
         # print("{0}" .format(cp.calcPoints(square_points, cc_points)))
 

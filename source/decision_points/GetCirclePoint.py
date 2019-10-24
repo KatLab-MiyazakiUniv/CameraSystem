@@ -26,7 +26,7 @@ class GetCirclePoint:
         img = cv2.imread(img)
         cv2.namedWindow(window_name)
         cv2.setMouseCallback(window_name, om.dragAndDropSquare,
-                             [window_name, img, self.cc_points, self.bc_points])
+                             [window_name, img])
         cv2.imshow(window_name, img)
         cv2.moveWindow(window_name, 100, 100)  # 左上にウィンドウを出す
         cv2.waitKey()
