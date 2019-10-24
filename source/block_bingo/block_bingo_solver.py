@@ -65,3 +65,110 @@ class Path():
             raise ArithmeticError('could not find the path from start node!')
  
         return path[::-1]
+
+class BlockBingoSolver():
+    def __init__(self, block_circles, cross_circles, block_circles_path):
+        """
+        ブロックビンゴを成立させるための経路を計算するクラス。
+
+        Parameters
+        ----------
+            block_circles : BlockCirclesCoordinate
+                ブロックサークルの座標
+            cross_circles : CrossCirclesCoordinate
+                交点サークルの座標
+            block_circles_path : list
+                ブロックサークル間移動の運搬経路
+        """
+        # ブロックサークルの座標クラス
+        self.block_circles = block_circles
+        # 交点サークルの座標クラス
+        self.cross_circles = cross_circles
+
+        # ブロックサークル間移動したあとの走行体の向きを取得する
+        self.direction = self.get_robot_direction_after_block_circle(block_circles_path)
+        # ブロックサークル間移動したあとに最も近くにあるブロックが置かれた交点サークルまで移動する
+        self.position = self.move_initial_position(block_circles_path)
+        # 現在地の交点サークルにあるブロックは取得済みなので削除する
+        self.cross_circles.move_block(self.position)
+    
+
+    def get_robot_direction_after_block_circle(self, block_circles_path):
+        """
+        ブロックサークル間移動したあとの走行体の向きを計算する。
+
+        Parameters
+        ----------
+            block_circles_path
+                ブロックサークル間移動の運搬経路
+        """
+        # ボーナスサークルへ進入したときの走行体の向きが知りたいので
+        # ブロックサークル間の運搬経路の末尾とその1つ前の座標を取得する
+        last = block_circles_path[-1]
+        prev = block_circles_path[-2]
+
+        return self.get_robot_direction(prev, last)
+
+
+    def move_initial_position(self, block_circles_path):
+        """
+        ブロックサークル間を移動したあとに走行体が向かうブロックが置かれた交点サークルを算出する。
+        [方針]
+            1. ブロックサークル間移動後の黒線の中点の座標を計算する 例: (1,0.5)なら1番と4番サークルの間
+            2. 黒線の中点座標から最も近いブロックが置かれた交点サークルの座標を計算する
+        
+        Parameters
+        ----------
+            block_circles_path
+                ブロックサークル間移動の運搬経路
+        """
+        # ボーナスサークルへ進入したあとの走行体の位置が知りたいので
+        # ブロックサークル間の運搬経路の末尾とその1つ前の座標を取得する
+        last = block_circles_path[-1]
+        prev = block_circles_path[-2]
+
+        # (末尾)と(末尾の1つ前)で座標が大きい方を取得する
+        block_circle_point = max([last, prev])
+        # ブロックサークル間移動後の走行体の向きが北向きor南向きならcolumn += 0.5
+        if self.direction == 0 or self.direction == 4:
+            src = (block_circle_point[0], block_circle_point[1] + 0.5)
+        else:
+            src = (block_circle_point[0] + 0.5, block_circle_point[1])
+
+        # 中点座標pointからブロックが置かれた交点サークルの座標との距離を計算する
+        distances = list(map(lambda x: abs(src[0]-x[0]) + abs(src[1]-x[1]), self.cross_circles.open))
+
+        # 走行体に最も近いブロックが置かれた交点サークルの座標を取得する
+        dst = self.cross_circles.open[distances.index(min(distances))]
+
+        # 走行体が現在向いている方向から移動先の交点サークルがどの向きにあるかを求める
+        direction_after_moving = self.get_robot_direction(src, dst)
+
+        # 走行体の向いている方向を更新
+        self.direction = direction_after_moving
+        
+        return dst
+    
+
+    def get_robot_direction(self, src, dst):
+        """
+        始点から終点までの移動したときの走行体の向きを取得する。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        """
+        subtraction = (dst[0]-src[0], dst[1]-src[1])
+
+        if subtraction == (-1, 0) or subtraction == (-0.5, 0):
+            return 0    # 北向き
+        if subtraction == (0, 1) or subtraction == (0, 0.5):
+            return 2    # 東向き
+        if subtraction == (1, 0) or subtraction == (0.5, 0):
+            return 4    # 南向き
+        if subtraction == (0, -1) or subtraction == (0, -0.5):
+            return 6    # 西向き
+        raise ValueError('could not calculate direction')
