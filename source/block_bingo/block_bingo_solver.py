@@ -209,7 +209,7 @@ class BlockBingoSolver():
     def adjacent_nodes(self, node):
         """
         指定ノードの隣接ノードのリストを返す。      
-         
+
         Parameters
         ----------
         node : tuple
@@ -224,3 +224,97 @@ class BlockBingoSolver():
                          (2.5,0.5), (2.5,1.5), (2.5,2.5)]
 
         return [node for node in nodes if 0 <= node[0] <= 3 and 0 <= node[1] <= 3 and node not in block_circles]      
+
+
+    def moving_cost(self, src, dst, path):
+        """
+        2点間の移動コストを計算して返す。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        path : dict
+            運搬経路
+        """
+        # 始点にブロックが置かれているかどうかを調べる
+        has_block = src in self.cross_circles.open
+        # 走行体の向きを求める
+        direction = self.current_direction(src, path)
+        # 走行体が水平に進むとき
+        if src[0] == dst[0]:
+            if direction == 0: # 90度右に旋回するとき
+                return self.spin90(has_block)
+
+            if direction == 2: # 直進するとき
+                return self.straight(has_block, src[1] > dst[1])
+            
+            if direction == 4: # 90度左に旋回するとき
+                return self.spin90(has_block)
+            
+            if direction == 6: # 180度旋回して直進するとき
+                return self.straight(has_block, src[1] < dst[1])
+
+        # 走行体が垂直に進むとき
+        if src[1] == dst[1]:
+            if direction == 0: # 180度旋回して直進するとき
+                return self.straight(has_block, src[0] < dst[0])
+        
+            if direction == 2: # 90度右に旋回するとき
+                return self.spin90(has_block)
+           
+            if direction == 4: # 直進するとき
+                return self.straight(has_block, src[0] > dst[0])
+
+            if direction == 6: # 90度左に旋回するとき
+                return  self.spin90(has_block)
+        raise ValueError('src or dst is invalid!')
+
+
+    def straight(self, has_block, should_turn):
+        """
+        直線のコストを返す。
+
+        Parameters
+        ----------
+        has_block : bool
+            始点にブロックが置いてあるかどうか
+        should_turn : bool
+            旋回が必要かどうか
+        """
+        if should_turn:
+            return self.spin180(has_block)
+
+        if has_block:
+            return 4
+        return 1            
+
+
+    def spin90(self, has_block):
+        """
+        90度回頭するコストを返す。
+
+        Parameters
+        ----------
+        has_block : bool
+            始点にブロックが置いてあるかどうか
+        """
+        if has_block:
+            return 2
+        return 2
+
+
+    def spin180(self, has_block):
+        """
+        180度回頭するコストを返す
+
+        Parameters
+        ----------
+        has_block : bool
+            始点にブロックが置いてあるかどうか
+        """
+        if has_block:
+            return 5
+        return 1

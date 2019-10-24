@@ -9,7 +9,7 @@ from block_bingo_solver import BlockBingoSolver
 from block_bingo_solver import BlockCirclesCoordinate
 from block_bingo_solver import CrossCirclesCoordinate
 
-def create_block_bingo(path):
+def create_block_bingo(path=[(1,0), (2,0), (2,1)]):
     is_left = True
     bonus = 5
     return BlockBingoSolver(BlockCirclesCoordinate(is_left, bonus), CrossCirclesCoordinate(), path)
@@ -107,3 +107,46 @@ def test_adjacent_nodes():
     assert [(0.5,1), (1.5,1), (1, 0.5), (1, 1.5)] == solver.adjacent_nodes((1,1))
     # ノード(3,3)の隣接ノードが正しく計算できていることを確認する
     assert [(2.5,3), (3,2.5)] == solver.adjacent_nodes((3,3))
+
+
+def test_moving_cost():
+    solver = create_block_bingo([(0,0), (0,1)])
+    # 走行体の現在地と向きを確認する
+    assert (1,1) == solver.position
+    assert 4 == solver.direction
+    path = Path()
+
+    #　--ブロックなしの動作--
+    # 走行体が水平に進むとき
+    solver.direction = 2 # 東向きに設定
+    assert 1 == solver.moving_cost((1,1), (1,1.5), path)    # 直進
+    assert 1 == solver.moving_cost((1,1), (1,0.5), path)    # 180度旋回
+    solver.direction = 4 # 南向きに設定
+    assert 2 == solver.moving_cost((1,1), (1,0.5), path)    # 右に90度旋回
+    assert 2 == solver.moving_cost((1,1), (1,1.5), path)    # 左に90度旋回
+
+    # 走行体が垂直に進むとき
+    solver.direction = 4 # 南向きに設定
+    assert 1 == solver.moving_cost((1,1), (1.5,1), path)    # 直進
+    assert 1 == solver.moving_cost((1,1), (0.5,1), path)    # 180度旋回
+    solver.direction = 2 # 東向きに設定
+    assert 2 == solver.moving_cost((1,1), (1.5,1), path)    # 右に90度旋回
+    assert 2 == solver.moving_cost((1,1), (0.5,1), path)    # 左に90度旋回
+    
+    # --ブロックありの動作--
+    # 走行体が水平に進むとき
+    solver.direction = 2 # 東向きに設定
+    solver.cross_circles.open.append((1,1)) # ブロックを設置
+    assert 4 == solver.moving_cost((1,1), (1,1.5), path)    # 直進
+    assert 5 == solver.moving_cost((1,1), (1,0.5), path)    # 180度旋回
+    solver.direction = 4 # 南向きに設定
+    assert 2 == solver.moving_cost((1,1), (1,0.5), path)    # 右に90度旋回
+    assert 2 == solver.moving_cost((1,1), (1,1.5), path)    # 左に90度旋回
+
+    # 走行体が垂直に進むとき
+    solver.direction = 4 # 南向きに設定
+    assert 4 == solver.moving_cost((1,1), (1.5,1), path)    # 直進
+    assert 5 == solver.moving_cost((1,1), (0.5,1), path)    # 180度旋回
+    solver.direction = 2 # 東向きに設定
+    assert 2 == solver.moving_cost((1,1), (1.5,1), path)    # 右に90度旋回
+    assert 2 == solver.moving_cost((1,1), (0.5,1), path)    # 左に90度旋回
