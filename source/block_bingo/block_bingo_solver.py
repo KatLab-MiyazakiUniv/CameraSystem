@@ -226,6 +226,63 @@ class BlockBingoSolver():
         return [node for node in nodes if 0 <= node[0] <= 3 and 0 <= node[1] <= 3 and node not in block_circles]      
 
 
+    def a_star(self, src, dst):
+        """
+        A*アルゴリズムを用いて始点ノード(src)から終点ノード(dst)まで移動する経路を探索する。
+
+        Parameters
+        ----------
+        src : tuple
+            始点ノード
+        dst : tuple
+            終点ノード
+        """
+        # openリスト
+        open = {self.position: 0 + self.Manhattan_distance(self.position, dst)}   # openリスト(辞書型; key: 交点サークルの座標, value: 移動コスト+予測コスト)
+        # closeリスト
+        close = {}
+        # 運搬経路
+        path = Path()
+        while 1:
+            # openリストが空であるとき、例外を送出する(探索失敗)
+            if len(open) == 0:
+                raise ArithmeticError('open set is empty!')
+
+            # openリストのうち、最もコストの小さい要素を取得する
+            elem = min(open.items(), key=lambda x: x[1])[0]
+
+            # 取得した要素が終点ノードなら探索を終了する
+            if elem == dst:
+                return path.search_path(src, dst)
+            
+            # 取得した要素をopenリストからcloseリストへ移す
+            close[elem] = open.pop(elem)
+            # 取得した要素の隣接ノードすべてに対して以下の操作を実行する
+            for node in self.adjacent_nodes(elem):
+                # 最小コストの候補値を計算する(始点から対象ノードまでの移動コスト + 対象ノードから隣接ノードまでの移動コスト + 隣接ノードからゴールまでの予測コスト)
+                cost = (close[elem] - self.Manhattan_distance(elem, dst)) + self.moving_cost(elem, node, path) + self.Manhattan_distance(node, dst)
+                # 隣接ノードがopenリストにもcloseリストにも含まれていない場合
+                if node not in open and node not in close:
+                    # 隣接ノードをopenリストへ追加する
+                    open[node] = cost
+                    path.set_path(elem, node)
+                # 隣接ノードがopenリストにある場合
+                if node in open:
+                    # cost < f(node)の場合、f(node) = costとする
+                    if cost < open[node]:
+                        open[node] = cost
+                        # 記録してある隣接ノードの親をelemに置き換える
+                        path.set_path(elem, node)
+                # 隣接ノードがcloseリストにある場合
+                if node in close:
+                    # f(node)を計算する
+                    # cost < f(node)の場合、f(node) = costとする
+                    if cost < close[node]:
+                        open[node] = cost
+                        # 記録してある隣接ノードの親をelemに置き換える
+                        path.set_path(elem, node)
+
+
     def moving_cost(self, src, dst, path):
         """
         2点間の移動コストを計算して返す。

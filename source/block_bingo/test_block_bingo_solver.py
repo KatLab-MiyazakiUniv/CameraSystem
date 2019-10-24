@@ -150,3 +150,31 @@ def test_moving_cost():
     solver.direction = 2 # 東向きに設定
     assert 2 == solver.moving_cost((1,1), (1.5,1), path)    # 右に90度旋回
     assert 2 == solver.moving_cost((1,1), (0.5,1), path)    # 左に90度旋回
+
+
+def test_a_star():
+    # 走行体の現在地は(1,1)、向きは東向き
+    solver = create_block_bingo([(1,0), (0,0)])
+    # (1,1)から(0,2)まで運搬する経路を計算する
+    assert [(1,1), (1,1.5), (1,2), (0.5,2), (0,2)] == solver.a_star((1,1), (0,2))
+
+
+def test_a_star2():
+    # 走行体の現在地は(3,1)、向きは西向き
+    solver = create_block_bingo([(2,1), (2,0)])
+    # (3,1)から(1,0)まで運搬する経路を計算する
+    assert [(3,1), (2.5,1), (2,1), (1.5,1), (1,1), (1,0.5), (1,0)] == solver.a_star((3,1), (1,0))
+
+
+def test_a_star3():
+    """
+    分析モデル2.3.5節の計算例をもとに動作を確認する。
+    """
+    # 走行体の現在地は(2,0)、向きは北向き
+    solver = create_block_bingo([(2,0), (1,0)])
+    # 走行体の向きを東向きにする
+    solver.direction = 2
+    # (2,2)のブロックを運搬したことにする
+    solver.cross_circles.move_block((2,2))
+    # (2,0)から(1,2)まで運搬する経路を計算する
+    assert [(2,0), (2,0.5), (2,1), (2,1.5), (2,2), (1.5,2), (1,2)] == solver.a_star((2,0), (1,2))
