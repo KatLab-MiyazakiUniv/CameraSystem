@@ -97,3 +97,13 @@ def test_current_direction():
     path.set_path((3,2), (2,2))
     # 走行体の向きが北向きになっていることを確認する
     assert 0 == solver.current_direction((2,2), path)
+
+
+def test_adjacent_nodes():
+    solver = create_block_bingo([(1,0), (2,0), (2,1)])
+    # 走行体の現在地(3,1)の隣接ノードが正しく計算できていることを確認する
+    assert [(2.5,1), (3,0.5), (3,1.5)] == solver.adjacent_nodes((3,1))
+    # ノード(1,1)の隣接ノードが正しく計算できていることを確認する
+    assert [(0.5,1), (1.5,1), (1, 0.5), (1, 1.5)] == solver.adjacent_nodes((1,1))
+    # ノード(3,3)の隣接ノードが正しく計算できていることを確認する
+    assert [(2.5,3), (3,2.5)] == solver.adjacent_nodes((3,3))

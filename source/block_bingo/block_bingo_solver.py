@@ -204,3 +204,23 @@ class BlockBingoSolver():
         if last is None:
             return self.direction
         return self.get_robot_direction(last, current)
+    
+
+    def adjacent_nodes(self, node):
+        """
+        指定ノードの隣接ノードのリストを返す。      
+         
+        Parameters
+        ----------
+        node : tuple
+            指定ノード
+        """
+        # 上下左右の4要素を作成する
+        nodes = [(node[0]-0.5, node[1]), (node[0]+0.5, node[1]), 
+                 (node[0], node[1]-0.5), (node[0], node[1]+0.5)]
+        # ブロックサークルを表す座標を作成する(隣接ノードと認めないため)
+        block_circles = [(0.5,0.5), (0.5,1.5), (0.5,2.5),
+                         (1.5,0.5), (1.5,1.5), (1.5,2.5),
+                         (2.5,0.5), (2.5,1.5), (2.5,2.5)]
+
+        return [node for node in nodes if 0 <= node[0] <= 3 and 0 <= node[1] <= 3 and node not in block_circles]      
