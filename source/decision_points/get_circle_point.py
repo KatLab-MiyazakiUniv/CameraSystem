@@ -4,15 +4,8 @@
 @brief: ブロックサークルと交点サークルを囲むだけで各サークルの座標を取得．
 """
 
-from source.decision_points.module import onMouse as om
 import cv2
 import numpy as np
-
-
-# 美しくないけど，global変数．他に美しいやり方があったら教えて下ちい．
-# ix = iy = h = w = 0
-# mode = False
-# circle_mode = 0
 
 
 class GetCirclePoint:
@@ -81,7 +74,7 @@ class GetCirclePoint:
     @staticmethod
     def calcPoints(points, column) -> np.ndarray:
         """
-        現在，3分割，2分割するときは切り捨てにしている
+        分割するときは切り捨てにしている
         columnが8ならブロックサークルの分割，16なら交点サークルの分割をする．それ以外だとすべて0の座標を返す．
         :param points:
         :param column:
