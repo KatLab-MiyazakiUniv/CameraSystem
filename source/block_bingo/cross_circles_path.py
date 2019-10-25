@@ -1,17 +1,5 @@
 import heapq
-from enum import Enum, auto
-
-
-class Color(Enum):
-    """
-    ブロックやラインの色
-    """
-    RED = auto()
-    BLUE = auto()
-    YELLOW = auto()
-    GREEN = auto()
-    BLACK = auto()
-
+from block_bingo_coordinate import Color
 
 class Node():
     '''
