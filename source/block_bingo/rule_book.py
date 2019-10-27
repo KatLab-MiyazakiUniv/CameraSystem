@@ -34,7 +34,8 @@ class RuleBook():
 
         for candidate in candidates:
             if color_circle in candidate:
-                return list(set(candidate) - set([color_circle]))
+                candidate.remove(color_circle)
+                return candidate
         raise ValueError('The number of block circle where color block is placed is wrong!')
 
 
@@ -49,7 +50,8 @@ class RuleBook():
 
         for candidate in candidates:
             if color_circle in candidate:
-                return list(set(candidate) - set([color_circle]))
+                candidate.remove(color_circle)
+                return candidate
         raise ValueError('The number of block circle where color block is placed is wrong!')
 
     
@@ -64,5 +66,20 @@ class RuleBook():
         
         for candidate in candidates:
             if color_circle in candidate:
-                return list(set(candidate) - set([color_circle]))
-        ValueError('The number of block circle where color block is placed is wrong!')
+                candidate.remove(color_circle)
+                return candidate
+        raise ValueError('The number of block circle where color block is placed is wrong!')
+
+
+    def full_bingo(self):
+        """
+        フルビンゴを達成するためにブロックを設置するブロックサークルの番号を返す。
+        """
+        # カラーブロックが置かれたブロックサークル番号を取得する
+        color_circle = self.block_circles.color_circle
+        candidate = [number for number in range(1, 8+1)]
+
+        if color_circle in candidate:
+            candidate.remove(color_circle)
+            return candidate
+        raise ValueError('The number of block circle where color block is placed is wrong!')
