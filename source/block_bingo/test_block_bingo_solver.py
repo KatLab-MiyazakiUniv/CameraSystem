@@ -53,26 +53,26 @@ def test_path_invalid():
 
 def test_get_robot_position_north():
     solver = create_block_bingo([(1,0), (0,0)])
-    assert (1,1) == solver.position
-    assert 2 == solver.direction
+    assert (1,0.5) == solver.position
+    assert 0 == solver.direction
 
 
 def test_get_robot_direction_east():
     solver = create_block_bingo([(0,0), (0,1), (0,2)])
-    assert (0,2) == solver.position
-    assert 0 == solver.direction
-
-
-def test_get_robot_direction_west():
-    solver = create_block_bingo([(0,2), (1,2), (2,2)])
-    assert (2,2) == solver.position
-    assert 6 == solver.direction
+    assert (0.5,2) == solver.position
+    assert 2 == solver.direction
 
 
 def test_get_robot_direction_south():
-    solver = create_block_bingo([(2,2), (2,1), (2,0)])
-    assert (3,1) == solver.position
+    solver = create_block_bingo([(0,2), (1,2), (2,2)])
+    assert (2,2.5) == solver.position
     assert 4 == solver.direction
+
+
+def test_get_robot_direction_west():
+    solver = create_block_bingo([(2,2), (2,1), (2,0)])
+    assert (2.5,1) == solver.position
+    assert 6 == solver.direction
 
 
 def test_Manhattan_distance():
@@ -87,17 +87,19 @@ def test_Manhattan_distance():
 def test_current_direction():
     solver = create_block_bingo([(1,0), (2,0), (2,1)])
     # 走行体の現在地と向きを確認する
-    assert (3,1) == solver.position
-    assert 4 == solver.direction
+    assert (2.5,1) == solver.position
+    assert 2 == solver.direction
 
-    # (3,1) => (3,2) => (2,2)に移動する
+    # (2.5,1) => (2,1) => (2,2)に移動する
     path = Path()
-    path.set_path((3,1), (3,2))
-    # 走行体の向きが東向きになっていることを確認する
-    assert 2 == solver.current_direction((3,2), path)
-    path.set_path((3,2), (2,2))
+    path.set_path((2.5,1), (2,1))
+    solver.direction = 0
+    solver.position = (2,1)
     # 走行体の向きが北向きになっていることを確認する
-    assert 0 == solver.current_direction((2,2), path)
+    assert 0 == solver.current_direction((2,1), path)
+    path.set_path((2,1), (2,2))
+    # 走行体の向きが東向きになっていることを確認する
+    assert 2 == solver.current_direction((2,2), path)
 
 
 def test_adjacent_nodes():
@@ -113,9 +115,14 @@ def test_adjacent_nodes():
 def test_moving_cost():
     solver = create_block_bingo([(0,0), (0,1)])
     # 走行体の現在地と向きを確認する
-    assert (1,1) == solver.position
-    assert 4 == solver.direction
+    assert (0.5,1) == solver.position
+    assert 2 == solver.direction
     path = Path()
+
+    # (1,1)まで移動する
+    solver.position = (1,1)
+    solver.direction = 4
+    solver.cross_circles.move_block((1,1))
 
     #　--ブロックなしの動作--
     # 走行体が水平に進むとき
@@ -156,6 +163,9 @@ def test_moving_cost():
 def test_a_star():
     # 走行体の現在地は(1,1)、向きは東向き
     solver = create_block_bingo([(1,0), (0,0)])
+    solver.direction = 2
+    solver.position = (1,1)
+    solver.cross_circles.move_block((1,1))
     # (1,1)から(0,2)まで運搬する経路を計算する
     assert [(1,1), (1,1.5), (1,2), (0.5,2), (0,2)] == solver.a_star((1,1), (0,2))
 
@@ -163,6 +173,9 @@ def test_a_star():
 def test_a_star2():
     # 走行体の現在地は(3,1)、向きは西向き
     solver = create_block_bingo([(2,1), (2,0)])
+    solver.direction = 6
+    solver.position = (3,1)
+    solver.cross_circles.move_block((3,1))
     # (3,1)から(1,0)まで運搬する経路を計算する
     assert [(3,1), (2.5,1), (2,1), (1.5,1), (1,1), (1,0.5), (1,0)] == solver.a_star((3,1), (1,0))
 
@@ -173,6 +186,9 @@ def test_a_star3():
     """
     # 走行体の現在地は(2,0)、向きは北向き
     solver = create_block_bingo([(2,0), (1,0)])
+    solver.direction = 0
+    solver.position = (2,0)
+    solver.cross_circles.move_block((2,0))
     # 走行体の向きを東向きにする
     solver.direction = 2
     # (2,2)のブロックを運搬したことにする

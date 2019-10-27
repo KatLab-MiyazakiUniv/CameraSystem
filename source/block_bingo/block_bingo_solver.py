@@ -88,10 +88,8 @@ class BlockBingoSolver():
 
         # ブロックサークル間移動したあとの走行体の向きを取得する
         self.direction = self.get_robot_direction_after_block_circle(block_circles_path)
-        # ブロックサークル間移動したあとに最も近くにあるブロックが置かれた交点サークルまで移動する
-        self.position = self.move_initial_position(block_circles_path)
-        # 現在地の交点サークルにあるブロックは取得済みなので削除する
-        self.cross_circles.move_block(self.position)
+        # ブロックサークル間移動したあとの走行体の位置を取得する
+        self.position = self.get_robot_position_after_block_circle(block_circles_path)
     
 
     def get_robot_direction_after_block_circle(self, block_circles_path):
@@ -111,17 +109,14 @@ class BlockBingoSolver():
         return self.get_robot_direction(prev, last)
 
 
-    def move_initial_position(self, block_circles_path):
+    def get_robot_position_after_block_circle(self, block_circles_path):
         """
-        ブロックサークル間を移動したあとに走行体が向かうブロックが置かれた交点サークルを算出する。
-        [方針]
-            1. ブロックサークル間移動後の黒線の中点の座標を計算する 例: (1,0.5)なら1番と4番サークルの間
-            2. 黒線の中点座標から最も近いブロックが置かれた交点サークルの座標を計算する
-        
+        ブロックサークル間移動したあとの走行体の位置を計算する。
+
         Parameters
         ----------
-            block_circles_path
-                ブロックサークル間移動の運搬経路
+        block_circles_path : list
+            ブロックサークル間移動の運搬経路
         """
         # ボーナスサークルへ進入したあとの走行体の位置が知りたいので
         # ブロックサークル間の運搬経路の末尾とその1つ前の座標を取得する
@@ -132,28 +127,14 @@ class BlockBingoSolver():
         block_circle_point = max([last, prev])
         # ブロックサークル間移動後の走行体の向きが北向きor南向きならcolumn += 0.5
         if self.direction == 0 or self.direction == 4:
-            src = (block_circle_point[0], block_circle_point[1] + 0.5)
+            return (block_circle_point[0], block_circle_point[1] + 0.5)
         else:
-            src = (block_circle_point[0] + 0.5, block_circle_point[1])
-
-        # 中点座標pointからブロックが置かれた交点サークルの座標との距離を計算する
-        distances = list(map(lambda x: abs(src[0]-x[0]) + abs(src[1]-x[1]), self.cross_circles.open))
-
-        # 走行体に最も近いブロックが置かれた交点サークルの座標を取得する
-        dst = self.cross_circles.open[distances.index(min(distances))]
-
-        # 走行体が現在向いている方向から移動先の交点サークルがどの向きにあるかを求める
-        direction_after_moving = self.get_robot_direction(src, dst)
-
-        # 走行体の向いている方向を更新
-        self.direction = direction_after_moving
-        
-        return dst
+            return (block_circle_point[0] + 0.5, block_circle_point[1])
     
 
     def get_robot_direction(self, src, dst):
         """
-        始点から終点までの移動したときの走行体の向きを取得する。
+        始点から終点まで移動したときの走行体の向きを取得する。
 
         Parameters
         ----------
