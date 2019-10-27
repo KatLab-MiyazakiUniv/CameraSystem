@@ -107,3 +107,23 @@ def test_move_block_of_cross_circle():
 
     coordinate.move_block(point)
     assert coordinate.color(point) == Color.NONE
+
+
+def test_start_node():
+    coordinate = CrossCirclesCoordinate()
+    # 現実的にはありえないが、交点サークルのすべてに緑色のブロックを配置する
+    for x in range(0, 3+1):
+        for y in range(0, 3+1):
+            coordinate.set_block_color((x,y), Color.GREEN)
+    
+    # 走行体の現在地から最も近い交点サークルの座標を返すことを確認する。
+    assert (1,1) == coordinate.start_node((1.5,1), [Color.GREEN])
+    assert (1,1) == coordinate.start_node((1,1), [Color.GREEN])
+
+    # 指定色のブロックが置いてある交点サークルがない場合は、Noneが返ることを確認する。
+    assert None == coordinate.start_node((1,1), [Color.RED])
+
+    # 1つだけ青色のブロックを置いて、正しく処理できるか確認する
+    coordinate.set_block_color((0,2), Color.BLUE)
+    assert (2,0) == coordinate.start_node((2.5,0), [Color.RED, Color.BLUE, Color.GREEN])
+    assert (0,2) == coordinate.start_node((2.5, 0), [Color.YELLOW, Color.BLUE])

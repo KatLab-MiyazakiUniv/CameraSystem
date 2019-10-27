@@ -155,3 +155,25 @@ class CrossCirclesCoordinate():
         self.set_block_color(coordinate, Color.NONE)
         # openリストから削除する
         self.open.remove(coordinate)
+    
+
+    def start_node(self, current, colors):
+        """
+        走行体の現在地から最も近い、指定色のブロックが置いてある交点サークルの座標を返す。
+
+        Parameters
+        ----------
+        current : tuple
+            走行体の現在地
+        colors : list
+            運搬するブロックの色のリスト
+        """
+        # 現在地から近い順にブロックが置いてある交点サークルの座標をソートする
+        distances = list(map(lambda x: abs(x[0]-current[0]) + abs(x[1]-current[1]), self.open))
+        coordinates = [self.open[index] for index in np.argsort(distances)]
+
+        # 走行体の現在地から最も近い、指定色のブロックが置いてある交点サークルの座標を調べる
+        for coordinate in coordinates:
+            if self.cross_circles[coordinate] in colors:
+                return coordinate
+        return None
