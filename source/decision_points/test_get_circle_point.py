@@ -1,5 +1,5 @@
 """
-@file: test_GetCirclePoint.py
+@file: test_get_circle_point.py
 @author: Tatsumi0000
 @brief: GetCirclePoint.pyのをテストするプログラム
 """

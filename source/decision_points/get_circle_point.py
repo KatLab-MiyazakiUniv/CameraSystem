@@ -1,5 +1,5 @@
 """
-@file: GetCirclePoint.py
+@file: get_circle_point.py
 @author: Tatsumi0000
 @brief: ブロックサークルと交点サークルを囲むだけで各サークルの座標を取得．
 """
@@ -137,11 +137,12 @@ class GetCirclePoint:
                 cv2.rectangle(img_copy, (get_circle_point.ix, get_circle_point.iy), (x, y), (255, 0, 0), thickness=2)
             cv2.imshow(window_name, img_copy)
 
-        if event == cv2.EVENT_LBUTTONDOWN:  # 左ボタンを押下したとき
+        if event == cv2.EVENT_LBUTTONDOWN and get_circle_point.circle_mode <= 1:  # 左ボタンを押下したとき
             get_circle_point.ix, get_circle_point.iy = x, y
-            # print('起点の座標：({0}, {1})'.format(get_circle_point.ix, get_circle_point.iy))
+            print('起点の座標：({0}, {1})'.format(get_circle_point.ix, get_circle_point.iy))
             get_circle_point.mode = True  # ドラッグ・アンド・ドロップで範囲指定モードをON
-        if event == cv2.EVENT_LBUTTONUP:  # マウスの左ボタンを上げたとき
+
+        if event == cv2.EVENT_LBUTTONUP and get_circle_point.circle_mode <= 1:  # マウスの左ボタンを上げたとき
             cv2.rectangle(img, (get_circle_point.ix, get_circle_point.iy), (x, y), (255, 0, 0), thickness=2)  # 四角形を描画
             get_circle_point.drawPoints(img, get_circle_point.ix, get_circle_point.iy)  # 始点の頂点
             get_circle_point.drawPoints(img, x, get_circle_point.iy)  # 始点の横の頂点
@@ -186,6 +187,7 @@ def main():
     cv2.imshow(window_name, img)
     cv2.moveWindow(window_name, 100, 100)  # 左上にウィンドウを出す
     cv2.waitKey()
+    print(get_circle_point.named_points)
     cv2.destroyAllWindows()
 
 
