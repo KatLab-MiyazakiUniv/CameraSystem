@@ -21,6 +21,9 @@ class RuleBook():
         self.block_circles = block_circles
         self.cross_circles = cross_circles
         
+        # ボーナスサークル設置成功数
+        self.bonus = 1
+        # ビンゴ達成のためのノルマ
         self.quota = self.single_bingo()
     
 
@@ -83,3 +86,10 @@ class RuleBook():
             candidate.remove(color_circle)
             return candidate
         raise ValueError('The number of block circle where color block is placed is wrong!')
+
+    
+    def block_circle(self):
+        """
+        ブロックビンゴ攻略までに設置する必要があるブロックサークル番号を返す。
+        """
+        return self.quota
