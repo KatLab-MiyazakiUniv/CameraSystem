@@ -44,6 +44,16 @@ def test_get_block_circles_coordinate_error_right():
         coordinate.get(9)
         
 
+def test_colors():
+    """
+    ブロックサークル番号のリストを指定したとき、正しく指定したブロックサークルの色が返ることを確認する。
+    """
+    coordinate = create_block_circles()
+    assert [Color.YELLOW, Color.GREEN] == coordinate.colors([1, 2])
+    assert [Color.YELLOW, Color.GREEN, Color.RED, Color.YELLOW, Color.BLUE] == coordinate.colors([1, 2, 3, 5, 8])
+
+
+
 def test_init_cross_circle_corrdinate():
     """
     交点サークルの座標を格納するデータ構造を作成したとき、はじめは配置ブロックの色がすべてNONEになっていることを確認する。

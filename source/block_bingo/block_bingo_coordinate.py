@@ -58,10 +58,19 @@ class BlockCirclesCoordinate():
         circle_number : int
             ブロックサークル番号
         """
-        
         if circle_number < 1 or 8 < circle_number:
             raise ValueError('Block circle number is invalid!')
         return self.block_circles[circle_number]
+
+    
+    def colors(self, candidate):
+        """
+        ブロックを設置するブロックサークルの番号から、サークルの色を返す。
+
+        candidate : list
+            ブロックビンゴを成立するためのブロックサークル番号のリスト
+        """
+        return [self.block_circle_color[number-1] for number in candidate]
 
 
 class CrossCirclesCoordinate():
