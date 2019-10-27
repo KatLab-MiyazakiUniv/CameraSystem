@@ -159,7 +159,7 @@ class GetCirclePoint:
                 square_points = np.array([[ix, y], [x, y], [ix, iy], [x, iy]])
             else:  # それ以外（起点の座標が第四象限のとき）
                 square_points = np.array([[x, y], [ix, y], [x, iy], [ix, iy]])
-            print("")
+
             if get_circle_point.circle_mode == 0:  # 交点サークルを囲むモード
                 get_circle_point.cc_points = get_circle_point.calcPoints(points=square_points, column=16)
                 get_circle_point.drawAllPoints(img, get_circle_point.cc_points)
