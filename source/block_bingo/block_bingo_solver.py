@@ -154,7 +154,12 @@ class BlockBingoSolver():
     def get_robot_direction(self, src, dst):
         """
         始点から終点までの移動したときの走行体の向きを取得する。
-
+        方角: 上向きを0とし、時計回りに45度=1、90度=2、135度=3・・・315度=7とする
+            0
+           7 1
+          6   2
+           5 3
+            4
         Parameters
         ----------
         src : tuple
@@ -286,7 +291,12 @@ class BlockBingoSolver():
     def moving_cost(self, src, dst, path):
         """
         2点間の移動コストを計算して返す。
-
+        方角: 上向きを0とし、時計回りに45度=1、90度=2、135度=3・・・315度=7とする
+            0
+           7 1
+          6   2
+           5 3
+            4
         Parameters
         ----------
         src : tuple
