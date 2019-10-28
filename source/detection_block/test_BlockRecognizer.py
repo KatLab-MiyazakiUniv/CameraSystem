@@ -15,7 +15,7 @@ def test_result():
         }
     
     recognizer = BlockRecognizer()
-    img = cv2.imread('result.png')
+    img = cv2.imread('detection_block/result.png')
     black, color, cc = recognizer.recognize(img, circles_coordinates)
 
     # 正解データ result_cc_blocks[col][row]
@@ -41,9 +41,9 @@ def test_result1():
         'c02': (46, 420), 'c12': (222, 422), 'c22': (402, 418), 'c32': (571, 419),
         "b6": (133, 517), "b7": (311, 517), "b8": (483, 515),
         'c03': (52, 606), 'c13': (231, 604), 'c23': (399, 608), 'c33': (581, 607)}
-        
+
     recognizer = BlockRecognizer()
-    img = cv2.imread('result1.png')
+    img = cv2.imread('detection_block/result1.png')
     black, color, cc = recognizer.recognize(img, circles_coordinates)
     
     # 正解データ result1_cc_blocks[col][row]
