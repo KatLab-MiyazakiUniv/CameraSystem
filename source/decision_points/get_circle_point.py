@@ -13,8 +13,11 @@ class GetCirclePoint:
     def __init__(self, window_name=None):
         """コンストラクタ
         """
-        self.cc_points = np.empty((16, 2), dtype=int)  # 交点サークル
-        self.bc_points = np.empty((8, 2), dtype=int)  # ブロックサークル
+        self.CROSS_CIRCLE_POINTS = 16  # 交点サークルの個数
+        self.BLOCK_CIRCLE_POINTS = 8   # ブロックサークルの個数
+        self.POINTS_NUMBER = 2         # 座標の個数
+        self.cc_points = np.empty((self.CROSS_CIRCLE_POINTS, self.POINTS_NUMBER), dtype=int)  # 交点サークル
+        self.bc_points = np.empty((self.BLOCK_CIRCLE_POINTS, self.POINTS_NUMBER), dtype=int)  # ブロックサークル
         self.ix = self.iy = 0  # 起点となる座標
         # サークルを選択するモード．0だと．交点サークルを囲むモード．1だとブロックサークルを囲むモード．2以上だと終了モード
         self.circle_mode = 0
@@ -38,17 +41,17 @@ class GetCirclePoint:
         :return:
         """
         # ブロックサークルの座標を代入．
-        for i in range(8):
+        for i in range(self.BLOCK_CIRCLE_POINTS):
             key = 'b{0}'.format(i + 1)
             self.named_points[key] = [int(p) for p in self.bc_points[i]]
 
         # 交点サークルの座標を代入．
-        n = 0
+        cross_circle_count = 0
         for i in range(4):
             for j in range(4):
                 key = 'c{0}{1}'.format(j, i)
-                self.named_points[key] = [int(p) for p in self.cc_points[n]]
-                n += 1
+                self.named_points[key] = [int(p) for p in self.cc_points[cross_circle_count]]
+                cross_circle_count += 1
 
     @staticmethod
     def drawPoints(img, x, y):
@@ -89,6 +92,7 @@ class GetCirclePoint:
         y_distance = points[2, 1] - points[0, 1]  # yの距離
         # print('前{0}'.format(circle_points))
         if column == 8:  # ブロックサークルのとき
+            # 交点サークルは，1/3に分割
             # x座標
             circle_points[0, 0] = circle_points[3, 0] = circle_points[5, 0] = points[0, 0]
             circle_points[1, 0] = circle_points[6, 0] = x_distance * 1 // 2 + points[0, 0]
@@ -98,6 +102,7 @@ class GetCirclePoint:
             circle_points[3:5, 1] = y_distance * 1 // 2 + points[0, 1]
             circle_points[5:, 1] = points[3, 1]
         elif column == 16:  # 交点サークルのとき
+            # ブロックサークルは，半分に分割
             # x座標
             circle_points[0:13:4, 0] = points[0, 0]
             circle_points[1:14:4, 0] = x_distance * 1 // 3 + points[0, 0]
