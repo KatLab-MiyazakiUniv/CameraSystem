@@ -1,9 +1,11 @@
 from BlockBingo import BlockBingo
 from BlockBingo import Color
+from block_bingo.block_bingo_coordinate import CrossCirclesCoordinate
 import cv2
 import sys
 import numpy as np
 import pytest
+
 
 class BlockRecognizer:
     def __init__(self):
@@ -35,10 +37,32 @@ class BlockRecognizer:
                 return key
         print(h, s, v)
         return None
-        
-    def recognize_block_circle(self, img, circles_coordinates):
+    
+    def recognize(self, img, circles_coordinates):
         # ブロックサークルの数字を削除する。画像の周辺のノイズも削除する。
         img = self.extractor.remove_circle_number(img)
+
+        # ブロックサークル上のブロックを識別
+        black, color = self.recognize_block_circle(img, circles_coordinates)
+
+        # クロスサークル上のブロックを識別
+        cross_circle = self.recognize_cross_circle(img, circles_coordinates)
+    
+        return black, color, cross_circle
+
+    def recognize_cross_circle(self, img, circles_coordinates):
+        cross_circles = CrossCirclesCoordinate()
+        for col in "0123":
+            for row in "0123":
+                key = 'c' + row + col
+                coordinate = (int(row), int(col))
+                point = circles_coordinates[key] # 交点サークルの座標
+                crop = self.extractor.trim(img, point) # 交点サークルの周辺を切り取る
+                color = self.detect_color(self.extractor.closing(crop)) # ブロック識別
+                cross_circles.set_block_color(coordinate, color) # 認識結果を辞書に格納
+        return cross_circles
+
+    def recognize_block_circle(self, img, circles_coordinates):
         black = None  # 黒ブロックが置かれているブロックサークル番号
         color = None  # カラーブロックが置かれているブロックサークル番号
         
@@ -162,7 +186,7 @@ def test_result():
         }
     recognizer = BlockRecognizer()
     img = cv2.imread('result.png')
-    return recognizer.recognize_block_circle(img, circles_coordinates)
+    return recognizer.recognize(img, circles_coordinates)
 
 def test_result1():
     circles_coordinates = {
@@ -176,8 +200,24 @@ def test_result1():
         } 
     recognizer = BlockRecognizer()
     img = cv2.imread('result1.png')
-    return recognizer.recognize_block_circle(img, circles_coordinates)
-   
+    return recognizer.recognize(img, circles_coordinates)
+
 if __name__ == '__main__':
-    assert (5, 7) == test_result()
-    assert (5, 2) == test_result1()
+    result1_cc = CrossCirclesCoordinate()
+    result_cc = CrossCirclesCoordinate()
+    result1_cc_blocks = ((Color.BLUE, None, Color.RED, None),
+                         (None, Color.YELLOW, None, Color.BLACK),
+                         (Color.BLUE, None, Color.RED, None),
+                         (None, Color.YELLOW, None, Color.GREEN)
+                        )
+    result_cc_blocks = ((Color.BLUE, None, Color.RED, None),
+                 (None, Color.GREEN, None, Color.BLACK),
+                 (Color.BLUE, None, Color.YELLOW, None),
+                 (None, Color.YELLOW, None, Color.GREEN)
+                 )
+    for row in range(4):
+        for col in range(4):
+            result_cc.set_block_color((col, row), result_cc_blocks[row][col])
+            result1_cc.set_block_color((col, row), result1_cc_blocks[row][col])
+    assert (5, 7, result_cc) == test_result()
+    assert (5, 2, result1_cc) == test_result1()
