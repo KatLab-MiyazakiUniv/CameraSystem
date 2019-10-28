@@ -88,8 +88,32 @@ class RuleBook():
         raise ValueError('The number of block circle where color block is placed is wrong!')
 
     
-    def block_circle(self):
+    def get_quota(self):
         """
         ブロックビンゴ攻略までに設置する必要があるブロックサークル番号を返す。
         """
         return self.quota
+
+
+    def achivement(self):
+        """
+        ゲームの終了判定をする。
+        """
+        if len(self.quota) == 0 and self.bonus == 2:
+            return True
+        return False
+    
+
+    def put(self, index):
+        """
+        有効移動が成立したことを登録する。
+
+        Parameters
+        ----------
+        index : tuple
+            quotaのインデックス
+        """
+        if 0 <= index:
+            del self.quota[index]
+        else:
+            self.bonus += 1

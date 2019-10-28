@@ -5,6 +5,9 @@
 """
 from block_bingo_coordinate import BlockCirclesCoordinate
 from block_bingo_coordinate import CrossCirclesCoordinate
+from block_bingo_coordinate import Color
+from rule_book import RuleBook
+import pprint
 
 class Path():
     """
@@ -90,7 +93,6 @@ class BlockBingoSolver():
         self.direction = self.get_robot_direction_after_block_circle(block_circles_path)
         # ブロックサークル間移動したあとの走行体の位置を取得する
         self.position = self.get_robot_position_after_block_circle(block_circles_path)
-    
 
     def get_robot_direction_after_block_circle(self, block_circles_path):
         """
@@ -205,6 +207,40 @@ class BlockBingoSolver():
                          (2.5,0.5), (2.5,1.5), (2.5,2.5)]
 
         return [node for node in nodes if 0 <= node[0] <= 3 and 0 <= node[1] <= 3 and node not in block_circles]      
+
+
+    def solve(self):
+        """
+        ブロックビンゴ攻略とボーナスサークル設置を成立させるための運搬経路を計算する。
+        """
+        # ゲームの終了判定クラス
+        rule_book = RuleBook(self.block_circles, self.cross_circles)
+        path = []
+        while rule_book.achivement() != True:
+            # ブロックビンゴ攻略のために運搬するブロックサークル番号
+            quota = rule_book.get_quota()
+            colors = self.block_circles.colors(quota)
+            if rule_book.bonus < 2:
+                colors.append(Color.BLACK)
+            (src, index) = self.cross_circles.start_node(self.position, colors)
+            # 走行体の現在地からブロックがある交点サークルまで移動する
+            path.extend(self.a_star(self.position, src))
+            self.position = src
+            self.direction = self.get_robot_direction(path[-2], path[-1])
+            self.cross_circles.move_block(src)
+
+            # ブロックがある交点サークルからブロックサークルまで移動する
+            if colors[index] != Color.BLACK:
+                dst = self.cross_circles.goal_node(src, self.block_circles.get(quota[index]))
+            else:
+                dst = self.cross_circles.goal_node(src, self.block_circles.get(self.block_circles.bonus_circle))
+                index = -1
+            path.extend(self.a_star(src, dst))
+            self.position = dst
+            self.direction = self.get_robot_direction(path[-2], path[-1])
+            rule_book.put(index)
+        pprint.pprint(path)
+        return path
 
 
     def a_star(self, src, dst):

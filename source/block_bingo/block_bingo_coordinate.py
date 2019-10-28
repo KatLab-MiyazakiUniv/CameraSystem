@@ -159,7 +159,7 @@ class CrossCirclesCoordinate():
 
     def start_node(self, current, colors):
         """
-        走行体の現在地から最も近い、指定色のブロックが置いてある交点サークルの座標を返す。
+        走行体の現在地から最も近い、指定色のブロックが置いてある交点サークルの座標とサークル色のリストインデックスを返す。
 
         Parameters
         ----------
@@ -175,5 +175,5 @@ class CrossCirclesCoordinate():
         # 走行体の現在地から最も近い、指定色のブロックが置いてある交点サークルの座標を調べる
         for coordinate in coordinates:
             if self.cross_circles[coordinate] in colors:
-                return coordinate
+                return (coordinate, colors.index(self.cross_circles[coordinate]))
         return None
