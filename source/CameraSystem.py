@@ -7,6 +7,7 @@ import time
 import threading
 from PrepareGarage import PrepareGarage
 
+
 class CameraSystem:
     def __init__(self):
         self.camera = Camera()
@@ -65,7 +66,7 @@ class CameraSystem:
         while True:
             # 領域、座標指定
             block_bingo_img = self.camera.get_block_bingo_img(is_debug=self.is_debug)     # 領域指定して画像取得
-            circles_coordinates = self.camera.get_circle_coordinates()  # 座標ポチポチ
+            circles_coordinates = self.camera.get_circle_coordinates_with_range()  # 座標ポチポチ
             self.camera.save_settings()  # 座標ポチポチした結果を保存
             # ブロックの識別が来る
             recognizer = BlockRecognizer()
