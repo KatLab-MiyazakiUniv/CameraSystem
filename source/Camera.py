@@ -14,6 +14,8 @@ import numpy as np
 
 from PointList import PointList
 from BlockBingoPointList import BlockBingoPointList
+from get_circle_point import GetCirclePoint
+
 
 class Camera:
     def __init__(self, url="http://raspberrypi.local/?action=stream"):
@@ -149,12 +151,26 @@ class Camera:
         self.block_bingo_img_dummy = result_img_dummy
         return result_img
 
+    def get_circle_coordinates_with_range(self, window_name="Choose circles"):
+        if self.block_bingo_circle_coordinates is None:
+            get_circle_point = GetCirclePoint(window_name)
+            cv2.namedWindow(window_name)
+            cv2.setMouseCallback(window_name, get_circle_point.dragAndDropSquare,
+                                 [window_name, self.block_bingo_img_dummy, get_circle_point])
+            cv2.imshow(window_name, self.block_bingo_img_dummy)
+            cv2.moveWindow(window_name, 100, 100)  # 左上にウィンドウを出す
+            cv2.waitKey()
+            cv2.destroyAllWindows()
+            self.block_bingo_circle_coordinates = get_circle_point.named_points
+            self.modified_settings = True
+        return self.block_bingo_circle_coordinates
+
     def get_circle_coordinates(self, wname="Choose circles", npoints=24):
         """
         切り取ったブロックビンゴエリアの画像から各種サークルの座標を指定
         """
         # ファイルから座標データを読み込んでいない場合は、各種サークルの座標を設定する
-        if self.block_bingo_circle_coordinates == None:
+        if self.block_bingo_circle_coordinates is None:
             circle_ptlist = BlockBingoPointList(npoints)
             cv2.namedWindow(wname)
             cv2.setMouseCallback(wname, circle_ptlist.add_point, [wname, self.block_bingo_img_dummy, circle_ptlist])
