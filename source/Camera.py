@@ -182,8 +182,12 @@ class Camera:
 
         # ファイル読み込み
         with open(file_name, mode='r') as fp:
-            tmp = json.load(fp)
-        
+            try:
+                tmp = json.load(fp)
+            except json.decoder.JSONDecodeError:
+                print("ファイル（{}）は不正な形式です".format(file_name))
+                return
+
         # ファイルのデータが不十分な場合
         if not "number_img_range" in tmp:
             raise ValueError("データが不十分です（数字カード切り取り用）")
