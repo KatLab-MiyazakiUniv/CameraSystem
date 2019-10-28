@@ -10,7 +10,7 @@ import numpy as np
 
 class GetCirclePoint:
 
-    def __init__(self):
+    def __init__(self, window_name=None):
         """コンストラクタ
         """
         self.cc_points = np.empty((16, 2), dtype=int)  # 交点サークル
@@ -29,6 +29,7 @@ class GetCirclePoint:
             "b6": None, "b7": None, "b8": None,
             "c03": None, "c13": None, "c23": None, "c33": None,
         }
+        self.window_name = window_name
 
     def add(self):
         """
@@ -39,14 +40,14 @@ class GetCirclePoint:
         # ブロックサークルの座標を代入．
         for i in range(8):
             key = 'b{0}'.format(i + 1)
-            self.named_points[key] = self.bc_points[i]
+            self.named_points[key] = [int(p) for p in self.bc_points[i]]
 
         # 交点サークルの座標を代入．
         n = 0
         for i in range(4):
             for j in range(4):
                 key = 'c{0}{1}'.format(j, i)
-                self.named_points[key] = self.cc_points[n]
+                self.named_points[key] = [int(p) for p in self.cc_points[n]]
                 n += 1
 
     @staticmethod
@@ -63,7 +64,9 @@ class GetCirclePoint:
         """
         cv2.putText(img, '({0}, {1})'.format(x, y), (x, y), cv2.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255))
 
-    def drawAllPoints(self, img, points, win_name="WindowDAYO"):
+    def drawAllPoints(self, img, points, win_name=None):
+        if win_name is None:
+            win_name = self.window_name
         for i in range(points.shape[0]):
             # print("({0}, {1})" .format(cc_points[i, 0], cc_points[i, 1]))
             self.drawPoints(img, points[i, 0], points[i, 1])
