@@ -120,7 +120,7 @@ def test_moving_cost():
     # 走行体が水平に進むとき
     solver.direction = 2 # 東向きに設定
     assert 1 == solver.moving_cost((1,1), (1,1.5), path)    # 直進
-    assert 1 == solver.moving_cost((1,1), (1,0.5), path)    # 180度旋回
+    assert 2 == solver.moving_cost((1,1), (1,0.5), path)    # 180度旋回
     solver.direction = 4 # 南向きに設定
     assert 2 == solver.moving_cost((1,1), (1,0.5), path)    # 右に90度旋回
     assert 2 == solver.moving_cost((1,1), (1,1.5), path)    # 左に90度旋回
@@ -128,7 +128,7 @@ def test_moving_cost():
     # 走行体が垂直に進むとき
     solver.direction = 4 # 南向きに設定
     assert 1 == solver.moving_cost((1,1), (1.5,1), path)    # 直進
-    assert 1 == solver.moving_cost((1,1), (0.5,1), path)    # 180度旋回
+    assert 2 == solver.moving_cost((1,1), (0.5,1), path)    # 180度旋回
     solver.direction = 2 # 東向きに設定
     assert 2 == solver.moving_cost((1,1), (1.5,1), path)    # 右に90度旋回
     assert 2 == solver.moving_cost((1,1), (0.5,1), path)    # 左に90度旋回

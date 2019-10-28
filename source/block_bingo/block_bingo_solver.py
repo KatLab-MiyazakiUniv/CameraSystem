@@ -384,4 +384,4 @@ class BlockBingoSolver():
         """
         if has_block:
             return 5
-        return 1
+        return 2
