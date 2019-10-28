@@ -39,6 +39,26 @@ class BlockRecognizer:
         return None
     
     def recognize(self, img, circles_coordinates):
+        """
+        各ブロック・交点サークル上のブロックを認識する
+
+        Parameters
+        ----------
+        img: numpy.ndarray
+            ブロックサークルの部分を切り取った画像
+
+        circles_coordinates: dict
+            ブロック・交点サークルの座標
+
+        Returns
+        -------
+        black: int
+            ブロックサークル上の黒ブロックの位置
+        color: int
+            ブロックサークル上のカラーブロックの位置
+        cross_circle: CrossCirclesCoordinate
+            交点サークル上のブロック情報
+        """
         # ブロックサークルの数字を削除する。画像の周辺のノイズも削除する。
         img = self.extractor.remove_circle_number(img)
 
