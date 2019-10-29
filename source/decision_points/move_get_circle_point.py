@@ -6,6 +6,7 @@
 
 import cv2
 import tkinter as tk
+from tkinter import font
 from PIL import Image, ImageTk
 from source.decision_points import get_circle_point as gcp
 
@@ -13,7 +14,7 @@ from source.decision_points import get_circle_point as gcp
 class Points:
     def __init__(self):
         self.ix = self.iy = 0  # 押したxy座標
-        self.item_id = -1  # オブジェクトのID
+        self.item_id = ()  # オブジェクトのID
 
 
 class MoveGetCirclePoint(tk.Frame):
@@ -52,6 +53,12 @@ class MoveGetCirclePoint(tk.Frame):
                                         tags='b{0}'.format(i))  # tags=オブジェクト固有の番号
                 self.canvas.tag_bind('b{0}'.format(i), "<ButtonPress-1>", self.mousePressed)
                 self.canvas.tag_bind('b{0}'.format(i), "<B1-Motion>", self.mouseDragged)
+                # self.canvas.create_text(self.get_circle_point.bc_points[i, 0] + 25,  # x座標
+                #                         self.get_circle_point.bc_points[i, 1] - 15,  # y座標
+                #                         text='({}, {})'.format(self.get_circle_point.bc_points[i, 0],
+                #                                                self.get_circle_point.bc_points[i, 1]),
+                #                         fill='blue',  # 文字色
+                #                         tags='b{0}'.format(i))
 
             # 交点サークルの描画
             self.canvas.create_oval(self.get_circle_point.cc_points[i, 0] - 5,  # 左上角のx座標
@@ -59,6 +66,12 @@ class MoveGetCirclePoint(tk.Frame):
                                     self.get_circle_point.cc_points[i, 0] + 5,  # 右下角のx座標
                                     self.get_circle_point.cc_points[i, 1] + 5, fill='green',  # 右下角のx座標, 塗りつぶす色
                                     tags='c{0}'.format(i))  # tags=オブジェクト固有の番号
+            # self.canvas.create_text(self.get_circle_point.cc_points[i, 0] + 25,  # x座標
+            #                         self.get_circle_point.cc_points[i, 1] - 15,  # y座標
+            #                         text='({}, {})'.format(self.get_circle_point.cc_points[i, 0],
+            #                                                self.get_circle_point.cc_points[i, 1]),
+            #                         fill='blue',  # 文字色
+            #                         tags='c{0}'.format(i))
             self.canvas.tag_bind('c{0}'.format(i), "<ButtonPress-1>", self.mousePressed)
             self.canvas.tag_bind('c{0}'.format(i), "<B1-Motion>", self.mouseDragged)
 
@@ -78,7 +91,7 @@ class MoveGetCirclePoint(tk.Frame):
 
     def mouseDragged(self, event):
         """
-        マウスをクリックした時に呼ばれる
+        マウスがドラッグした時に呼ばれる
         :param event:
         :return:
         """
@@ -88,7 +101,6 @@ class MoveGetCirclePoint(tk.Frame):
             item = self.canvas.type(tag)
             delta_x = event.x - self.points.ix
             delta_y = event.y - self.points.iy
-            # print('eventの中身：{}'.format(event))
             if item == 'oval':  # 円のとき
                 x0, y0, x1, y1 = self.canvas.coords(self.points.item_id)  # 左上のxy座標と右下のxy座標を取得
                 self.canvas.coords(self.points.item_id, x0 + delta_x, y0 + delta_y, x1 + delta_x, y1 + delta_y)
