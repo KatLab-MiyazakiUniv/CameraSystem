@@ -16,21 +16,21 @@ class Points:
         self.item_id = -1  # オブジェクトのID
 
 
-class MoveGetCirclePoint:
-    def __init__(self, title='Show Image', img='./../img/clip_field.png'):
+class MoveGetCirclePoint(tk.Frame):
+    def __init__(self, master, title='Show Image', img='./../img/clip_field.png'):
         """コンストラクタ
         """
-        self.root = tk.Tk()
+        super().__init__(master)
         self.img = Image.open(img)
         self.image_tk = ImageTk.PhotoImage(self.img)
         width, height = self.img.size
         self.points = Points()
         self.title = title
         self.get_circle_point = gcp.GetCirclePoint()
-        self.root.title(title)
-        self.canvas = tk.Canvas(self.root, width=width, height=height)  # Canvas作成
+        master.title(title)
+        self.canvas = tk.Canvas(master, width=width, height=height)  # Canvas作成
         self.canvas.pack()
-        self.canvas.create_image(0, 0, image=self.image_tk, anchor=tk.NW)  # ImageTk 画像配置
+        self.canvas.create_image(0, 0, image=self.image_tk, anchor=tk.NW)  # ImageTk画像配置
         self.canvas.pack()
 
     def setGetCirclePoint(self, get_circle_point):
@@ -77,18 +77,27 @@ class MoveGetCirclePoint:
         self.points.iy = event.y
 
     def mouseDragged(self, event):
-        self.points.item_id = self.canvas.find_closest(event.x, event.y)
-        tag = self.canvas.gettags(self.points.item_id[0])[0]
-        item = self.canvas.type(tag)
+        """
+        マウスをクリックした時に呼ばれる
+        :param event:
+        :return:
+        """
+        try:
+            self.points.item_id = self.canvas.find_closest(event.x, event.y)
+            tag = self.canvas.gettags(self.points.item_id[0])[0]
+            item = self.canvas.type(tag)
+            delta_x = event.x - self.points.ix
+            delta_y = event.y - self.points.iy
+            # print('eventの中身：{}'.format(event))
+            if item == 'oval':  # 円のとき
+                x0, y0, x1, y1 = self.canvas.coords(self.points.item_id)  # 左上のxy座標と右下のxy座標を取得
+                self.canvas.coords(self.points.item_id, x0 + delta_x, y0 + delta_y, x1 + delta_x, y1 + delta_y)
+                self.points.ix = event.x
+                self.points.iy = event.y
+        except IndexError:
+            print('マウスの動きが早すぎます．')
+
         # print(item)
-        delta_x = event.x - self.points.ix
-        delta_y = event.y - self.points.iy
-        # print('eventの中身：{}'.format(event))
-        if item == 'oval':
-            x0, y0, x1, y1 = self.canvas.coords(self.points.item_id)
-            self.canvas.coords(self.points.item_id, x0 + delta_x, y0 + delta_y, x1 + delta_x, y1 + delta_y)
-            self.points.ix = event.x
-            self.points.iy = event.y
 
     def sub(self):
         img = './../img/clip_field.png'
@@ -105,7 +114,8 @@ class MoveGetCirclePoint:
 
 
 if __name__ == '__main__':
-    move_get_circle_point = MoveGetCirclePoint()  # 台形補正した画像をを準備して表示
+    root = tk.Tk()
+    move_get_circle_point = MoveGetCirclePoint(master=root)  # 台形補正した画像をを準備して表示
     move_get_circle_point.sub()
     move_get_circle_point.drawGetCirclePoint()
-    move_get_circle_point.root.mainloop()
+    move_get_circle_point.mainloop()
