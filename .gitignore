@@ -9,6 +9,8 @@ cg.png
 *_labels.txt
 result
 .venv/
+coverage.xml
+.pytest_cache
 
 source/detection_number/training_scripts/test/*
 !source/detection_number/training_scripts/test/README.md
