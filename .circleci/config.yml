@@ -4,9 +4,7 @@ jobs:
   build:  # required for runs that don't use workflows
     working_directory: ~/workspace
     docker:
-      - image: circleci/python:3.6.7  # primary container for the build job
-        environment:
-          PIPENV_VENV_IN_PROJECT: true
+      - image: circleci/python:3.7.4  # primary container for the build job
     steps:
       - checkout  # checkout source code to working directory
       - run:
@@ -16,19 +14,19 @@ jobs:
             ssh git@github.com git-lfs-authenticate "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}" download
             git lfs pull
       - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
       - restore_cache:  # ensure this step occurs *before* installing dependencies
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: |  # use pipenv to install dependencies
-            sudo pip install pipenv
-            pipenv install --ignore-pipfile --dev
-      - run: cd source && PYTHONPATH=. pipenv run pytest --cov . --cov=block_bingo --cov=bluetooth --cov=detection_number --cov=detection_block --cov-branch
-      - run: cd source && COVERALLS_REPO_TOKEN=brs6Jjqv1i5atmgyxgsPcxb0jj9dBt4FU pipenv run coveralls
+            sudo pip install poetry
+            poetry install
+      - run: cd source && PYTHONPATH=. poetry run pytest --cov . --cov=block_bingo --cov=bluetooth --cov=detection_number --cov=detection_block --cov-branch
+      - run: cd source && COVERALLS_REPO_TOKEN=brs6Jjqv1i5atmgyxgsPcxb0jj9dBt4FU poetry run coveralls
 
       - save_cache:
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - ".venv"
             - "/usr/local/bin"
-            - "/usr/local/lib/python3.6/site-packages"
+            - "/usr/local/lib/python3.7/site-packages"
