@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "CameraSystem2019"
-version = "0.1.0"
+name = "CameraSystem"
+version = "2019.10.29"
 description = ""
 authors = ["Futa Hirakoba <korosuke613613@gmail.com>"]
 license = "MIT"
