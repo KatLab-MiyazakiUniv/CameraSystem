@@ -5,7 +5,6 @@
 """
 
 import cv2
-import numpy as np
 import tkinter as tk
 from PIL import Image, ImageTk
 from source.decision_points import get_circle_point as gcp
@@ -14,43 +13,25 @@ from source.decision_points import get_circle_point as gcp
 class Points:
     def __init__(self):
         self.ix = self.iy = 0  # 押したxy座標
-        self.item_id = []  # オブジェクトのID
+        self.item_id = -1  # オブジェクトのID
 
 
 class MoveGetCirclePoint:
     def __init__(self, title='Show Image', img='./../img/clip_field.png'):
         """コンストラクタ
         """
+        self.root = tk.Tk()
+        self.img = Image.open(img)
+        self.image_tk = ImageTk.PhotoImage(self.img)
+        width, height = self.img.size
         self.points = Points()
         self.title = title
-        self.img = img
         self.get_circle_point = gcp.GetCirclePoint()
-        self.root = root
-        self.image_rgb = self.convertBGRtoRGB()
-        self.image_tk = self.convertImg()
         self.root.title(title)
-        self.canvas = tk.Canvas(self.root, width=self.image_rgb.shape[0], height=self.image_rgb.shape[1])  # Canvas作成
+        self.canvas = tk.Canvas(self.root, width=width, height=height)  # Canvas作成
         self.canvas.pack()
-        self.canvas.create_image(0, 0, image=self.image_tk, anchor='nw')  # ImageTk 画像配置
+        self.canvas.create_image(0, 0, image=self.image_tk, anchor=tk.NW)  # ImageTk 画像配置
         self.canvas.pack()
-
-    def convertImg(self):
-        """
-        RGBをPILに変換
-        :return:
-        """
-        image_pil = Image.fromarray(self.image_rgb)  # RGBからPILフォーマットへ変換
-        image_tk = ImageTk.PhotoImage(image_pil)  # ImageTkフォーマットへ変換
-        return image_tk
-
-    def convertBGRtoRGB(self):
-        """
-        imgreadで読み込んだの（BGR）をRGBに変換
-        :return:
-        """
-        image_bgr = cv2.imread(self.img)
-        image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)  # imgreadはBGRなのでRGBに変換
-        return image_rgb
 
     def setGetCirclePoint(self, get_circle_point):
         """
@@ -68,10 +49,9 @@ class MoveGetCirclePoint:
                                         self.get_circle_point.bc_points[i, 1] - 5,  # 左上角のy座標
                                         self.get_circle_point.bc_points[i, 0] + 5,  # 右下角のx座標
                                         self.get_circle_point.bc_points[i, 1] + 5, fill='red',  # 右下角のx座標, 塗りつぶす色
-                                        tags='b{}'.format(i))  # tags=オブジェクト固有の番号
+                                        tags='b{0}'.format(i))  # tags=オブジェクト固有の番号
                 self.canvas.tag_bind('b{0}'.format(i), "<ButtonPress-1>", self.mousePressed)
                 self.canvas.tag_bind('b{0}'.format(i), "<B1-Motion>", self.mouseDragged)
-                self.canvas.tag_bind('b{0}'.format(i), "<ButtonRelease-1>", self.mouseReleased)
 
             # 交点サークルの描画
             self.canvas.create_oval(self.get_circle_point.cc_points[i, 0] - 5,  # 左上角のx座標
@@ -81,7 +61,6 @@ class MoveGetCirclePoint:
                                     tags='c{0}'.format(i))  # tags=オブジェクト固有の番号
             self.canvas.tag_bind('c{0}'.format(i), "<ButtonPress-1>", self.mousePressed)
             self.canvas.tag_bind('c{0}'.format(i), "<B1-Motion>", self.mouseDragged)
-            self.canvas.tag_bind('c{0}'.format(i), "<ButtonRelease-1>", self.mouseReleased)
 
     def mousePressed(self, event):
         """
@@ -90,29 +69,26 @@ class MoveGetCirclePoint:
         :return:
         """
         self.points.item_id = self.canvas.find_closest(event.x, event.y)
+        print(self.canvas.find_closest(event.x, event.y))
         tag = self.canvas.gettags(self.points.item_id[0])[0]
         item = self.canvas.type(tag)
-        print('押されたのは：{}'.format(tag))
-        self.points.pressed_x = event.x
-        self.points.pressed_y = event.y
+        # print('押されたのは：{}'.format(tag))
+        self.points.ix = event.x
+        self.points.iy = event.y
 
     def mouseDragged(self, event):
         self.points.item_id = self.canvas.find_closest(event.x, event.y)
         tag = self.canvas.gettags(self.points.item_id[0])[0]
         item = self.canvas.type(tag)
-        print(item)
+        # print(item)
         delta_x = event.x - self.points.ix
         delta_y = event.y - self.points.iy
-        print('eventの中身：{}' .format(event))
+        # print('eventの中身：{}'.format(event))
         if item == 'oval':
-            x, y = self.canvas.coords(self.points.item_id)
-            print('item_id')
-            self.canvas.coords(self.points.item_id, delta_x+x, delta_y+y)
-        self.points.ix = event.x
-        self.points.iy = event.y
-
-    def mouseReleased(self):
-        pass
+            x0, y0, x1, y1 = self.canvas.coords(self.points.item_id)
+            self.canvas.coords(self.points.item_id, x0 + delta_x, y0 + delta_y, x1 + delta_x, y1 + delta_y)
+            self.points.ix = event.x
+            self.points.iy = event.y
 
     def sub(self):
         img = './../img/clip_field.png'
@@ -129,8 +105,6 @@ class MoveGetCirclePoint:
 
 
 if __name__ == '__main__':
-    # get_circle_point = gcp.GetCirclePoint()
-    root = tk.Tk()
     move_get_circle_point = MoveGetCirclePoint()  # 台形補正した画像をを準備して表示
     move_get_circle_point.sub()
     move_get_circle_point.drawGetCirclePoint()
