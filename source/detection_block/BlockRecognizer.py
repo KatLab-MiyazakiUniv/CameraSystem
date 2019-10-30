@@ -1,9 +1,11 @@
 from BlockBingo import BlockBingo
 from BlockBingo import Color
+from block_bingo.block_bingo_coordinate import CrossCirclesCoordinate
 import cv2
 import sys
 import numpy as np
 import pytest
+
 
 class BlockRecognizer:
     def __init__(self):
@@ -35,10 +37,52 @@ class BlockRecognizer:
                 return key
         print(h, s, v)
         return None
-        
-    def recognize_block_circle(self, img, circles_coordinates):
+    
+    def recognize(self, img, circles_coordinates):
+        """
+        各ブロック・交点サークル上のブロックを認識する
+
+        Parameters
+        ----------
+        img: numpy.ndarray
+            ブロックサークルの部分を切り取った画像
+
+        circles_coordinates: dict
+            ブロック・交点サークルの座標
+
+        Returns
+        -------
+        black: int
+            ブロックサークル上の黒ブロックの位置
+        color: int
+            ブロックサークル上のカラーブロックの位置
+        cross_circle: CrossCirclesCoordinate
+            交点サークル上のブロック情報
+        """
         # ブロックサークルの数字を削除する。画像の周辺のノイズも削除する。
         img = self.extractor.remove_circle_number(img)
+
+        # ブロックサークル上のブロックを識別
+        black, color = self.recognize_block_circle(img, circles_coordinates)
+
+        # クロスサークル上のブロックを識別
+        cross_circle = self.recognize_cross_circle(img, circles_coordinates)
+    
+        return black, color, cross_circle
+
+    def recognize_cross_circle(self, img, circles_coordinates):
+        cross_circles = CrossCirclesCoordinate()
+        for col in "0123":
+            for row in "0123":
+                key = 'c' + row + col
+                coordinate = (int(row), int(col))
+                point = circles_coordinates[key] # 交点サークルの座標
+                crop = self.extractor.trim(img, point) # 交点サークルの周辺を切り取る
+                color = self.detect_color(self.extractor.closing(crop)) # ブロック識別
+                cross_circles.set_block_color(coordinate, color) # 認識結果を辞書に格納
+        return cross_circles
+
+    def recognize_block_circle(self, img, circles_coordinates):
         black = None  # 黒ブロックが置かれているブロックサークル番号
         color = None  # カラーブロックが置かれているブロックサークル番号
         
@@ -150,34 +194,7 @@ class BlockExtractor():
         # 不要な情報が黒色になっているので白色に変換する
         return cv2.addWeighted(dst, 1, cv2.bitwise_not(mask), 1, 0)
 
-def test_result():
-    circles_coordinates = {
-        "c00": None, "c10": None, "c20": None, "c30": None,
-        "b1": (122, 153), "b2": (302, 155), "b3": (480, 150),
-        "c01": None, "c11": None, "c21": None, "c31": None,
-        "b4": (127, 338), "b5": (480, 339),
-        "c02": None, "c12": None, "c22": None, "c32": None,
-        "b6": (130, 521), "b7": (307, 521), "b8": (481, 520),
-        "c03": None, "c13": None, "c23": None, "c33": None,
-        }
-    recognizer = BlockRecognizer()
-    img = cv2.imread('result.png')
-    return recognizer.recognize_block_circle(img, circles_coordinates)
 
-def test_result1():
-    circles_coordinates = {
-        "c00": None, "c10": None, "c20": None, "c30": None,
-        "b1": (130, 145), "b2": (304, 148), "b3": (487, 147),
-        "c01": None, "c11": None, "c21": None, "c31": None,
-        "b4": (131, 331), "b5": (484, 333),
-        "c02": None, "c12": None, "c22": None, "c32": None,
-        "b6": (133, 517), "b7": (311, 517), "b8": (483, 515),
-        "c03": None, "c13": None, "c23": None, "c33": None,
-        } 
-    recognizer = BlockRecognizer()
-    img = cv2.imread('result1.png')
-    return recognizer.recognize_block_circle(img, circles_coordinates)
-   
 if __name__ == '__main__':
-    assert (5, 7) == test_result()
-    assert (5, 2) == test_result1()
+    pass
+
