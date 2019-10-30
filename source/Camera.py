@@ -91,18 +91,25 @@ class Camera:
         # キャプチャ終了
         cap.release()
 
-    def get_number_img(self, wname="CameraSystem", npoints=4, output_size=[420, 297], is_debug=True):
+    def get_img(self, npoints, wname):
+        ptlist = PointList(npoints)
+        cv2.namedWindow(wname)
+        cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
+        cv2.imshow(wname, self.original_img_dummy)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+        ptlist.trans()
+        # 切り取りのための座標情報をメンバ変数に格納
+        return ptlist.named_points
+
+    def get_number_img(self, wname="CameraSystem", npoints=4, output_size=None, is_debug=True):
         # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
-        if self.number_img_range == None:
-            ptlist = PointList(npoints)
-            cv2.namedWindow(wname)
-            cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
-            cv2.imshow(wname, self.original_img_dummy)
-            cv2.waitKey()
-            cv2.destroyAllWindows()
-            ptlist.trans()
+        if output_size is None:
+            output_size = [420, 297]
+
+        if self.number_img_range is None:
             # 切り取りのための座標情報をメンバ変数に格納
-            self.number_img_range = ptlist.named_points
+            self.number_img_range = self.get_img(npoints, wname)
             self.modified_settings = True
 
         # 画像を切り取る
@@ -118,16 +125,9 @@ class Camera:
 
     def get_block_bingo_img(self, wname="Clip 'Block Bingo' area", npoints=4, output_size=[640, 640], is_debug=True):
         # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
-        if self.block_bingo_img_range == None:
-            ptlist = PointList(npoints)
-            cv2.namedWindow(wname)
-            cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
-            cv2.imshow(wname, self.original_img_dummy)
-            cv2.waitKey()
-            cv2.destroyAllWindows()
-            ptlist.trans()
+        if self.block_bingo_img_range is None:
             # 切り取りのための座標情報をメンバ変数に格納
-            self.block_bingo_img_range = ptlist.named_points
+            self.block_bingo_img_range = self.get_img(npoints, wname)
             self.modified_settings = True
 
         # 画像を切り取り、保存する
