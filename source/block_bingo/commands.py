@@ -156,10 +156,10 @@ class Commands():
         # srcからdstの向きとdirectionが同じ向きであることを確認する
         if direction != self.get_next_direction(src, dst):
             # 向きが異なる場合、旋回コマンドに変換する
-            pass
+            return self.spin(src, dst, direction, has_block)
         if has_block != False:
             # 始点にブロックがある場合、ブロックありの直進に変換する
-            pass
+            return self.straight_detour(src, dst, direction, has_block)
         self.commands.append(Instructions.MOVE_NODE)
         return direction
 
@@ -171,7 +171,7 @@ class Commands():
         # 始点にブロックがないことを確認する
         if has_block != False:
             # 始点にブロックがある場合、ブロックありの旋回に変換する
-            pass
+            return self.turn180_detour(src, dst, direction, has_block)
         # srcとdstから走行体が次に向く方向を求める
         next_direction = self.get_next_direction(src, dst)
         sub = next_direction - direction
@@ -195,7 +195,7 @@ class Commands():
         # 始点にブロックがないことを確認する
         if has_block != False:
             # 始点にブロックがある場合、ブロックありの180°回頭して直進するコマンドへ変換する
-            pass
+            self.turn180_detour(src, dst, direction, has_block)
         self.commands.append(Instructions.TURN180)
 
         return self.get_next_direction(src, dst)
@@ -263,12 +263,14 @@ class Commands():
         """
         ブロックをブロックサークルに設置する動作をコマンドへ変換する。
         """
+        # 終点にブロックサークルがあることを確認する
+        if dst not in self.block_circles.block_circles.values():
+            raise ValueError('cannot find block circle corresponding to dst!')
         # 始点が交点サークルにあるとき
-        if src in self.cross_circles.cross_circles:
-            self.put_block_from_cross_circle(src, dst, direction, has_block)
-
+        if src[0] in [0, 1, 2, 3] and src[1] in [0, 1, 2, 3]:
+            return self.put_block_from_cross_circle(src, dst, direction, has_block)
         # 始点が黒線の中点にあるとき
-        pass
+        return self.put_block_from_midpoint(src, dst, direction, has_block)
 
 
     def put_block_from_midpoint(self, src, dst, direction, has_block):

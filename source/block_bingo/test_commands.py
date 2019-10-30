@@ -192,12 +192,36 @@ def test_put_block_from_cross_circle():
     for (args, results) in zip(args_list, results_list):
         for (arg, result) in zip(args, results):
             commands = create_commands()
-            print(arg[0], arg[1], arg[2], arg[3], result[0], result[1])
             assert result[0] == commands.put_block_from_cross_circle(arg[0], arg[1], arg[2], arg[3])
-            print(commands.get())
             assert len(result)-1 == len(commands.get())
             if len(commands.get()) == 1:
                 assert result[1] == commands.get()[0]
             else:
                 assert result[1] == commands.get()[0]
                 assert result[2] == commands.get()[1]
+
+
+def test_put():
+    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
+    args = [[(0,0), (0,0), 0, False],
+            [(0,0.5), (0,0), 0, False],
+            [(1,2.5), (0,2), 2, False],
+            [(2,2), (2,1), 4, False],
+            [(2,2), (2,2), 6, False]]
+
+    # 期待出力: 次の走行体の向き, コマンド
+    results = [[2, 'd', 'y'],
+               [4, 'f', 'g'],
+               [0, 'e', 'g'],
+               [4, 'y'],
+               [4, 'e', 'z']]
+    
+    for (arg, result) in zip(args, results):
+        commands = create_commands()
+        assert result[0] == commands.put(arg[0], arg[1], arg[2], arg[3])
+        assert len(result)-1 == len(commands.get())
+        if len(commands.get()) == 1:
+            assert result[1] == commands.get()[0]
+        else:
+            assert result[1] == commands.get()[0]
+            assert result[2] == commands.get()[1]
