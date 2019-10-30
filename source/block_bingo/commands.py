@@ -177,3 +177,4 @@ class Commands():
         if sub == -2 or sub == -6:
             self.commands.append(Instructions.TURN_LEFT90_UNEXIST_BLOCK)
             return next_direction
+    
