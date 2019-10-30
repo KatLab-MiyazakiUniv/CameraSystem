@@ -150,7 +150,7 @@ class Camera:
         if self.block_bingo_circle_coordinates is None:
             get_circle_point = GetCirclePoint(window_name)
             cv2.namedWindow(window_name)
-            cv2.setMouseCallback(window_name, get_circle_point.dragAndDropSquare,
+            cv2.setMouseCallback(window_name, get_circle_point.drag_and_drop_square,
                                  [window_name, self.block_bingo_img_dummy, get_circle_point])
             cv2.imshow(window_name, self.block_bingo_img_dummy)
             cv2.moveWindow(window_name, 100, 100)  # 左上にウィンドウを出す
