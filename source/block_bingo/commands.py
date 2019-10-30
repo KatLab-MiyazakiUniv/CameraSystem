@@ -16,10 +16,12 @@ class Instructions():
     PUT = 'g'
     STRAIGHT_DETOUR_RIGHT = 'h'
     STRAIGHT_DETOUR_LEFT = 'i'
+    TURN_RIGHT90_EXIST_BLOCK = 'j'
     TURN_RIGHT90_UNEXIST_BLOCK = 'k'
-    
+    TURN_LEFT90_EXIST_BLOCK = 'l'
     TURN_LEFT90_UNEXIST_BLOCK = 'm'
     TURN180 = 'n'
+
     MOVE_NODE = 'u'
     
 
@@ -33,12 +35,11 @@ class Instructions():
                 Instructions.SPIN_LEFT: '左に90°回頭する',
                 Instructions.SPIN180: '180°回頭する',
                 Instructions.PUT: 'ブロックを黒線の中点から設置',
-        
                 Instructions.STRAIGHT_DETOUR_RIGHT: 'ブロックを右方向に迂回しながら直進',
                 Instructions.STRAIGHT_DETOUR_LEFT: 'ブロックを左方向に迂回しながら直進',
-
+                Instructions.TURN_RIGHT90_EXIST_BLOCK: '右方向に旋回（ブロックあり）',
+                Instructions.TURN_LEFT90_EXIST_BLOCK: '左方向に旋回（ブロックあり）',
                 Instructions.TURN_RIGHT90_UNEXIST_BLOCK: '右方向に旋回（ブロックなし）',
-
                 Instructions.TURN_LEFT90_UNEXIST_BLOCK: '左方向に旋回（ブロックなし）'   ,   
                 Instructions.TURN180: '180°回頭して直進（ブロックなし）',
                 Instructions.MOVE_NODE: '交点サークルから黒線の中点まで直進'
@@ -180,6 +181,7 @@ class Commands():
         if sub == -2 or sub == 6:
             self.commands.append(Instructions.TURN_LEFT90_UNEXIST_BLOCK)
             return next_direction
+        raise ArithmeticError('cannot convert path to TURN command!')
 
 
     def turn180(self, src, dst, direction, has_block):
@@ -216,3 +218,23 @@ class Commands():
             self.commands[-1] = Instructions.STRAIGHT_DETOUR_RIGHT
         
         return direction
+    
+
+    def turn_detour(self, src, dst, direction, has_block):
+        """
+        ブロックありの旋回コマンドへ変換する。
+        """
+        # srcとdstから走行体が次に向く方向を求める
+        next_direction = self.get_next_direction(src, dst)
+        sub = next_direction - direction
+
+        if sub == 2 or sub == -6:
+            self.commands[-1] = Instructions.TURN_RIGHT90_EXIST_BLOCK
+            return next_direction
+        if sub == 4 or sub == -4:
+            # 180°回頭する必要がある場合は、180°回頭コマンドへ変換する
+            self.turn180(src, dst, direction, has_block)
+        if sub == -2 or sub == 6:
+            self.commands[-1] = Instructions.TURN_LEFT90_EXIST_BLOCK
+            return next_direction
+        raise ArithmeticError('cannot convert path to TURN command!')

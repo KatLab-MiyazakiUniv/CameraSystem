@@ -118,3 +118,20 @@ def test_straight_detour():
         assert arg[2] == commands.straight_detour(arg[0], arg[1], arg[2], arg[3])
         assert 1 == len(commands.get())
         assert result[0] == commands.get()[0]
+
+
+def test_turn_detour():
+    # README.mdの6.1のコマンド変換例
+    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
+    args = [[(1,1), (1,1.5), 0, True],
+            [(1,1), (1,0.5), 0, True]]
+    
+    # 期待出力リスト: 次の走行体の向き, コマンド
+    results = [[2, 'j'], [6, 'l']]
+
+    for (arg, result) in zip(args, results):
+        commands = create_commands()
+        commands.commands.append('u')    # 直進コマンドを追加する
+        assert result[0] == commands.turn_detour(arg[0], arg[1], arg[2], arg[3])
+        assert 1 == len(commands.get())
+        assert result[1] == commands.get()[0]
