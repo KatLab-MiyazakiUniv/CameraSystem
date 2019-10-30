@@ -69,3 +69,16 @@ def test_turn():
     assert 2 == commands.turn(src, dst, direction, has_block)
     assert 1 == len(commands.get())
     assert Instructions.TURN_RIGHT90_UNEXIST_BLOCK == commands.get()[0]
+
+
+def test_turn180():
+    commands = create_commands()
+
+    src = (1,1)
+    dst = (1.5,1)
+    direction = 0
+    has_block = False
+
+    assert 4 == commands.turn180(src, dst, direction, has_block)
+    assert 1 == len(commands.get())
+    assert Instructions.TURN180 == commands.get()[0]

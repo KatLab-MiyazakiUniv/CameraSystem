@@ -18,7 +18,7 @@ class Instructions():
     TURN_RIGHT90_UNEXIST_BLOCK = 'k'
     
     TURN_LEFT90_UNEXIST_BLOCK = 'm'
-    
+    TURN180 = 'n'
     MOVE_NODE = 'u'
     
 
@@ -36,8 +36,8 @@ class Instructions():
                 Instructions.TURN_RIGHT90_UNEXIST_BLOCK: '右方向に旋回（ブロックなし）',
 
                 Instructions.TURN_LEFT90_UNEXIST_BLOCK: '左方向に旋回（ブロックなし）'   ,   
-
-               Instructions.MOVE_NODE: '交点サークルから黒線の中点まで直進'
+                Instructions.TURN180: '180°回頭して直進（ブロックなし）',
+                Instructions.MOVE_NODE: '交点サークルから黒線の中点まで直進'
         }
         return ja[instruction]
 
@@ -173,8 +173,20 @@ class Commands():
             return next_direction
         if sub == 4 or sub == -4:
             # 180°回頭する必要がある場合は、180°回頭コマンドへ変換する
-            pass
+            self.turn180(src, dst, direction, has_block)
         if sub == -2 or sub == -6:
             self.commands.append(Instructions.TURN_LEFT90_UNEXIST_BLOCK)
             return next_direction
-    
+
+
+    def turn180(self, src, dst, direction, has_block):
+        """
+        180°回頭して直進するコマンドへ変換する。
+        """
+        # 始点にブロックがないことを確認する
+        if has_block != False:
+            # 始点にブロックがある場合、ブロックありの180°回頭して直進するコマンドへ変換する
+            pass
+        self.commands.append(Instructions.TURN180)
+
+        return self.get_next_direction(src, dst)
