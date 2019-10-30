@@ -56,3 +56,16 @@ def test_straight():
     assert direction == commands.straight(src, dst, direction, has_block)
     assert 1 == len(commands.get())
     assert Instructions.MOVE_NODE == commands.get()[0]
+
+
+def test_turn():
+    commands = create_commands()
+
+    src = (1,1)
+    dst = (1,1.5)
+    direction = 0
+    has_block = False
+
+    assert 2 == commands.turn(src, dst, direction, has_block)
+    assert 1 == len(commands.get())
+    assert Instructions.TURN_RIGHT90_UNEXIST_BLOCK == commands.get()[0]
