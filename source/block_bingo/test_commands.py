@@ -153,3 +153,33 @@ def test_turn180_detour():
         assert 2 == len(commands.get())
         assert result[1] == commands.get()[0]
         assert result[2] == commands.get()[1]
+
+
+def test_put_block_from_cross_circle():
+    # README.mdの9.1のコマンド変換例
+    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
+    points = [(1,0), (1,1), (2,0), (2,1)]   # 交点サークルの座標
+    place = (1,0)   # 設置するブロックサークルの座標
+
+    args_list = []
+    for point in points:
+        args_list.append([[point, place, i*2, False] for i in range(0,4)])
+    
+    # 期待出力リスト: 次の走行体の向き, コマンド
+    results_list = [[[2, 'd', 'y'], [2, 'y'], [4, 'z'], [4, 'e', 'z']],
+               [[6, 'e', 'z'], [4, 'd', 'y'], [4, 'y'], [6, 'z']],
+               [[0, 'y'], [2, 'z'], [2, 'e', 'z'], [0, 'd', 'y']],
+               [[0, 'z'], [0, 'e', 'z'], [6, 'd', 'y'], [6, 'y']]]
+    
+    for (args, results) in zip(args_list, results_list):
+        for (arg, result) in zip(args, results):
+            commands = create_commands()
+            print(arg[0], arg[1], arg[2], arg[3], result[0], result[1])
+            assert result[0] == commands.put_block_from_cross_circle(arg[0], arg[1], arg[2], arg[3])
+            print(commands.get())
+            assert len(result)-1 == len(commands.get())
+            if len(commands.get()) == 1:
+                assert result[1] == commands.get()[0]
+            else:
+                assert result[1] == commands.get()[0]
+                assert result[2] == commands.get()[1]
