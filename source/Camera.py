@@ -74,6 +74,8 @@ class Camera:
         # 画像をキャプチャ
         ret, img = cap.read()
         ret_dummy, img_dummy = cap.read()
+        if img_dummy is None:
+            img_dummy = img
 
         # 余白を設定する
         def create_padding(im):
@@ -294,13 +296,16 @@ if __name__ == '__main__':
             edit_settings = True
 
     # ラズパイから映像を受信し、保存する
-    camera = Camera()
+    camera = Camera("https://raw.githubusercontent.com/KatLab-MiyazakiUniv/CameraSystem/ticket-70/source/detection_number/imgs/sample.jpg")
     if not edit_settings:
         camera.load_settings()
     # 余白を設定
     camera.capture(padding=100)
     num_img = camera.get_number_img()  # 数字カードの画像
+    cv2.imwrite("aaa.png", num_img)
 
     bingo_img = camera.get_block_bingo_img()  # ブロックビンゴエリアの画像
+    cv2.imwrite("bbb.png", bingo_img)
+
     circle_coordinates = camera.get_circle_coordinates()  # 上記の画像における各種サークルの座標
     camera.save_settings()

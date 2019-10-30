@@ -1,7 +1,7 @@
 """
-@file: test_get_circle_point.py
-@author: Tatsumi0000
-@brief: GetCirclePoint.pyのをテストするプログラム
+@file: test_search_serial_port.py
+@author: Futa HIRAKOBA
+@brief: search_serial_port.pyのをテストするプログラム
 """
 
 from search_serial_port import search_com_ports, search_enabled_com_port
