@@ -4,9 +4,8 @@
 @brief: 取得した座標をtkinterで描画し，マウスで動かせるようにし座標の微調整をする．
 """
 
-import cv2
+import cv2.cv2 as cv2
 import tkinter as tk
-from tkinter import font
 from PIL import Image, ImageTk
 from source.decision_points import get_circle_point as gcp
 
@@ -109,9 +108,7 @@ class MoveGetCirclePoint(tk.Frame):
         except IndexError:
             print('マウスの動きが早すぎます．')
 
-        # print(item)
-
-    def sub(self):
+    def runGetCirclePoint(self):
         img = './../img/clip_field.png'
         window_name = 'WindowDAYO'
         img = cv2.imread(img)
@@ -124,10 +121,14 @@ class MoveGetCirclePoint(tk.Frame):
         cv2.waitKey()
         print(self.get_circle_point.named_points)
 
+    def run(self):
+        print('プログラムが起動しました．ウィンドウが出ない場合は，後ろにウィンドウがでてるかもしれません．')
+        self.runGetCirclePoint()
+        self.drawGetCirclePoint()
+        self.mainloop()
+
 
 if __name__ == '__main__':
     root = tk.Tk()
     move_get_circle_point = MoveGetCirclePoint(master=root)  # 台形補正した画像をを準備して表示
-    move_get_circle_point.sub()
-    move_get_circle_point.drawGetCirclePoint()
-    move_get_circle_point.mainloop()
+    move_get_circle_point.run()
