@@ -102,10 +102,8 @@ class Camera:
         # 切り取りのための座標情報をメンバ変数に格納
         return ptlist.named_points
 
-    def get_number_img(self, wname="CameraSystem", npoints=4, output_size=None, is_debug=True):
+    def get_number_img(self, wname="CameraSystem", npoints=4, output_size=(420, 297), is_debug=True):
         # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
-        if output_size is None:
-            output_size = [420, 297]
 
         if self.number_img_range is None:
             # 切り取りのための座標情報をメンバ変数に格納
@@ -123,7 +121,7 @@ class Camera:
             cv2.destroyAllWindows()
         return result_img
 
-    def get_block_bingo_img(self, wname="Clip 'Block Bingo' area", npoints=4, output_size=[640, 640], is_debug=True):
+    def get_block_bingo_img(self, wname="Clip 'Block Bingo' area", npoints=4, output_size=(640, 640), is_debug=True):
         # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
         if self.block_bingo_img_range is None:
             # 切り取りのための座標情報をメンバ変数に格納
@@ -241,15 +239,16 @@ class Camera:
             target_dict[key] = src_dict[key].tolist()
         return target_dict
 
-    def clip(self, img, output_size=[420, 297],
-             l_top=[-30, 460], l_btm=[190, 620],
-             r_top=[400, 450], r_btm=[200, 360]):
+    @staticmethod
+    def clip(img, output_size=(420, 297),
+             l_top=(-30, 460), l_btm=(190, 620),
+             r_top=(400, 450), r_btm=(200, 360)):
         """
         画像から指定された座標の部分を切り抜き、台形補正し保存する。
 
         Parameters
         ----------
-        src_img: numpy.ndarray
+        img: numpy.ndarray
             入力画像
 
         output_size: list
