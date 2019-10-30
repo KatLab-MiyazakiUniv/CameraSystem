@@ -7,6 +7,7 @@ from block_bingo_coordinate import BlockCirclesCoordinate
 from block_bingo_coordinate import CrossCirclesCoordinate
 from block_bingo_coordinate import Color
 from rule_book import RuleBook
+from rule_book import Bingo
 from commands import Commands
 
 class Path():
@@ -214,12 +215,12 @@ class BlockBingoSolver():
         return [node for node in nodes if 0 <= node[0] <= 3 and 0 <= node[1] <= 3 and node not in block_circles]      
 
 
-    def solve(self):
+    def solve(self, bingo=Bingo.DOUBLE_BINGO):
         """
         ブロックビンゴ攻略とボーナスサークル設置を成立させるための運搬経路を計算する。
         """
         # ゲームの終了判定クラス
-        rule_book = RuleBook(self.block_circles, self.cross_circles)
+        rule_book = RuleBook(self.block_circles, self.cross_circles, bingo)
         # コマンド変換クラス
         commands = Commands(self.block_circles, self.cross_circles)
         

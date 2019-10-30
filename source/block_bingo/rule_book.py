@@ -5,9 +5,17 @@
 """
 from block_bingo_coordinate import BlockCirclesCoordinate
 from block_bingo_coordinate import CrossCirclesCoordinate
+from enum import Enum, auto
+
+class Bingo(Enum):
+    SINGLE_BINGO = auto()
+    DOUBLE_BINGO = auto()
+    TRIPLE_BINGO = auto()
+    FULL_BINGO = auto()
+
 
 class RuleBook():
-    def __init__(self, block_circles, cross_circles):
+    def __init__(self, block_circles, cross_circles, bingo):
         """
         ブロックサークルおよび交点サークルの座標を登録し、ブロックビンゴの終了基準を決定する。
 
@@ -24,8 +32,29 @@ class RuleBook():
         # ボーナスサークル設置成功数
         self.bonus = 1
         # ビンゴ達成のためのノルマ
-        self.quota = self.single_bingo()
+        self.quota = self.select_bingo_quota(bingo)
     
+
+    def select_bingo_quota(self, bingo):
+        """
+        ブロックビンゴ達成のためのノルマを決める。
+        
+        Parameters
+        ----------
+        bingo : Bingo
+            ビンゴの種類
+        """
+        if bingo == Bingo.SINGLE_BINGO:
+            return self.single_bingo()
+        if bingo == Bingo.DOUBLE_BINGO:
+            return self.double_bingo()
+        if bingo == Bingo.TRIPLE_BINGO:
+            return self.triple_bingo()
+        if bingo == Bingo.FULL_BINGO:
+            return self.full_bingo()
+        
+        raise ValueError('selected quota is not in Bingo enumeration!')
+
 
     def single_bingo(self):
         """

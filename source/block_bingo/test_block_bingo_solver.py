@@ -10,6 +10,7 @@ from block_bingo_solver import BlockCirclesCoordinate
 from block_bingo_solver import CrossCirclesCoordinate
 from block_bingo_coordinate import Color
 from commands import Instructions
+from rule_book import Bingo
 
 def create_block_bingo(path=[(1,0), (2,0), (2,1)], is_left=True, bonus=5, color=3):
     return BlockBingoSolver(BlockCirclesCoordinate(is_left, bonus, color), CrossCirclesCoordinate(), path)
@@ -196,7 +197,7 @@ def test_a_star3():
     assert [(2,0), (2,0.5), (2,1), (2,1.5), (2,2), (1.5,2), (1,2)] == solver.a_star((2,0), (1,2))
 
 
-def test_solve2():
+def test_solve():
     solver = create_block_bingo([(1,0), (2,0)], bonus=6, color=7)
     block = [[Color.YELLOW, Color.NONE, Color.YELLOW, Color.NONE],
              [Color.NONE, Color.GREEN, Color.NONE, Color.BLUE],
@@ -207,4 +208,4 @@ def test_solve2():
             solver.cross_circles.set_block_color((x,y), block[x][y])
 
     commands = ['e', 'm', 'u', 'f', 'u', 'u', 'y', 'u', 'u', 'e', 'u', 'u', 'z', 'e', 'u', 'u', 'e', 'u', 'u', 'z']
-    assert commands == solver.solve()
+    assert commands == solver.solve(Bingo.SINGLE_BINGO)

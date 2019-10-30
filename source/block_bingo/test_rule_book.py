@@ -5,16 +5,32 @@
 """
 from block_bingo_coordinate import BlockCirclesCoordinate
 from block_bingo_coordinate import CrossCirclesCoordinate
+from rule_book import Bingo
 from rule_book import RuleBook
 
-def create_rule_book(color):
+def create_rule_book(color, bingo=Bingo.DOUBLE_BINGO):
     is_left = True
     bonus = 1
     color = color
     block_circle = BlockCirclesCoordinate(is_left, bonus, color)
     cross_circle = CrossCirclesCoordinate()
 
-    return RuleBook(block_circle, cross_circle)
+    return RuleBook(block_circle, cross_circle, bingo=bingo)
+
+
+def test_select_bingo_quota():
+    color = 1
+    rule_book = create_rule_book(color, Bingo.SINGLE_BINGO)
+    assert 2 == len(rule_book.quota)
+
+    rule_book = create_rule_book(color, Bingo.DOUBLE_BINGO)
+    assert 4 == len(rule_book.quota)
+
+    rule_book = create_rule_book(color, Bingo.TRIPLE_BINGO)
+    assert 6 == len(rule_book.quota)
+
+    rule_book = create_rule_book(color, Bingo.FULL_BINGO)
+    assert 7 == len(rule_book.quota)
 
 
 def test_single_bingo():
