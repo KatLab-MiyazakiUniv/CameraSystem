@@ -77,8 +77,8 @@ class RuleBook():
         """
         # カラーブロックが置かれたブロックサークル番号を取得する
         color_circle = self.block_circles.color_circle
-        candidates = [[1, 2, 3, 5, 8], [1, 2, 3, 4, 5], 
-                      [3, 4, 8, 7, 6], [1, 4, 6, 7, 8]]
+        candidates = [[1, 2, 3, 5, 8], [1, 2, 3, 4, 6], 
+                      [3, 5, 8, 7, 6], [1, 4, 6, 7, 8]]
 
         for candidate in candidates:
             if color_circle in candidate:

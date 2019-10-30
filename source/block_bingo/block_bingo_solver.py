@@ -254,7 +254,20 @@ class BlockBingoSolver():
             self.position = dst
             self.direction = commands.convert(self.direction, path)
             self.direction = commands.put(self.position, placed_circle, self.direction)
-            
+        
+        # ガレージに行くまでの運搬経路を計算する
+        if self.block_circles.block_circle_color[0] == Color.YELLOW:
+            # Lコースの場合、(2,2.5)まで移動する
+            path = self.a_star(self.position, (2,2.5))
+            self.direction = commands.convert(self.direction, path)
+            # ガレージ方向(座標(2,3)側）に回頭する
+            commands.spin((2,2.5), (2,3), self.direction, False)
+        else:
+            # Rコースの場合、(1,0.5)まで移動する
+            path = self.a_star(self.position, (1,0.5))
+            self.direction = commands.convert(self.direction, path)
+            # ガレージ方向(座標(1,0)側)に回頭する
+            commands.spin((1,0.5), (1,0), self.direction, path)
         return commands.get()
 
 
