@@ -62,4 +62,3 @@ def test_clip_bingo_area(camera):
     img = camera.get_block_bingo_img(is_debug=False)
     actual = cv2.imread("./img/sample_bingo.png")
     assert (img == actual).all()
-
