@@ -14,7 +14,8 @@ class Instructions():
     SPIN_LEFT = 'e'
     SPIN180 = 'f'
     PUT = 'g'
-
+    STRAIGHT_DETOUR_RIGHT = 'h'
+    STRAIGHT_DETOUR_LEFT = 'i'
     TURN_RIGHT90_UNEXIST_BLOCK = 'k'
     
     TURN_LEFT90_UNEXIST_BLOCK = 'm'
@@ -33,6 +34,9 @@ class Instructions():
                 Instructions.SPIN180: '180°回頭する',
                 Instructions.PUT: 'ブロックを黒線の中点から設置',
         
+                Instructions.STRAIGHT_DETOUR_RIGHT: 'ブロックを右方向に迂回しながら直進',
+                Instructions.STRAIGHT_DETOUR_LEFT: 'ブロックを左方向に迂回しながら直進',
+
                 Instructions.TURN_RIGHT90_UNEXIST_BLOCK: '右方向に旋回（ブロックなし）',
 
                 Instructions.TURN_LEFT90_UNEXIST_BLOCK: '左方向に旋回（ブロックなし）'   ,   
@@ -125,16 +129,15 @@ class Commands():
         
         # 次の方向と現在の方向を引き算する。
         sub = next_direction - direction
-
         if sub == 0:
             return direction
-        if sub == 2 or sub == 6:
+        if sub == 2 or sub == -6:
             self.commands.append(Instructions.SPIN_RIGHT)
             return next_direction
         if sub == 4 or sub == -4:
             self.commands.append(Instructions.SPIN180)
             return next_direction
-        if sub == -2 or sub == -6:
+        if sub == -2 or sub == 6:
             self.commands.append(Instructions.SPIN_LEFT)
             return next_direction
         
@@ -168,13 +171,13 @@ class Commands():
         next_direction = self.get_next_direction(src, dst)
         sub = next_direction - direction
 
-        if sub == 2 or sub == 6:
+        if sub == 2 or sub == -6:
             self.commands.append(Instructions.TURN_RIGHT90_UNEXIST_BLOCK)
             return next_direction
         if sub == 4 or sub == -4:
             # 180°回頭する必要がある場合は、180°回頭コマンドへ変換する
             self.turn180(src, dst, direction, has_block)
-        if sub == -2 or sub == -6:
+        if sub == -2 or sub == 6:
             self.commands.append(Instructions.TURN_LEFT90_UNEXIST_BLOCK)
             return next_direction
 
@@ -190,3 +193,26 @@ class Commands():
         self.commands.append(Instructions.TURN180)
 
         return self.get_next_direction(src, dst)
+    
+
+    def straight_detour(self, src, dst, direction, has_block):
+        """
+        ブロックありの直進コマンドへ変換する。
+        """
+        # 始点が格子状エリアの右端または下端にない場合
+        if 0 <= src[0] < 3 and 0 <= src[1] < 3:
+            # 走行体が上向きまたは右方向に進む場合
+            if dst[0] < src[0] or src[1] < dst[1]:
+                self.commands[-1] = Instructions.STRAIGHT_DETOUR_RIGHT
+            # 走行体が下向きまたは左方向に進む場合
+            else:
+                self.commands[-1] = Instructions.STRAIGHT_DETOUR_LEFT
+            return direction
+        
+        # 始点が格子状エリアの右端または下端にある場合
+        if dst[0] < src[0] or src[1] < dst[1]:
+            self.commands[-1] = Instructions.STRAIGHT_DETOUR_LEFT
+        else:
+            self.commands[-1] = Instructions.STRAIGHT_DETOUR_RIGHT
+        
+        return direction

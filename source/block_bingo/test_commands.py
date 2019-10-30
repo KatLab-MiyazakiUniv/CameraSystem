@@ -32,53 +32,89 @@ def create_commands(is_left=True, bonus=5, color=3):
     return Commands(block_circles, cross_circles)
 
 def test_spin():
-    commands = create_commands()
+    # README.mdの1.1のコマンド変換例
+    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
+    args = [[(1,1), (1,1.5), 0, False],
+            [(1,1), (1,1.5), 4, False],
+            [(1,1), (1,0.5), 0, False],
+            [(1,1), (1,0.5), 4, False]]
     
-    src = (3,1)
-    dst = (2.5,1)
-    direction = 4   # 南に向いていると仮定
-    has_block = False
+    # 期待出力: 次の走行体の向き, コマンド
+    results = [[2, 'd'],
+              [2, 'e'],
+              [6, 'e'],
+              [6, 'd']]
 
-    # 走行体が回頭したのち、北向きになることを確認する
-    assert 0 == commands.spin(src, dst, direction, has_block)
-    assert 1 == len(commands.get())
-    assert Instructions.SPIN180 == commands.get()[0]
+    for arg, result in zip(args, results):
+        commands = create_commands()
+        assert result[0] == commands.spin(arg[0], arg[1], arg[2], arg[3])
+        assert 1 == len(commands.get())
+        assert result[1] == commands.get()[0] 
 
 
 def test_straight():
-    commands = create_commands()
+    # README.mdの2.1のコマンド変換例
+    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
+    args = [[(1,1), (0.5,1), 0, False],
+            [(1,1), (1,1.5), 2, False],
+            [(1,1), (1.5,1), 4, False],
+            [(1,1), (1,0.5), 6, False]]
 
-    src = (1,1)
-    dst = (1,1.5)
-    direction = 2
-    has_block = False
-
-    assert direction == commands.straight(src, dst, direction, has_block)
-    assert 1 == len(commands.get())
-    assert Instructions.MOVE_NODE == commands.get()[0]
+    for arg in args:
+        commands = create_commands()
+        assert arg[2] == commands.straight(arg[0], arg[1], arg[2], arg[3])
+        assert 1 == len(commands.get())
+        assert 'u'== commands.get()[0]
 
 
 def test_turn():
-    commands = create_commands()
+    # README.mdの3.1のコマンド変換例
+    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
+    args = [[(1,1), (1,1.5), 0, False],
+            [(1,1), (1,0.5), 0, False]]
 
-    src = (1,1)
-    dst = (1,1.5)
-    direction = 0
-    has_block = False
+    # 期待出力リスト: 次の走行体の向き, コマンド
+    results = [[2, 'k'], [6, 'm']]
 
-    assert 2 == commands.turn(src, dst, direction, has_block)
-    assert 1 == len(commands.get())
-    assert Instructions.TURN_RIGHT90_UNEXIST_BLOCK == commands.get()[0]
+    for (arg, result) in zip(args, results):
+        commands = create_commands()
+        assert result[0] == commands.turn(arg[0], arg[1], arg[2], arg[3])
+        assert 1 == len(commands.get())
+        assert result[1] == commands.get()[0]
 
 
 def test_turn180():
-    commands = create_commands()
+    # README.mdの4.1のコマンド変換例
+    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
+    args = [[(1,1), (1.5,1), 0, False],
+            [(1,1), (1,0.5), 2, False],
+            [(1,1), (0.5,1), 4, False],
+            [(1,1), (1,1.5), 6, False]]
 
-    src = (1,1)
-    dst = (1.5,1)
-    direction = 0
-    has_block = False
+    # 期待出力リスト: 次の走行体の向き, コマンド
+    results = [[4, 'n'], [6, 'n'], [0, 'n'], [2, 'n']]
 
-    assert 4 == commands.turn180(src, dst, direction, has_block)
-    assert 1 == len(commands.get())
-    assert Instructions.TURN180 == commands.get()[0]
+    for (arg, result) in zip(args, results):
+        commands = create_commands()
+        assert result[0] == commands.turn180(arg[0], arg[1], arg[2], arg[3])
+        assert 1 == len(commands.get())
+        assert result[1] == commands.get()[0]
+
+
+def test_straight_detour():
+    # README.mdの5.1のコマンド変換例
+    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
+    args = [[(1,0), (0.5,0), 0, True],
+            [(3,1), (3,0.5), 6, True],
+            [(2,3), (1.5,3), 0, True],
+            [(3,2), (3,2.5), 2, True]]
+    
+    # 期待出力リスト: コマンド
+    results = ['h', 'h', 'i', 'i']
+
+    for (arg, result) in zip(args, results):
+        commands = create_commands()
+        commands.commands.append('u')   # 直進コマンドを追加する
+        assert arg[2] == commands.straight_detour(arg[0], arg[1], arg[2], arg[3])
+        assert 1 == len(commands.get())
+        assert result[0] == commands.get()[0]
