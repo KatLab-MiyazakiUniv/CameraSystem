@@ -39,6 +39,20 @@ def test_spin():
     direction = 4   # 南に向いていると仮定
     has_block = False
 
+    # 走行体が回頭したのち、北向きになることを確認する
     assert 0 == commands.spin(src, dst, direction, has_block)
     assert 1 == len(commands.get())
     assert Instructions.SPIN180 == commands.get()[0]
+
+
+def test_straight():
+    commands = create_commands()
+
+    src = (1,1)
+    dst = (1,1.5)
+    direction = 2
+    has_block = False
+
+    assert direction == commands.straight(src, dst, direction, has_block)
+    assert 1 == len(commands.get())
+    assert Instructions.MOVE_NODE == commands.get()[0]

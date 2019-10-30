@@ -15,6 +15,8 @@ class Instructions():
     SPIN180 = 'f'
     PUT = 'g'
 
+    MOVE_NODE = 'u'
+
 
     def translate(self, instruction):
         ja = {Instructions.ENTER_BINGO_AREA_L4: '4番サークルに進入',
@@ -24,6 +26,8 @@ class Instructions():
               Instructions.SPIN_LEFT: '左に90°回頭する',
               Instructions.SPIN180: '180°回頭する',
               Instructions.PUT: 'ブロックを黒線の中点から設置',
+        
+              Instructions.MOVE_NODE: '交点サークルから黒線の中点まで直進'
         }
         return ja[instruction]
 
@@ -123,3 +127,18 @@ class Commands():
             return next_direction
         
         raise ArithmeticError('cannot convert path to SPIN command!')
+    
+
+    def straight(self, src, dst, direction, has_block):
+        """
+        交点サークル間の直進コマンドへ変換する。
+        """
+        # srcからdstの向きとdirectionが同じ向きであることを確認する
+        if direction != self.get_next_direction(src, dst):
+            # 向きが異なる場合、旋回コマンドに変換する
+            pass
+        if has_block != False:
+            # 始点にブロックがある場合、ブロックありの直進に変換する
+            pass
+        self.commands.append(Instructions.MOVE_NODE)
+        return direction
