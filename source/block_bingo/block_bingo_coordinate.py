@@ -129,11 +129,15 @@ class CrossCirclesCoordinate():
         block_circle : tuple
             ブロックサークルの座標
         """
-        # ブロックサークルの周辺にある4つの交点サークルの座標を取得する
-        coordinates = [block_circle,
-                       (block_circle[0], block_circle[1]+1),
-                       (block_circle[0]+1, block_circle[1]),
-                       (block_circle[0]+1, block_circle[1]+1)]
+        # ブロックサークルの周辺にある8つの点の座標を取得する
+        coordinates = [block_circle, 
+                      (block_circle[0], block_circle[1]+0.5),
+                      (block_circle[0], block_circle[1]+1),
+                      (block_circle[0]+0.5, block_circle[1]),
+                      (block_circle[0]+0.5, block_circle[1]+1),
+                      (block_circle[0]+1, block_circle[1]),
+                      (block_circle[0]+1, block_circle[1]+0.5),
+                      (block_circle[0]+1, block_circle[1]+1)]
         # ブロックが置かれた交点サークルの座標を取り除く
         coordinates = list(set(coordinates) - set(self.open))
         # 交点サークルの座標と現在地の距離を計算する
