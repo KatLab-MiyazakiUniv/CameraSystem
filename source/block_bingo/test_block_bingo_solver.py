@@ -196,12 +196,12 @@ def test_a_star3():
 
 
 def test_solve():
-    solver = create_block_bingo([(2,0), (2,1)], bonus=7, color=7)
-    block = [[Color.BLUE, Color.NONE, Color.BLUE, Color.NONE],
-             [Color.NONE, Color.GREEN, Color.NONE, Color.RED],
-             [Color.GREEN, Color.NONE, Color.YELLOW, Color.NONE],
-             [Color.NONE, Color.YELLOW, Color.NONE, Color.BLACK]]
+    solver = create_block_bingo([(2,2), (2,1)], bonus=7, color=4)
+    block = [[Color.BLACK, Color.NONE, Color.RED, Color.NONE],
+             [Color.NONE, Color.GREEN, Color.NONE, Color.BLUE],
+             [Color.YELLOW, Color.NONE, Color.YELLOW, Color.NONE],
+             [Color.NONE, Color.GREEN, Color.NONE, Color.RED]]
     for x in range(0, 3+1):
         for y in range(0, 3+1):
             solver.cross_circles.set_block_color((x,y), block[x][y])
-    solver.solve()
+    assert [] == solver.solve()
