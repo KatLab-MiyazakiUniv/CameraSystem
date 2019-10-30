@@ -238,3 +238,18 @@ class Commands():
             self.commands[-1] = Instructions.TURN_LEFT90_EXIST_BLOCK
             return next_direction
         raise ArithmeticError('cannot convert path to TURN command!')
+
+
+    def turn180_detour(self, src, dst, direction, has_block):
+        """
+        ブロックありの180°回頭して直進するコマンドへ変換する。
+        """
+        # コマンドリストの先頭を取り出す
+        top = self.commands.pop(-1)
+        # 180°回頭するコマンドをコマンドリストへ追加し、directionを更新する
+        self.commands.append(Instructions.SPIN180)
+        direction = self.get_next_direction(src, dst)
+        # 取り出したコマンドリストの先頭をコマンドリストへ追加する
+        self.commands.append(top)
+        # ブロックありの直進コマンドへ変換する
+        return self.straight_detour(src, dst, direction, True)
