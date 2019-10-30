@@ -26,7 +26,7 @@ class BlackBlockCommands():
 
         # インスタンス生成
         self.block_circles_solver = BlockCirclesSolver(bonus, black, color, is_left)
-        self.block_circles_coordinate = BlockCirclesCoordinate(is_left, bonus)
+        self.block_circles_coordinate = BlockCirclesCoordinate(is_left, bonus, color)
 
         # 経路を計算
         route_tmp = self.block_circles_solver.solve()
