@@ -221,10 +221,9 @@ class Camera:
         if not self.modified_settings:
             print("[{}.{}] 設定の変更がないため保存は行いません".format(self.__class__.__name__, sys._getframe().f_code.co_name))
             return
-        settings = {}
-        settings["number_img_range"] = self.array_to_list(self.number_img_range)
-        settings["block_bingo_img_range"] = self.array_to_list(self.block_bingo_img_range)
-        settings["block_bingo_circle_coordinates"] = self.block_bingo_circle_coordinates
+        settings = {"number_img_range": self.array_to_list(self.number_img_range),
+                    "block_bingo_img_range": self.array_to_list(self.block_bingo_img_range),
+                    "block_bingo_circle_coordinates": self.block_bingo_circle_coordinates}
         with open(file_name, mode="w") as fp:
             print(settings)
             json.dump(settings, fp, indent=4)
