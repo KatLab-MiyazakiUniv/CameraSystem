@@ -78,6 +78,7 @@ def test_turn():
 
     for (arg, result) in zip(args, results):
         commands = create_commands()
+        commands.commands.append('u')   # 直進コマンドを追加する
         assert result[0] == commands.turn(arg[0], arg[1], arg[2], arg[3])
         assert 1 == len(commands.get())
         assert result[1] == commands.get()[0]
@@ -225,3 +226,13 @@ def test_put():
         else:
             assert result[1] == commands.get()[0]
             assert result[2] == commands.get()[1]
+
+
+def test_convert():
+    path = [(2.5,1), (2,1), (2,1.5), (2,2), (2,2.5), (2,3), (1.5,3), (1,3), (0.5,3)]
+    direction = 4   # 南向き
+    result = ['f', 'k', 'h', 'm', 'i']
+
+    commands = create_commands()
+    assert 0 == commands.convert(direction, path)
+    assert result == commands.get()

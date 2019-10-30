@@ -70,16 +70,12 @@ class Commands():
         self.commands = []
     
     
-    def convert(self, src, dst, direction, path):
+    def convert(self, direction, path):
         """
         運搬経路をコマンド変換する。
 
         Parameters
         ----------
-        src : tuple
-            始点の座標
-        dst : tuple
-            終点の座標
         direction : int
             方角: 上向きを0とし、時計回りに45度=1、90度=2、135度=3・・・315度=7とする
             0
@@ -88,11 +84,15 @@ class Commands():
         path : list
             運搬経路（移動する座標のリスト）
         """
-        # 始点にブロックが置いてあるか調べる。
-        has_block = src in self.cross_circles.open
-        # srcの前に運搬経路が存在しないことを確認する。
-        if src == path[0]:
-            self.spin(src, dst, direction, has_block)
+        # 運搬経路から始点と終点を抽出する
+        for (src, dst) in zip(path[:-1], path[1:]):
+            # 始点にブロックが置いてあるか調べる。
+            has_block = src in self.cross_circles.open
+            # srcの前に運搬経路が存在しないことを確認する。
+            if src == path[0]:
+                direction = self.spin(src, dst, direction, has_block)
+            direction = self.straight(src, dst, direction, has_block)
+        return direction
     
 
     def get(self):
@@ -156,7 +156,7 @@ class Commands():
         # srcからdstの向きとdirectionが同じ向きであることを確認する
         if direction != self.get_next_direction(src, dst):
             # 向きが異なる場合、旋回コマンドに変換する
-            return self.spin(src, dst, direction, has_block)
+            return self.turn(src, dst, direction, has_block)
         if has_block != False:
             # 始点にブロックがある場合、ブロックありの直進に変換する
             return self.straight_detour(src, dst, direction, has_block)
@@ -177,13 +177,13 @@ class Commands():
         sub = next_direction - direction
 
         if sub == 2 or sub == -6:
-            self.commands.append(Instructions.TURN_RIGHT90_UNEXIST_BLOCK)
+            self.commands[-1] = Instructions.TURN_RIGHT90_UNEXIST_BLOCK
             return next_direction
         if sub == 4 or sub == -4:
             # 180°回頭する必要がある場合は、180°回頭コマンドへ変換する
             self.turn180(src, dst, direction, has_block)
         if sub == -2 or sub == 6:
-            self.commands.append(Instructions.TURN_LEFT90_UNEXIST_BLOCK)
+            self.commands[-1] = Instructions.TURN_LEFT90_UNEXIST_BLOCK
             return next_direction
         raise ArithmeticError('cannot convert path to TURN command!')
 
