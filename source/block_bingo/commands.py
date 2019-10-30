@@ -129,6 +129,17 @@ class Commands():
     def spin(self, src, dst, direction, has_block):
         """
         回頭コマンドへ変換する。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         next_direction = self.get_next_direction(src, dst)
         
@@ -152,6 +163,17 @@ class Commands():
     def straight(self, src, dst, direction, has_block):
         """
         交点サークル間の直進コマンドへ変換する。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         # srcからdstの向きとdirectionが同じ向きであることを確認する
         if direction != self.get_next_direction(src, dst):
@@ -167,6 +189,17 @@ class Commands():
     def turn(self, src, dst, direction, has_block):
         """
         旋回コマンドへ変換する。
+        
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         # 始点にブロックがないことを確認する
         if has_block != False:
@@ -191,6 +224,17 @@ class Commands():
     def turn180(self, src, dst, direction, has_block):
         """
         180°回頭して直進するコマンドへ変換する。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         # 始点にブロックがないことを確認する
         if has_block != False:
@@ -227,6 +271,17 @@ class Commands():
     def turn_detour(self, src, dst, direction, has_block):
         """
         ブロックありの旋回コマンドへ変換する。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         # srcとdstから走行体が次に向く方向を求める
         next_direction = self.get_next_direction(src, dst)
@@ -247,6 +302,17 @@ class Commands():
     def turn180_detour(self, src, dst, direction, has_block):
         """
         ブロックありの180°回頭して直進するコマンドへ変換する。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         # コマンドリストの先頭を取り出す
         top = self.commands.pop(-1)
@@ -262,6 +328,17 @@ class Commands():
     def put(self, src, dst, direction, has_block=False):
         """
         ブロックをブロックサークルに設置する動作をコマンドへ変換する。
+
+      　Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         # 終点にブロックサークルがあることを確認する
         if dst not in self.block_circles.block_circles.values():
@@ -276,6 +353,17 @@ class Commands():
     def put_block_from_midpoint(self, src, dst, direction, has_block):
         """
         黒線の中点からブロックを設置する動作をコマンドに変換する。
+
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         # 黒線の中点の座標からブロックサークルの座標を引く
         sub = (src[0] - dst[0], src[1] - dst[1])
@@ -301,6 +389,17 @@ class Commands():
     def put_block_from_cross_circle(self, src, dst, direction, has_block):
         """
         交点サークルからブロックを設置する動作をコマンドに変換する。
+        
+        Parameters
+        ----------
+        src : tuple
+            始点の座標
+        dst : tuple
+            終点の座標
+        direction : int
+            走行体の現在の向き
+        has_block : bool
+            始点にブロックが存在するか
         """
         # 交点サークルの座標からブロックサークルの座標を引く
         sub = (src[0] - dst[0], src[1] - dst[1])

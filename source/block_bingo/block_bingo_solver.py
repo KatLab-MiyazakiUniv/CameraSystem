@@ -218,6 +218,11 @@ class BlockBingoSolver():
     def solve(self, bingo=Bingo.DOUBLE_BINGO):
         """
         ブロックビンゴ攻略とボーナスサークル設置を成立させるための運搬経路を計算する。
+
+        Parameters
+        ----------
+        bingo : Bingo
+            ビンゴ状態
         """
         # ゲームの終了判定クラス
         rule_book = RuleBook(self.block_circles, self.cross_circles, bingo)

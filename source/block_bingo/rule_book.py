@@ -25,6 +25,8 @@ class RuleBook():
             ブロックサークルの座標
         cross_circles : CrossCirclesCoordinate
             交点サークルの座標
+        bingo : Bingo
+            ビンゴ状態
         """
         self.block_circles = block_circles
         self.cross_circles = cross_circles
