@@ -76,24 +76,20 @@ class Camera:
         ret_dummy, img_dummy = cap.read()
 
         # 余白を設定する
-        tmp = img[:, :]
-        height, width = img.shape[:2]
-        new_img = cv2.resize(np.full((1, 1, 3), fill_value=255, dtype=np.uint8),
-                             dsize=(width + padding * 2, height + padding * 2))
-        new_img[padding:height + padding, padding:width + padding] = tmp
-        # 余白を設定する
-        tmp = img_dummy[:, :]
-        height, width = img_dummy.shape[:2]
-        new_img_dummy = cv2.resize(np.full((1, 1, 3), fill_value=255, dtype=np.uint8),
-                             dsize=(width + padding * 2, height + padding * 2))
-        new_img_dummy[padding:height + padding, padding:width + padding] = tmp
+        def create_padding(im):
+            tmp = im[:, :]
+            height, width = img.shape[:2]
+            new_img = cv2.resize(np.full((1, 1, 3), fill_value=255, dtype=np.uint8),
+                                 dsize=(width + padding * 2, height + padding * 2))
+            new_img[padding:height + padding, padding:width + padding] = tmp
+            return new_img
+
+        # 画像をメンバ変数に格納
+        self.original_img = create_padding(img)
+        self.original_img_dummy = create_padding(img_dummy)
 
         # キャプチャ終了
         cap.release()
-
-        # 画像をメンバ変数に格納
-        self.original_img = new_img
-        self.original_img_dummy = new_img_dummy
 
     def get_number_img(self, wname="CameraSystem", npoints=4, output_size=[420, 297], is_debug=True):
         # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
