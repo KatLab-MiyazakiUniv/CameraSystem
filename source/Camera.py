@@ -202,15 +202,12 @@ class Camera:
                 return
 
         # ファイルのデータが不十分な場合
-        if not "number_img_range" in tmp:
+        if "number_img_range" not in tmp:
             raise ValueError("データが不十分です（数字カード切り取り用）")
-            return
-        if not "block_bingo_img_range" in tmp:
+        if "block_bingo_img_range" not in tmp:
             raise ValueError("データが不十分です（ブロックビンゴエリア切り取り用）")
-            return
-        if not "block_bingo_circle_coordinates" in tmp:
+        if "block_bingo_circle_coordinates" not in tmp:
             raise ValueError("データが不十分です（各種サークルの座標）")
-            return
 
         self.number_img_range = tmp["number_img_range"]
         self.block_bingo_img_range = tmp["block_bingo_img_range"]
