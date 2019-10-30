@@ -9,7 +9,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        python-version: [3.6]
+        python-version: [3.7]
 
     steps:
     - uses: actions/checkout@master
@@ -20,12 +20,12 @@ jobs:
     - name: Install pipenv
       run: |
         python -m pip install --upgrade pip
-        pip install pipenv
+        pip install poetry
     - name: Install dependencies
       run: |
-        pipenv install --python python --ignore-pipfile --dev
+        poetry install
     - name: Test with pytest
-      run: cd source && PYTHONPATH=. pipenv run pytest --cov=. --cov=block_bingo --cov=bluetooth --cov=detection_number --cov=detection_block --cov-branch --cov-report=xml
+      run: cd source && PYTHONPATH=. poetry run pytest --cov=. --cov=block_bingo --cov=bluetooth --cov=detection_number --cov=detection_block --cov-branch --cov-report=xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1.0.0
       with:
