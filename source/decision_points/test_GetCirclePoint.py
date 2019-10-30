@@ -4,7 +4,7 @@
 @brief: GetCirclePoint.pyのをテストするプログラム
 """
 
-from get_circle_point import GetCirclePoint
+from GetCirclePoint import GetCirclePoint
 import numpy as np
 
 

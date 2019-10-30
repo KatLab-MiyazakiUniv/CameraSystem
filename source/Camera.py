@@ -11,9 +11,9 @@ import json
 import cv2
 import numpy as np
 
-from PointList import PointList
-from BlockBingoPointList import BlockBingoPointList
-from get_circle_point import GetCirclePoint
+from decision_points.PointList import PointList
+from decision_points.BlockBingoPointList import BlockBingoPointList
+from decision_points.GetCirclePoint import GetCirclePoint
 
 
 class Camera:
