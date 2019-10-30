@@ -171,7 +171,7 @@ class Commands():
         # 始点にブロックがないことを確認する
         if has_block != False:
             # 始点にブロックがある場合、ブロックありの旋回に変換する
-            return self.turn180_detour(src, dst, direction, has_block)
+            return self.turn_detour(src, dst, direction, has_block)
         # srcとdstから走行体が次に向く方向を求める
         next_direction = self.get_next_direction(src, dst)
         sub = next_direction - direction

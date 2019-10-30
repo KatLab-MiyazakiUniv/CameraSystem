@@ -7,7 +7,7 @@ from block_bingo_coordinate import BlockCirclesCoordinate
 from block_bingo_coordinate import CrossCirclesCoordinate
 from block_bingo_coordinate import Color
 from rule_book import RuleBook
-import pprint
+from commands import Commands
 
 class Path():
     """
@@ -220,32 +220,41 @@ class BlockBingoSolver():
         """
         # ゲームの終了判定クラス
         rule_book = RuleBook(self.block_circles, self.cross_circles)
-        path = []
+        # コマンド変換クラス
+        commands = Commands(self.block_circles, self.cross_circles)
+        
         while rule_book.achivement() != True:
             # ブロックビンゴ攻略のために運搬するブロックサークル番号
             quota = rule_book.get_quota()
             colors = self.block_circles.colors(quota)
+            # ボーナスサークル設置が2個成立していないときは、運搬するブロック色に黒色を加える
             if rule_book.bonus < 2:
                 colors.append(Color.BLACK)
-            (src, index) = self.cross_circles.start_node(self.position, colors)
-            # 走行体の現在地からブロックがある交点サークルまで移動する
-            path.extend(self.a_star(self.position, src))
-            self.position = src
-            self.direction = self.get_robot_direction(path[-2], path[-1])
-            self.cross_circles.move_block(src)
 
-            # ブロックがある交点サークルからブロックサークルまで移動する
+            (src, index) = self.cross_circles.start_node(self.position, colors)
+            # 走行体の現在地からブロックがある交点サークルまで移動する経路を求める
+            path = self.a_star(self.position, src)
+            # ブロックがある交点サークルからブロックを取得する
+            self.cross_circles.move_block(src)
+            self.position = src
+            self.direction = commands.convert(self.direction, path)
+
             if colors[index] != Color.BLACK:
-                dst = self.cross_circles.goal_node(src, self.block_circles.get(quota[index]))
+                placed_circle = self.block_circles.get(quota[index])
+                dst = self.cross_circles.goal_node(src, placed_circle)
+                rule_book.put_color_block(index)
             else:
-                dst = self.cross_circles.goal_node(src, self.block_circles.get(self.block_circles.bonus_circle))
-                index = -1
-            path.extend(self.a_star(src, dst))
+                placed_circle = self.block_circles.get(self.block_circles.bonus_circle)
+                dst = self.cross_circles.goal_node(src, placed_circle)
+                rule_book.put_black_block()
+            
+            # ブロックがある交点サークルからブロックサークルまで移動する経路を求める
+            path = self.a_star(src, dst)
             self.position = dst
-            self.direction = self.get_robot_direction(path[-2], path[-1])
-            rule_book.put(index)
-        pprint.pprint(path)
-        return path
+            self.direction = commands.convert(self.direction, path)
+            self.direction = commands.put(self.position, placed_circle, self.direction)
+            
+        return commands.get()
 
 
     def a_star(self, src, dst):

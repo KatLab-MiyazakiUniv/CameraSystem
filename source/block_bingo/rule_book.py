@@ -104,7 +104,7 @@ class RuleBook():
         return False
     
 
-    def put(self, index):
+    def put_color_block(self, index):
         """
         有効移動が成立したことを登録する。
 
@@ -113,7 +113,12 @@ class RuleBook():
         index : tuple
             quotaのインデックス
         """
-        if 0 <= index:
+        if 0 <= index < len(self.quota):
             del self.quota[index]
-        else:
-            self.bonus += 1
+    
+
+    def put_black_block(self):
+        """
+        ボーナスサークル設置が成立したことを登録する。
+        """
+        self.bonus += 1
