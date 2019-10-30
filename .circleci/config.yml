@@ -7,12 +7,6 @@ jobs:
       - image: circleci/python:3.7.4  # primary container for the build job
     steps:
       - checkout  # checkout source code to working directory
-      - run:
-          command: |
-            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-            sudo apt-get install git-lfs
-            ssh git@github.com git-lfs-authenticate "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}" download
-            git lfs pull
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
       - restore_cache:  # ensure this step occurs *before* installing dependencies

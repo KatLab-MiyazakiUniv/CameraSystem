@@ -24,6 +24,6 @@ source/detection_number/training_scripts/valid/*
 
 preprocess.jpg
 .coverage
-
+.venv
 snapshot_iter_*
 camera_settings.json
