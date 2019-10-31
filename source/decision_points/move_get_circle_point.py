@@ -21,14 +21,17 @@ class MoveGetCirclePoint(tk.Frame):
         """コンストラクタ
         """
         super().__init__(master)
+        self.master = master
+        self.master.bind("<KeyPress>", self.keyEvent)
+        # master.focus_set()
         self.img = Image.open(img)
         self.image_tk = ImageTk.PhotoImage(self.img)
         width, height = self.img.size
         self.points = Points()
         self.title = title
         self.get_circle_point = gcp.GetCirclePoint()
-        master.title(title)
-        self.canvas = tk.Canvas(master, width=width, height=height)  # Canvas作成
+        self.master.title(title)
+        self.canvas = tk.Canvas(self.master, width=width, height=height)  # Canvas作成
         self.canvas.pack()
         self.canvas.create_image(0, 0, image=self.image_tk, anchor=tk.NW)  # ImageTk画像配置
         self.canvas.pack()
@@ -43,15 +46,19 @@ class MoveGetCirclePoint(tk.Frame):
         self.get_circle_point = get_circle_point
 
     def drawGetCirclePoint(self):
+        """
+        メモ：：ここのfor文を辞書型の方で回して，タグの名前をその辞書型のkeyに変えることで後でソートが楽になるはず
+        :return:
+        """
         for i in range(self.get_circle_point.CROSS_CIRCLE_POINTS):
             if i < self.get_circle_point.BLOCK_CIRCLE_POINTS:  # ブロックサークル
                 self.canvas.create_oval(self.get_circle_point.bc_points[i, 0] - 5,  # 左上角のx座標
                                         self.get_circle_point.bc_points[i, 1] - 5,  # 左上角のy座標
                                         self.get_circle_point.bc_points[i, 0] + 5,  # 右下角のx座標
                                         self.get_circle_point.bc_points[i, 1] + 5, fill='red',  # 右下角のx座標, 塗りつぶす色
-                                        tags='b{0}'.format(i))  # tags=オブジェクト固有の番号
-                self.canvas.tag_bind('b{0}'.format(i), "<ButtonPress-1>", self.mousePressed)
-                self.canvas.tag_bind('b{0}'.format(i), "<B1-Motion>", self.mouseDragged)
+                                        tags='b{0}'.format(i + 1))  # tags=オブジェクト固有の番号
+                self.canvas.tag_bind('b{0}'.format(i + 1), "<ButtonPress-1>", self.mousePressed)
+                self.canvas.tag_bind('b{0}'.format(i + 1), "<B1-Motion>", self.mouseDragged)
                 # self.canvas.create_text(self.get_circle_point.bc_points[i, 0] + 25,  # x座標
                 #                         self.get_circle_point.bc_points[i, 1] - 15,  # y座標
                 #                         text='({}, {})'.format(self.get_circle_point.bc_points[i, 0],
@@ -84,7 +91,7 @@ class MoveGetCirclePoint(tk.Frame):
         print(self.canvas.find_closest(event.x, event.y))
         tag = self.canvas.gettags(self.points.item_id[0])[0]
         item = self.canvas.type(tag)
-        # print('押されたのは：{}'.format(tag))
+        print('押されたのは：{}'.format(item))
         self.points.ix = event.x
         self.points.iy = event.y
 
@@ -97,9 +104,11 @@ class MoveGetCirclePoint(tk.Frame):
         try:
             self.points.item_id = self.canvas.find_closest(event.x, event.y)
             tag = self.canvas.gettags(self.points.item_id[0])[0]
+            print('TAG:{}'.format(tag))
             item = self.canvas.type(tag)
             delta_x = event.x - self.points.ix
             delta_y = event.y - self.points.iy
+            print(self.canvas.find_all())
             if item == 'oval':  # 円のとき
                 x0, y0, x1, y1 = self.canvas.coords(self.points.item_id)  # 左上のxy座標と右下のxy座標を取得
                 self.canvas.coords(self.points.item_id, x0 + delta_x, y0 + delta_y, x1 + delta_x, y1 + delta_y)
@@ -107,6 +116,21 @@ class MoveGetCirclePoint(tk.Frame):
                 self.points.iy = event.y
         except IndexError:
             print('マウスの動きが早すぎます．')
+
+    def getFixPoints(self):
+        pass
+
+    def keyEvent(self, event):
+        if event.char == 'q':  # キーボードのqが押されたら
+            self.master.quit()  # tkinterを終了
+        print('押されたキーボード：{}'.format(event.char))
+
+    def fixPoint(self):
+        pass
+        # for id in self.canvas.find_all():
+        #     tag = self.canvas.itemcget(id, 'tags')
+        #     if tag in 'b':
+        #         self.get_circle_point.bc_points[]
 
     def runGetCirclePoint(self):
         img = './../img/clip_field.png'
@@ -126,6 +150,7 @@ class MoveGetCirclePoint(tk.Frame):
         self.runGetCirclePoint()
         self.drawGetCirclePoint()
         self.mainloop()
+        print(self.canvas.find_all())
 
 
 if __name__ == '__main__':
