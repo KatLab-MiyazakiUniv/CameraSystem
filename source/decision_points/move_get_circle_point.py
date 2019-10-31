@@ -12,6 +12,8 @@ from source.decision_points import get_circle_point as gcp
 
 class Points:
     def __init__(self):
+        """マウスで図形を動かす時に座標を管理するために使うクラス
+        """
         self.ix = self.iy = 0  # 押したxy座標
         self.item_id = ()  # オブジェクトのID
 
@@ -22,13 +24,14 @@ class MoveGetCirclePoint(tk.Frame):
         """
         super().__init__(master)
         self.master = master
-        self.master.bind("<KeyPress>", self.keyEvent)
+        self.RADIUS = 5  # 描画する円の半径
+        self.master.bind("<KeyPress>", self.keyEvent)  # キーボードを入力を受け付ける
         # master.focus_set()
         self.img = Image.open(img)
         self.image_tk = ImageTk.PhotoImage(self.img)
-        width, height = self.img.size
+        width, height = self.img.size  # 画像のサイズ
         self.points = Points()
-        self.title = title
+        self.title = title  # windowのタイトル
         self.get_circle_point = gcp.GetCirclePoint()
         self.master.title(title)
         self.canvas = tk.Canvas(self.master, width=width, height=height)  # Canvas作成
@@ -50,36 +53,23 @@ class MoveGetCirclePoint(tk.Frame):
         メモ：：ここのfor文を辞書型の方で回して，タグの名前をその辞書型のkeyに変えることで後でソートが楽になるはず
         :return:
         """
-        for i in range(self.get_circle_point.CROSS_CIRCLE_POINTS):
-            if i < self.get_circle_point.BLOCK_CIRCLE_POINTS:  # ブロックサークル
-                self.canvas.create_oval(self.get_circle_point.bc_points[i, 0] - 5,  # 左上角のx座標
-                                        self.get_circle_point.bc_points[i, 1] - 5,  # 左上角のy座標
-                                        self.get_circle_point.bc_points[i, 0] + 5,  # 右下角のx座標
-                                        self.get_circle_point.bc_points[i, 1] + 5, fill='red',  # 右下角のx座標, 塗りつぶす色
-                                        tags='b{0}'.format(i + 1))  # tags=オブジェクト固有の番号
-                self.canvas.tag_bind('b{0}'.format(i + 1), "<ButtonPress-1>", self.mousePressed)
-                self.canvas.tag_bind('b{0}'.format(i + 1), "<B1-Motion>", self.mouseDragged)
-                # self.canvas.create_text(self.get_circle_point.bc_points[i, 0] + 25,  # x座標
-                #                         self.get_circle_point.bc_points[i, 1] - 15,  # y座標
-                #                         text='({}, {})'.format(self.get_circle_point.bc_points[i, 0],
-                #                                                self.get_circle_point.bc_points[i, 1]),
-                #                         fill='blue',  # 文字色
-                #                         tags='b{0}'.format(i))
-
-            # 交点サークルの描画
-            self.canvas.create_oval(self.get_circle_point.cc_points[i, 0] - 5,  # 左上角のx座標
-                                    self.get_circle_point.cc_points[i, 1] - 5,  # 左上角のy座標
-                                    self.get_circle_point.cc_points[i, 0] + 5,  # 右下角のx座標
-                                    self.get_circle_point.cc_points[i, 1] + 5, fill='green',  # 右下角のx座標, 塗りつぶす色
-                                    tags='c{0}'.format(i))  # tags=オブジェクト固有の番号
-            # self.canvas.create_text(self.get_circle_point.cc_points[i, 0] + 25,  # x座標
-            #                         self.get_circle_point.cc_points[i, 1] - 15,  # y座標
-            #                         text='({}, {})'.format(self.get_circle_point.cc_points[i, 0],
-            #                                                self.get_circle_point.cc_points[i, 1]),
-            #                         fill='blue',  # 文字色
-            #                         tags='c{0}'.format(i))
-            self.canvas.tag_bind('c{0}'.format(i), "<ButtonPress-1>", self.mousePressed)
-            self.canvas.tag_bind('c{0}'.format(i), "<B1-Motion>", self.mouseDragged)
+        for key, value in self.get_circle_point.named_points.items():
+            if 'b' in key:  # ブロックサークルの描画
+                self.canvas.create_oval(self.get_circle_point.named_points[key][0] - self.RADIUS,  # 左上角のx座標
+                                        self.get_circle_point.named_points[key][1] - self.RADIUS,  # 左上角のy座標
+                                        self.get_circle_point.named_points[key][0] + self.RADIUS,  # 右下角のx座標
+                                        self.get_circle_point.named_points[key][1] + self.RADIUS, fill='red',
+                                        # 右下角のx座標, 塗りつぶす色
+                                        tags='{0}'.format(key))  # tags=オブジェクト固有の番号
+            elif 'c' in key:  # 交点サークルの描画
+                self.canvas.create_oval(self.get_circle_point.named_points[key][0] - self.RADIUS,  # 左上角のx座標
+                                        self.get_circle_point.named_points[key][1] - self.RADIUS,  # 左上角のy座標
+                                        self.get_circle_point.named_points[key][0] + self.RADIUS,  # 右下角のx座標
+                                        self.get_circle_point.named_points[key][1] + self.RADIUS, fill='green',
+                                        # 右下角のx座標, 塗りつぶす色
+                                        tags='{0}'.format(key))  # tags=オブジェクト固有の番号
+            self.canvas.tag_bind('{0}'.format(key), "<ButtonPress-1>", self.mousePressed)
+            self.canvas.tag_bind('{0}'.format(key), "<B1-Motion>", self.mouseDragged)
 
     def mousePressed(self, event):
         """
@@ -104,11 +94,9 @@ class MoveGetCirclePoint(tk.Frame):
         try:
             self.points.item_id = self.canvas.find_closest(event.x, event.y)
             tag = self.canvas.gettags(self.points.item_id[0])[0]
-            print('TAG:{}'.format(tag))
             item = self.canvas.type(tag)
             delta_x = event.x - self.points.ix
             delta_y = event.y - self.points.iy
-            print(self.canvas.find_all())
             if item == 'oval':  # 円のとき
                 x0, y0, x1, y1 = self.canvas.coords(self.points.item_id)  # 左上のxy座標と右下のxy座標を取得
                 self.canvas.coords(self.points.item_id, x0 + delta_x, y0 + delta_y, x1 + delta_x, y1 + delta_y)
@@ -117,26 +105,37 @@ class MoveGetCirclePoint(tk.Frame):
         except IndexError:
             print('マウスの動きが早すぎます．')
 
-    def getFixPoints(self):
-        pass
-
     def keyEvent(self, event):
         if event.char == 'q':  # キーボードのqが押されたら
+            self.fixPoint()
             self.master.quit()  # tkinterを終了
+        if event.char == 'd':  # デバッグ用のd
+            self.fixPoint()
         print('押されたキーボード：{}'.format(event.char))
 
     def fixPoint(self):
-        pass
-        # for id in self.canvas.find_all():
-        #     tag = self.canvas.itemcget(id, 'tags')
-        #     if tag in 'b':
-        #         self.get_circle_point.bc_points[]
+        """
+        画面上のすべての座標を取得しnamed_pointsに代入する．
+        本当は，マウスイベントが起こった時に対応する辞書型に代入したほうが圧倒的に効率的
+        :return:
+        """
+        print('修正前： {0}'.format(self.get_circle_point.named_points))
+        for object_id in self.canvas.find_all():
+            tag = self.canvas.itemcget(object_id, 'tags')  # タグ名取得
+            tag = tag.split()  # クリックされたタグは後ろにcurrentという文字列がつくので分割
+            if tag:  # リストが空でないとき
+                if self.canvas.type(tag[0]) == 'oval':  # oval（円）なら
+                    x0, y0, x1, y1 = self.canvas.coords(tag[0])  # 座標の問い合わせ
+                    x = int(x0 + self.RADIUS)  # 半径分中心に
+                    y = int(y0 + self.RADIUS)  # 半径分中心に
+                    self.get_circle_point.named_points[tag[0]] = [x, y]
+        print('修正後： {0}'.format(self.get_circle_point.named_points))
 
     def runGetCirclePoint(self):
         img = './../img/clip_field.png'
         window_name = 'WindowDAYO'
         img = cv2.imread(img)
-        self.get_circle_point = gcp.GetCirclePoint(window_name=window_name)
+        self.setGetCirclePoint(gcp.GetCirclePoint(window_name=window_name))
         cv2.namedWindow(window_name)
         cv2.setMouseCallback(window_name, self.get_circle_point.dragAndDropSquare,
                              [window_name, img, self.get_circle_point])
@@ -150,7 +149,8 @@ class MoveGetCirclePoint(tk.Frame):
         self.runGetCirclePoint()
         self.drawGetCirclePoint()
         self.mainloop()
-        print(self.canvas.find_all())
+        # self.fixPoint()
+        # self.debug()
 
 
 if __name__ == '__main__':
