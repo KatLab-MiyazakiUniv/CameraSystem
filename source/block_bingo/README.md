@@ -62,7 +62,7 @@
 
 ![](./img/turn_has_not_block.png)
 
-## 3.1 コマンド変換例
+### 3.1 コマンド変換例
 
 ```python
 (1,1), (1.5,1), 0, False	=>	k
@@ -107,7 +107,7 @@
 
 ![](./img/straight_has_block.png)
 
-## 5.1 コマンド変換例
+### 5.1 コマンド変換例
 
 ```python
 (1,0), (0.5,0), 0, True	=>	h
