@@ -22,6 +22,9 @@ def search_enabled_com_port():
     comlist = []
     for com in coms:
         comlist.append(com.device)
+    if len(comlist) == 0:
+        print('Nothing COM ports...')
+        return
     print('Connected COM ports: ' + str(comlist))
     use_port = comlist[0]
     print('Use COM port: ' + use_port)

@@ -1,13 +1,13 @@
 """
-    @file   block_bingo_solver.py
+    @file   BlockBingoSolver.py
     @author T.Miyaji
     @brief  ブロックビンゴを攻略するための経路を計算するクラス
 """
-from block_bingo_coordinate import BlockCirclesCoordinate
-from block_bingo_coordinate import CrossCirclesCoordinate
-from block_bingo_coordinate import Color
-from rule_book import RuleBook
-from rule_book import Bingo
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import CrossCirclesCoordinate
+from BlockBingoCoordinate import Color
+from RuleBook import RuleBook
+from RuleBook import Bingo
 from commands import Commands
 
 class Path():

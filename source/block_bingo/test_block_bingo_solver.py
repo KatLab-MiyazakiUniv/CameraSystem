@@ -4,11 +4,11 @@
     @brief  block_bingo_solverのテストファイル
 """
 import pytest
-from block_bingo_solver import Path
-from block_bingo_solver import BlockBingoSolver
-from block_bingo_solver import BlockCirclesCoordinate
-from block_bingo_solver import CrossCirclesCoordinate
-from block_bingo_coordinate import Color
+from BlockBingoSolver import Path
+from BlockBingoSolver import BlockBingoSolver
+from BlockBingoSolver import BlockCirclesCoordinate
+from BlockBingoSolver import CrossCirclesCoordinate
+from BlockBingoCoordinate import Color
 
 def create_block_bingo(path=[(1,0), (2,0), (2,1)], is_left=True, bonus=5, color=3):
     return BlockBingoSolver(BlockCirclesCoordinate(is_left, bonus, color), CrossCirclesCoordinate(), path)

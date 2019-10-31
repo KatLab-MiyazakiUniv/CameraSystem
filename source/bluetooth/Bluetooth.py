@@ -64,7 +64,6 @@ class Bluetooth:
             print(f'{chr(int_value)}({int_value})を送信')
         self.ser.write(self.convert_to_byte(int_value, 1, "big"))
 
-
     @staticmethod
     def convert_to_byte(convert_data, byte_size, byte_order):
         """

@@ -1,10 +1,10 @@
 """
-    @file   rule_book.py
+    @file   RuleBook.py
     @author T.Miyaji
     @brief  ブロックビンゴの終了判定を提供する。
 """
-from block_bingo_coordinate import BlockCirclesCoordinate
-from block_bingo_coordinate import CrossCirclesCoordinate
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import CrossCirclesCoordinate
 from enum import Enum, auto
 
 class Bingo(Enum):
