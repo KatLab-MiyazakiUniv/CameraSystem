@@ -3,8 +3,9 @@
     @author: Takahiro55555
     @brief: 黒ブロック運搬経路をコマンドへ変換するクラス
 """
-from block_circles_path import BlockCirclesSolver
-from block_bingo_coordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockCirclesPath import BlockCirclesSolver
+
 
 class BlackBlockCommands():
     def __init__(self, bonus, black, color, is_left=True):
@@ -55,10 +56,10 @@ class BlackBlockCommands():
         ### コマンドの初期化（定義） ###
         # HACK: 別ファイルから読み込んだほうが良いかも
         # ブロックビンゴエリアへの侵入
-        self.ENTER_4 = 'a' # Lコース
-        self.ENTER_6 = 'b' # Lコース
-        self.ENTER_5 = 'w' # Rコース
-        self.ENTER_8 = 'x' # Rコース
+        self.ENTER_4 = 'a'  # Lコース
+        self.ENTER_6 = 'b'  # Lコース
+        self.ENTER_5 = 'w'  # Rコース
+        self.ENTER_8 = 'x'  # Rコース
         # ブロックサークル間移動
         self.MOVE_CIRCLE = 'c'
         # 90度右回転
@@ -67,7 +68,6 @@ class BlackBlockCommands():
         self.TURN_LEFT_90 = 'e'
         # 180度回転
         self.TURN_180 = 'f'
-
 
     def gen_commands(self):
         """
@@ -100,7 +100,6 @@ class BlackBlockCommands():
             commands += self.coordinate_to_command(current_coordinate, self.route[i], self.direction)
             current_coordinate = self.route[i]
         return commands
-
 
     def coordinate_to_command(self, robot_coor, next_coor, direction):
         """
@@ -139,7 +138,7 @@ class BlackBlockCommands():
         # ブロックサークル間移動
         tmp_commands += self.MOVE_CIRCLE
         return tmp_commands
-    
+
     def direction_to_command(self, robot_direction, movement_direction):
         """
         機体の方向と進行方向からコマンドを計算
@@ -215,10 +214,11 @@ class BlackBlockCommands():
             return 'l'
         # 回転しない or 180度回転
         return ''
-        
+
+
 def main():
     pass
 
+
 if __name__ == "__main__":
     main()
-	

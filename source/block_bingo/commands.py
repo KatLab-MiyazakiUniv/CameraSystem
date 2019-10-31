@@ -3,8 +3,8 @@
     @author T.Miyaji
     @brief  ブロックビンゴ攻略のための運搬経路を走行体動作コマンドに変換する。
 """
-from block_bingo_coordinate import BlockCirclesCoordinate
-from block_bingo_coordinate import CrossCirclesCoordinate
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import CrossCirclesCoordinate
 
 class Instructions():
     ENTER_BINGO_AREA_L4 = 'a'
