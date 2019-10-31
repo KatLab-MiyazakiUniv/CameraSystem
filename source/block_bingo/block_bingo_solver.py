@@ -5,6 +5,10 @@
 """
 from block_bingo_coordinate import BlockCirclesCoordinate
 from block_bingo_coordinate import CrossCirclesCoordinate
+from block_bingo_coordinate import Color
+from rule_book import RuleBook
+from rule_book import Bingo
+from commands import Commands
 
 class Path():
     """
@@ -88,11 +92,8 @@ class BlockBingoSolver():
 
         # ブロックサークル間移動したあとの走行体の向きを取得する
         self.direction = self.get_robot_direction_after_block_circle(block_circles_path)
-        # ブロックサークル間移動したあとに最も近くにあるブロックが置かれた交点サークルまで移動する
-        self.position = self.move_initial_position(block_circles_path)
-        # 現在地の交点サークルにあるブロックは取得済みなので削除する
-        self.cross_circles.move_block(self.position)
-    
+        # ブロックサークル間移動したあとの走行体の位置を取得する
+        self.position = self.get_robot_position_after_block_circle(block_circles_path)
 
     def get_robot_direction_after_block_circle(self, block_circles_path):
         """
@@ -111,17 +112,14 @@ class BlockBingoSolver():
         return self.get_robot_direction(prev, last)
 
 
-    def move_initial_position(self, block_circles_path):
+    def get_robot_position_after_block_circle(self, block_circles_path):
         """
-        ブロックサークル間を移動したあとに走行体が向かうブロックが置かれた交点サークルを算出する。
-        [方針]
-            1. ブロックサークル間移動後の黒線の中点の座標を計算する 例: (1,0.5)なら1番と4番サークルの間
-            2. 黒線の中点座標から最も近いブロックが置かれた交点サークルの座標を計算する
-        
+        ブロックサークル間移動したあとの走行体の位置を計算する。
+
         Parameters
         ----------
-            block_circles_path
-                ブロックサークル間移動の運搬経路
+        block_circles_path : list
+            ブロックサークル間移動の運搬経路
         """
         # ボーナスサークルへ進入したあとの走行体の位置が知りたいので
         # ブロックサークル間の運搬経路の末尾とその1つ前の座標を取得する
@@ -132,23 +130,9 @@ class BlockBingoSolver():
         block_circle_point = max([last, prev])
         # ブロックサークル間移動後の走行体の向きが北向きor南向きならcolumn += 0.5
         if self.direction == 0 or self.direction == 4:
-            src = (block_circle_point[0], block_circle_point[1] + 0.5)
+            return (block_circle_point[0], block_circle_point[1] + 0.5)
         else:
-            src = (block_circle_point[0] + 0.5, block_circle_point[1])
-
-        # 中点座標pointからブロックが置かれた交点サークルの座標との距離を計算する
-        distances = list(map(lambda x: abs(src[0]-x[0]) + abs(src[1]-x[1]), self.cross_circles.open))
-
-        # 走行体に最も近いブロックが置かれた交点サークルの座標を取得する
-        dst = self.cross_circles.open[distances.index(min(distances))]
-
-        # 走行体が現在向いている方向から移動先の交点サークルがどの向きにあるかを求める
-        direction_after_moving = self.get_robot_direction(src, dst)
-
-        # 走行体の向いている方向を更新
-        self.direction = direction_after_moving
-        
-        return dst
+            return (block_circle_point[0] + 0.5, block_circle_point[1])
     
 
     def get_robot_direction(self, src, dst):
@@ -229,6 +213,67 @@ class BlockBingoSolver():
                          (2.5,0.5), (2.5,1.5), (2.5,2.5)]
 
         return [node for node in nodes if 0 <= node[0] <= 3 and 0 <= node[1] <= 3 and node not in block_circles]      
+
+
+    def solve(self, bingo=Bingo.DOUBLE_BINGO):
+        """
+        ブロックビンゴ攻略とボーナスサークル設置を成立させるための運搬経路を計算する。
+
+        Parameters
+        ----------
+        bingo : Bingo
+            ビンゴ状態
+        """
+        # ゲームの終了判定クラス
+        rule_book = RuleBook(self.block_circles, self.cross_circles, bingo)
+        # コマンド変換クラス
+        commands = Commands(self.block_circles, self.cross_circles)
+        
+        while rule_book.achivement() != True:
+            # ブロックビンゴ攻略のために運搬するブロックサークル番号
+            quota = rule_book.get_quota()
+            colors = self.block_circles.colors(quota)
+            # ボーナスサークル設置が2個成立していないときは、運搬するブロック色に黒色を加える
+            if rule_book.bonus < 2:
+                colors.append(Color.BLACK)
+
+            (src, index) = self.cross_circles.start_node(self.position, colors)
+            # 走行体の現在地からブロックがある交点サークルまで移動する経路を求める
+            path = self.a_star(self.position, src)
+            # ブロックがある交点サークルからブロックを取得する
+            self.cross_circles.move_block(src)
+            self.position = src
+            self.direction = commands.convert(self.direction, path)
+
+            if colors[index] != Color.BLACK:
+                placed_circle = self.block_circles.get(quota[index])
+                dst = self.cross_circles.goal_node(src, placed_circle)
+                rule_book.put_color_block(index)
+            else:
+                placed_circle = self.block_circles.get(self.block_circles.bonus_circle)
+                dst = self.cross_circles.goal_node(src, placed_circle)
+                rule_book.put_black_block()
+            
+            # ブロックがある交点サークルからブロックサークルまで移動する経路を求める
+            path = self.a_star(src, dst)
+            self.position = dst
+            self.direction = commands.convert(self.direction, path)
+            self.direction = commands.put(self.position, placed_circle, self.direction)
+        
+        # ガレージに行くまでの運搬経路を計算する
+        if self.block_circles.block_circle_color[0] == Color.YELLOW:
+            # Lコースの場合、(2,2.5)まで移動する
+            path = self.a_star(self.position, (2,2.5))
+            self.direction = commands.convert(self.direction, path)
+            # ガレージ方向(座標(2,3)側）に回頭する
+            commands.spin((2,2.5), (2,3), self.direction, False)
+        else:
+            # Rコースの場合、(1,0.5)まで移動する
+            path = self.a_star(self.position, (1,0.5))
+            self.direction = commands.convert(self.direction, path)
+            # ガレージ方向(座標(1,0)側)に回頭する
+            commands.spin((1,0.5), (1,0), self.direction, path)
+        return commands.get()
 
 
     def a_star(self, src, dst):
