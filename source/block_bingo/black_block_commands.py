@@ -53,22 +53,6 @@ class BlackBlockCommands(Instructions):
         else:
             self.direction = (-1, 0)
 
-        ### コマンドの初期化（定義） ###
-        # HACK: 別ファイルから読み込んだほうが良いかも
-        # ブロックビンゴエリアへの侵入
-        self.ENTER_4 = 'a' # Lコース
-        self.ENTER_6 = 'b' # Lコース
-        self.ENTER_5 = 'w' # Rコース
-        self.ENTER_8 = 'x' # Rコース
-        # ブロックサークル間移動
-        self.MOVE_CIRCLE = 'c'
-        # 90度右回転
-        self.TURN_RIGHT_90 = 'd'
-        # 90度左回転
-        self.TURN_LEFT_90 = 'e'
-        # 180度回転
-        self.TURN_180 = 'f'
-
 
     def gen_commands(self):
         """
