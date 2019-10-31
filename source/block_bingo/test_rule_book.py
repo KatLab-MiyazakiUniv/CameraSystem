@@ -3,10 +3,10 @@
     @author T.Miyaji
     @brief  rule_book.pyのテストコード。
 """
-from block_bingo_coordinate import BlockCirclesCoordinate
-from block_bingo_coordinate import CrossCirclesCoordinate
-from rule_book import Bingo
-from rule_book import RuleBook
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import CrossCirclesCoordinate
+from RuleBook import Bingo
+from RuleBook import RuleBook
 
 def create_rule_book(color, bingo=Bingo.DOUBLE_BINGO):
     is_left = True

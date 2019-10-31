@@ -2,7 +2,7 @@ from DetectionNumber import DetectionNumber
 from Camera import Camera
 from bluetooth.Bluetooth import Bluetooth
 from detection_block.BlockRecognizer import BlockRecognizer
-from block_bingo.black_block_commands import BlackBlockCommands
+from block_bingo.BlackBlockCommands import BlackBlockCommands
 import time
 import threading
 from PrepareGarage import PrepareGarage

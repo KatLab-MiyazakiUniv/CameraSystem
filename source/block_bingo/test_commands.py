@@ -5,8 +5,8 @@
 """
 from commands import Instructions
 from commands import Commands
-from block_bingo_coordinate import BlockCirclesCoordinate
-from block_bingo_coordinate import CrossCirclesCoordinate
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import CrossCirclesCoordinate
 import pytest
 
 def test_translate():

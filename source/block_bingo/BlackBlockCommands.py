@@ -3,8 +3,9 @@
     @author: Takahiro55555
     @brief: 黒ブロック運搬経路をコマンドへ変換するクラス
 """
-from block_circles_path import BlockCirclesSolver
-from block_bingo_coordinate import BlockCirclesCoordinate
+
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockCirclesPath import BlockCirclesSolver
 from commands import Instructions
 
 class BlackBlockCommands(Instructions):
@@ -53,7 +54,6 @@ class BlackBlockCommands(Instructions):
         else:
             self.direction = (-1, 0)
 
-
     def gen_commands(self):
         """
         運搬経路からコマンドを生成する
@@ -85,7 +85,6 @@ class BlackBlockCommands(Instructions):
             commands += self.coordinate_to_command(current_coordinate, self.route[i], self.direction)
             current_coordinate = self.route[i]
         return commands
-
 
     def coordinate_to_command(self, robot_coor, next_coor, direction):
         """
@@ -124,7 +123,7 @@ class BlackBlockCommands(Instructions):
         # ブロックサークル間移動
         tmp_commands += self.STRAIGHT
         return tmp_commands
-    
+
     def direction_to_command(self, robot_direction, movement_direction):
         """
         機体の方向と進行方向からコマンドを計算
@@ -200,10 +199,11 @@ class BlackBlockCommands(Instructions):
             return 'l'
         # 回転しない or 180度回転
         return ''
-        
+
+
 def main():
     pass
 
+
 if __name__ == "__main__":
     main()
-	

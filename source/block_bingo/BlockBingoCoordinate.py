@@ -1,5 +1,5 @@
 """
-    @file   block_bingo_coordinate.py
+    @file   BlockBingoCoordinate.py
     @author T.Miyaji
     @brief  ブロックビンゴ攻略に使用するブロックサークルおよび交点サークルの座標を提供する。
 """
