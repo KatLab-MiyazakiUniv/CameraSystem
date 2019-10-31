@@ -37,3 +37,6 @@ $ poetry install
 ```bash
 $ ./pytest.sh
 ```
+
+## With PyCharm
+PyCharmで楽しみたい人はこの[URL](https://github.com/KatLab-MiyazakiUniv/CameraSystem/wiki/Pycharm-with-Poerty)を参照
