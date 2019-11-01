@@ -170,10 +170,10 @@ class GetCirclePoint:
 
             if get_circle_point.circle_mode == 0:  # 交点サークルを囲むモード
                 get_circle_point.cc_points = get_circle_point.calc_points(points=square_points, column=16)
-                get_circle_point.draw_all_points(img, get_circle_point.cc_points)
+                get_circle_point.draw_all_points(img=img, points=get_circle_point.cc_points, win_name=window_name)
             elif get_circle_point.circle_mode == 1:  # ブロックサークルを囲むモード
                 get_circle_point.bc_points = get_circle_point.calc_points(points=square_points, column=8)
-                get_circle_point.draw_all_points(img, get_circle_point.bc_points)
+                get_circle_point.draw_all_points(img=img, points=get_circle_point.bc_points, win_name=window_name)
                 # print('代入前：{0}'.format(get_circle_point.named_points))
                 get_circle_point.add()
                 # print('代入後：{0}'.format(get_circle_point.named_points))
@@ -188,7 +188,7 @@ class GetCirclePoint:
         img = cv2.imread(img)
         get_circle_point = GetCirclePoint()
         cv2.namedWindow(window_name)
-        cv2.setMouseCallback(window_name, get_circle_point.dragAndDropSquare,
+        cv2.setMouseCallback(window_name, get_circle_point.drag_and_drop_square,
                              [window_name, img, get_circle_point])
         cv2.imshow(window_name, img)
         cv2.moveWindow(window_name, 100, 100)  # 左上にウィンドウを出す
