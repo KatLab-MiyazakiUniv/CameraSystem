@@ -1,5 +1,5 @@
-from block_bingo.block_circles_path import BlockCirclesCoordinate
-from block_bingo.cross_circles_path import CrossCircleSolver
+from block_bingo.BlockCirclesPath import BlockCirclesCoordinate
+from block_bingo.CrossCirclesPath import CrossCircleSolver
 from detection_block.BlockBingo import Color
 import unittest
 

@@ -54,7 +54,7 @@ class GetCirclePoint:
                 cross_circle_count += 1
 
     @staticmethod
-    def drawPoints(img, x, y):
+    def draw_points(img, x, y):
         """
         座標を描画する
         :param img: 画像
@@ -67,18 +67,18 @@ class GetCirclePoint:
         """
         cv2.putText(img, '({0}, {1})'.format(x, y), (x, y), cv2.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255))
 
-    def drawAllPoints(self, img, points, win_name=None):
+    def draw_all_points(self, img, points, win_name=None):
         if win_name is None:
             win_name = self.window_name
         for i in range(points.shape[0]):
             # print("({0}, {1})" .format(cc_points[i, 0], cc_points[i, 1]))
-            self.drawPoints(img, points[i, 0], points[i, 1])
+            self.draw_points(img, points[i, 0], points[i, 1])
             # print("{},{}".format(calc_cc_points[i, 0], calc_cc_points[i, 1]))
             img = cv2.circle(img, (points[i, 0], points[i, 1]), 5, (255, 255, 0), -1)
             cv2.imshow(win_name, img)
 
     @staticmethod
-    def calcPoints(points, column) -> np.ndarray:
+    def calc_points(points, column) -> np.ndarray:
         """
         分割するときは切り捨てにしている
         columnが8ならブロックサークルの分割，16なら交点サークルの分割をする．それ以外だとすべて0の座標を返す．
@@ -120,7 +120,7 @@ class GetCirclePoint:
         return circle_points
 
     @staticmethod
-    def dragAndDropSquare(event, x, y, flags, param) -> None:
+    def drag_and_drop_square(event, x, y, flags, param) -> None:
         """
         画像上でドラッグアンドドロップした範囲に対して四角形を描画する
         :param event: CV_EVENT_* の内の1つ
@@ -152,11 +152,11 @@ class GetCirclePoint:
 
         if event == cv2.EVENT_LBUTTONUP and get_circle_point.circle_mode <= 1:  # マウスの左ボタンを上げたとき
             cv2.rectangle(img, (get_circle_point.ix, get_circle_point.iy), (x, y), (255, 0, 0), thickness=2)  # 四角形を描画
-            get_circle_point.drawPoints(img, get_circle_point.ix, get_circle_point.iy)  # 始点の頂点
-            get_circle_point.drawPoints(img, x, get_circle_point.iy)  # 始点の横の頂点
-            get_circle_point.drawPoints(img, get_circle_point.ix, y)  # 終点の横の頂点
-            get_circle_point.drawPoints(img, x, y)  # 終点の頂点
-            square_points = np.empty((4, 2))  # 0行目左上．1行目右上．2行目左下．3行目右下
+            get_circle_point.draw_points(img, get_circle_point.ix, get_circle_point.iy)  # 始点の頂点
+            get_circle_point.draw_points(img, x, get_circle_point.iy)  # 始点の横の頂点
+            get_circle_point.draw_points(img, get_circle_point.ix, y)  # 終点の横の頂点
+            get_circle_point.draw_points(img, x, y)  # 終点の頂点
+            # square_points = np.empty((4, 2))  # 0行目左上．1行目右上．2行目左下．3行目右下
             ix, iy = get_circle_point.ix, get_circle_point.iy
             if w / 2 <= ix and h / 2 >= iy:  # 起点の座標が第一象限のとき
                 square_points = np.array([[x, iy], [ix, iy], [x, y], [ix, y]])
@@ -169,11 +169,11 @@ class GetCirclePoint:
                 square_points = np.array([[x, y], [ix, y], [x, iy], [ix, iy]])
 
             if get_circle_point.circle_mode == 0:  # 交点サークルを囲むモード
-                get_circle_point.cc_points = get_circle_point.calcPoints(points=square_points, column=16)
-                get_circle_point.drawAllPoints(img, get_circle_point.cc_points)
+                get_circle_point.cc_points = get_circle_point.calc_points(points=square_points, column=16)
+                get_circle_point.draw_all_points(img, get_circle_point.cc_points)
             elif get_circle_point.circle_mode == 1:  # ブロックサークルを囲むモード
-                get_circle_point.bc_points = get_circle_point.calcPoints(points=square_points, column=8)
-                get_circle_point.drawAllPoints(img, get_circle_point.bc_points)
+                get_circle_point.bc_points = get_circle_point.calc_points(points=square_points, column=8)
+                get_circle_point.draw_all_points(img, get_circle_point.bc_points)
                 # print('代入前：{0}'.format(get_circle_point.named_points))
                 get_circle_point.add()
                 # print('代入後：{0}'.format(get_circle_point.named_points))
@@ -203,7 +203,7 @@ def main():
     img = cv2.imread(img)
     get_circle_point = GetCirclePoint()
     cv2.namedWindow(window_name)
-    cv2.setMouseCallback(window_name, get_circle_point.dragAndDropSquare,
+    cv2.setMouseCallback(window_name, get_circle_point.drag_and_drop_square,
                          [window_name, img, get_circle_point])
     cv2.imshow(window_name, img)
     cv2.moveWindow(window_name, 100, 100)  # 左上にウィンドウを出す

@@ -1,5 +1,5 @@
-from block_circles_path import BlockCirclesSolver
-from block_circles_path import BlockCirclesTracks
+from BlockCirclesPath import BlockCirclesSolver
+from BlockCirclesPath import BlockCirclesTracks
 import unittest
 
 class BlockCirclesSolverTest(unittest.TestCase):
