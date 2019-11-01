@@ -4,9 +4,8 @@
 @brief: 取得した座標をtkinterで描画し，マウスで動かせるようにし座標の微調整をする．
 """
 
-import tkinter as tk
-import numpy as np
 import pytest
+import tkinter as tk
 from GetCirclePoint import GetCirclePoint
 from MoveGetCirclePoint import MoveGetCirclePoint, Points
 
