@@ -1,5 +1,5 @@
 """
-@file: move_get_circle_point.py
+@file: moveGetCirclePoint.py
 @author: Tatsumi0000
 @brief: 取得した座標をtkinterで描画し，マウスで動かせるようにし座標の微調整をする．
 """
@@ -7,7 +7,7 @@
 import cv2.cv2 as cv2
 import tkinter as tk
 from PIL import Image, ImageTk
-from source.decision_points import GetCirclePoint as gcp
+from GetCirclePoint import GetCirclePoint
 
 
 class Points:
@@ -29,7 +29,7 @@ class MoveGetCirclePoint(tk.Frame):
         self.image_tk = ImageTk.PhotoImage(self.img)
         width, height = self.img.size  # 画像のサイズ
         self.points = Points()
-        self.get_circle_point = gcp.GetCirclePoint()
+        self.get_circle_point = GetCirclePoint()
         self.master.title(title)
         self.canvas = tk.Canvas(self.master, width=width, height=height)  # Canvas作成
         self.canvas.pack()
@@ -47,7 +47,7 @@ class MoveGetCirclePoint(tk.Frame):
 
     def draw_get_circle_point(self):
         """
-        座標を描画する．
+        円で座標を描画する．
         :return:
         """
         for key, value in self.get_circle_point.named_points.items():
@@ -75,16 +75,12 @@ class MoveGetCirclePoint(tk.Frame):
         :return:
         """
         self.points.item_id = self.canvas.find_closest(event.x, event.y)  # クリックされた座標を渡して何がクリックされたかidを探す
-        # print(self.canvas.find_closest(event.x, event.y))
-        # tag = self.canvas.gettags(self.points.item_id[0])[0]  # idを渡してtagを探す
-        # item = self.canvas.type(tag)
-        # print('押されたのは：{}'.format(item))
         self.points.ix = event.x
         self.points.iy = event.y
 
     def mouse_dragged(self, event):
         """
-        マウスがドラッグした時に呼ばれる
+        マウスを動かした時に呼ばれる
         :param event:
         :return:
         """
@@ -103,6 +99,11 @@ class MoveGetCirclePoint(tk.Frame):
             print('マウスの動きが早すぎます．')
 
     def key_event(self, event):
+        """
+        キーボードが押された時に呼ぶ
+        :param event: キーボードのイベント
+        :return:
+        """
         if event.char == 'q':  # キーボードのqが押されたら
             self.fix_point()
             self.master.quit()  # tkinterを終了
@@ -132,7 +133,7 @@ class MoveGetCirclePoint(tk.Frame):
         img = './../img/clip_field.png'
         window_name = 'WindowDAYO'
         img = cv2.imread(img)
-        self.set_get_circle_point(gcp.GetCirclePoint(window_name=window_name))
+        self.set_get_circle_point(GetCirclePoint(window_name=window_name))
         cv2.namedWindow(window_name)
         cv2.setMouseCallback(window_name, self.get_circle_point.drag_and_drop_square,
                              [window_name, img, self.get_circle_point])
