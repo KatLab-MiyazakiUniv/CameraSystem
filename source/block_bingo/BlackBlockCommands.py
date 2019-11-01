@@ -8,7 +8,7 @@ from BlockBingoCoordinate import BlockCirclesCoordinate
 from BlockCirclesPath import BlockCirclesSolver
 from commands import Instructions
 
-class BlackBlockCommands(Instructions):
+class BlackBlockCommands():
     def __init__(self, bonus, black, color, is_left=True):
         """
         ブロックサークル内の黒ブロックを運搬する経路を計算するための情報を登録する。
@@ -69,17 +69,17 @@ class BlackBlockCommands(Instructions):
             # 座標系の相違を吸収
             tmp_trans[0], tmp_trans[1] = tmp_trans[1], tmp_trans[0]
             if self.route[0] == tmp_trans:
-                commands += self.ENTER_BINGO_AREA_L4
+                commands += Instructions.ENTER_BINGO_AREA_L4
             else:
-                commands += self.ENTER_BINGO_AREA_L6
+                commands += Instructions.ENTER_BINGO_AREA_L6
         else:
             tmp_trans = list(self.block_circles_coordinate.get(5))
             # 座標系の相違を吸収
             tmp_trans[0], tmp_trans[1] = tmp_trans[1], tmp_trans[0]
             if self.route[0] == tmp_trans:
-                commands += self.ENTER_BINGO_AREA_R5
+                commands += Instructions.ENTER_BINGO_AREA_R5
             else:
-                commands += self.ENTER_BINGO_AREA_R8
+                commands += Instructions.ENTER_BINGO_AREA_R8
         current_coordinate = self.route[0]
         for i in range(1, len(self.route)):
             commands += self.coordinate_to_command(current_coordinate, self.route[i], self.direction)
@@ -121,7 +121,7 @@ class BlackBlockCommands(Instructions):
         # 機体の向きを更新
         self.direction = next_direction
         # ブロックサークル間移動
-        tmp_commands += self.STRAIGHT
+        tmp_commands += Instructions.STRAIGHT
         return tmp_commands
 
     def direction_to_command(self, robot_direction, movement_direction):
@@ -150,14 +150,14 @@ class BlackBlockCommands(Instructions):
         # 90度回転
         direction = self.detect_direction(robot_direction, movement_direction)
         if direction == "r":
-            return self.SPIN_RIGHT
+            return Instructions.SPIN_RIGHT
         if direction == "l":
-            return self.SPIN_LEFT
+            return Instructions.SPIN_LEFT
         # 180度右回転
         if robot_direction[0] == movement_direction[0]:
-            return self.SPIN180
+            return Instructions.SPIN180
         if robot_direction[1] == movement_direction[1]:
-            return self.SPIN180
+            return Instructions.SPIN180
         return ""
 
     def detect_direction(self, robot_direction, movement_direction):

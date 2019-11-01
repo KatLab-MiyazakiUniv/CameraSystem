@@ -9,6 +9,7 @@ import itertools
 import unittest
 
 from BlackBlockCommands import BlackBlockCommands
+from commands import Instructions
 
 class BlackBlockCommandsTest(unittest.TestCase):
     """
@@ -34,25 +35,25 @@ class BlackBlockCommandsTest(unittest.TestCase):
                 commands = generator.gen_commands()
                 # 確認事項1.のテスト
                 if is_left:
-                    self.assertTrue(commands[0] == generator.ENTER_BINGO_AREA_L4 or commands[0] == generator.ENTER_BINGO_AREA_L6)
+                    self.assertTrue(commands[0] == Instructions.ENTER_BINGO_AREA_L4 or commands[0] == Instructions.ENTER_BINGO_AREA_L6)
                 else:
-                    self.assertTrue(commands[0] == generator.ENTER_BINGO_AREA_R5 or commands[0] == generator.ENTER_BINGO_AREA_R8)
+                    self.assertTrue(commands[0] == Instructions.ENTER_BINGO_AREA_R5 or commands[0] == Instructions.ENTER_BINGO_AREA_R8)
 
                 flag = False
                 for comm in commands:
                     before_flag = flag
-                    if comm == generator.SPIN180:
+                    if comm == Instructions.SPIN180:
                         flag = True
-                    elif comm == generator.SPIN_LEFT:
+                    elif comm == Instructions.SPIN_LEFT:
                         flag = True
-                    elif comm == generator.SPIN_RIGHT:
+                    elif comm == Instructions.SPIN_RIGHT:
                         flag = True
                     else:
                         flag = False
                     # 確認事項2.のテスト
                     self.assertTrue((before_flag != flag) or (not before_flag and not flag))
                 # 確認事項3.のテスト
-                self.assertTrue(commands[-1] == generator.STRAIGHT)
+                self.assertTrue(commands[-1] == Instructions.STRAIGHT)
 
     def test_coordinate_to_command(self):
         """
@@ -94,22 +95,22 @@ class BlackBlockCommandsTest(unittest.TestCase):
                     commands = generator.coordinate_to_command(pre_coor, next_coor, robot_direction)
                     if pre_index == next_index:
                         # 確認事項4.のテスト
-                        self.assertEqual(commands, generator.STRAIGHT)
+                        self.assertEqual(commands, Instructions.STRAIGHT)
                     elif  ((pre_index + 1) % 4) == next_index:
                         # 確認事項5.のテスト
                         # 右90度
-                        self.assertEqual(commands[0], generator.SPIN_RIGHT)
-                        self.assertEqual(commands[1], generator.STRAIGHT)
+                        self.assertEqual(commands[0], Instructions.SPIN_RIGHT)
+                        self.assertEqual(commands[1], Instructions.STRAIGHT)
                     elif ((next_index + 1) % 4) == pre_index:
                         # 確認事項5.のテスト
                         # 左90度
-                        self.assertEqual(commands[0], generator.SPIN_LEFT)
-                        self.assertEqual(commands[1], generator.STRAIGHT)
+                        self.assertEqual(commands[0], Instructions.SPIN_LEFT)
+                        self.assertEqual(commands[1], Instructions.STRAIGHT)
                     else:
                         # 確認事項5.のテスト
                         # 180度
-                        self.assertEqual(commands[0], generator.SPIN180)
-                        self.assertEqual(commands[1], generator.STRAIGHT)
+                        self.assertEqual(commands[0], Instructions.SPIN180)
+                        self.assertEqual(commands[1], Instructions.STRAIGHT)
         # 確認事項3.のテスト
         with self.assertRaises(TypeError):
             generator.coordinate_to_command(1, 1, 1)
