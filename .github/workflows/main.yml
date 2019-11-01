@@ -18,7 +18,7 @@ jobs:
       with:
         version: ${{ matrix.python-version }}
     - name: install tkinter
-      run: apt install tk-dev
+      run: sudo apt install tk-dev
     - name: Install pipenv
       run: |
         python -m pip install --upgrade pip
