@@ -4,9 +4,9 @@
     @brief  block_bingo_coordinateのテストコード
 """
 import pytest
-from block_bingo_coordinate import Color
-from block_bingo_coordinate import BlockCirclesCoordinate
-from block_bingo_coordinate import CrossCirclesCoordinate
+from BlockBingoCoordinate import Color
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import CrossCirclesCoordinate
 
 def create_block_circles(is_left = True, bonus = 6, color = 3):
     return BlockCirclesCoordinate(is_left, bonus, color)

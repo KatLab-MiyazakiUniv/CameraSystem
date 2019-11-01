@@ -8,7 +8,7 @@ import math
 import itertools
 import unittest
 
-from black_block_commands import BlackBlockCommands
+from BlackBlockCommands import BlackBlockCommands
 
 class BlackBlockCommandsTest(unittest.TestCase):
     """
