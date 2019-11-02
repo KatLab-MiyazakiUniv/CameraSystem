@@ -13,8 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
-    - name: install tkinter
-      run: sudo apt-get install python3-tk
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
