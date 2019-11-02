@@ -1,9 +1,9 @@
 """
-    @file: block_circles_path.py
+    @file: BlockCirclesPath.py
     @author: T.Miyaji
     @brief: ブロックサークル内の黒ブロックを運搬する経路計算クラス
 """
-from block_bingo_coordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import BlockCirclesCoordinate
 
 class BlockCirclesTracks():
     def __init__(self, coordinate):
@@ -47,7 +47,7 @@ class BlockCirclesSolver():
         self.black = black
         self.color = color
         self.is_left = is_left
-        self.coordinate = BlockCirclesCoordinate(is_left, bonus)
+        self.coordinate = BlockCirclesCoordinate(is_left, bonus, color)
     
     def solve(self):
         """

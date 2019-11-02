@@ -4,9 +4,13 @@
     @brief  block_bingo_coordinateのテストコード
 """
 import pytest
-from block_bingo_coordinate import Color
-from block_bingo_coordinate import BlockCirclesCoordinate
-from block_bingo_coordinate import CrossCirclesCoordinate
+from BlockBingoCoordinate import Color
+from BlockBingoCoordinate import BlockCirclesCoordinate
+from BlockBingoCoordinate import CrossCirclesCoordinate
+
+def create_block_circles(is_left = True, bonus = 6, color = 3):
+    return BlockCirclesCoordinate(is_left, bonus, color)
+
 
 def check_block_circles_size(coordinate):
     # ブロックサークルが8個あることを確認
@@ -19,9 +23,7 @@ def test_init_block_circles_coordinate_left():
     """
     Lコースのブロックサークルの座標と色を格納するデータ構造が正しく生成できることを確認する。
     """
-    is_left = True
-    bonus = 6
-    coordinate = BlockCirclesCoordinate(is_left, bonus)
+    coordinate = create_block_circles()
     check_block_circles_size(coordinate)
 
 
@@ -29,69 +31,8 @@ def test_init_block_circles_coordinate_right():
     """
     Rコースのブロックサークルの座標と色を格納するデータ構造が正しく生成できることを確認する。
     """
-    is_left = False
-    bonus = 4
-    coordinate = BlockCirclesCoordinate(is_left, bonus)
+    coordinate = create_block_circles()
     check_block_circles_size(coordinate)
-
-
-def test_move_block():
-    """
-    引数の座標をキーにもつブロックサークル番号がopenリストから削除されることを確認する。
-    """
-    is_left = True
-    bonus = 4
-    coordinate = BlockCirclesCoordinate(is_left, bonus)
-    
-    # openリストに1番サークルが登録されていることを確認する
-    assert 1 in coordinate.open
-    # 1番サークルにブロックを設置する
-    coordinate.move_block(coordinate.get(1))
-    # openリストから1番サークルが削除されていることを確認する
-    assert 1 not in coordinate.open
-
-
-def test_move_block_invalid():
-    """
-    存在しないブロックサークルの座標を引数にしてmove_block関数を呼び出す。
-    """
-    is_left = True
-    bonus = 4
-    coordinate = BlockCirclesCoordinate(is_left, bonus)
-
-    # openリストを取得しておく
-    open = coordinate.open
-    # 存在しないブロックサークルの座標を引数にしてmove_blockを呼び出す
-    coordinate.move_block((5,5))
-    # openリストに影響がないことを確認する
-    assert open == coordinate.open
-
-
-
-def test_circle_to_put():
-    """
-    運搬するブロックの色を指定して、ブロックサークルの座標が正しく返ってくることを確認する。
-    """
-    is_left = True
-    bonus = 5
-    coordinate = BlockCirclesCoordinate(is_left, bonus)
-    # 黄色ブロックを運搬するブロックサークルの座標が返ることを確認する
-    block_circle = coordinate.circle_to_put(Color.YELLOW)
-    assert block_circle in [(0,0), (1,2)]
-
-    # 返却された座標に黄色ブロックを運搬する
-    coordinate.move_block(block_circle)
-    # 黄色ブロックを運搬するブロックサークルの座標が返ることを確認する
-    block_circle = coordinate.circle_to_put(Color.YELLOW)
-    assert block_circle in [(0,0), (1,2)]
-
-    # 返却された座標に黄色ブロックを運搬する
-    coordinate.move_block(block_circle)
-    # Noneが返ってくることを確認する
-    assert None == coordinate.circle_to_put(Color.YELLOW)
-
-    # 黒ブロックを運搬するブロックサークルの座標がボーナスサークルの座標であることを確認する
-    assert coordinate.get(bonus) == coordinate.circle_to_put(Color.BLACK)
     
 
 def test_get_block_circles_coordinate_error_right():
@@ -99,28 +40,18 @@ def test_get_block_circles_coordinate_error_right():
     誤ったブロックサークル番号を指定したとき、例外が送出されることを確認する。
     """
     with pytest.raises(ValueError):
-        is_left = True
-        bonus = 5
-        coordinate = BlockCirclesCoordinate(is_left, bonus)
+        coordinate = create_block_circles()
         coordinate.get(9)
+        
 
-
-def test_move_block_of_block_circle():
+def test_colors():
     """
-    ブロックサークルにブロックを設置したとき、データ構造に正しく登録されていることを確認する。
+    ブロックサークル番号のリストを指定したとき、正しく指定したブロックサークルの色が返ることを確認する。
     """
-    is_left = True
-    bonus = 5
-    coordinate = BlockCirclesCoordinate(is_left, bonus)
-    
-    # 設置前のopenリストの要素数を取得する
-    assert 8 == len(coordinate.open)
+    coordinate = create_block_circles()
+    assert [Color.YELLOW, Color.GREEN] == coordinate.colors([1, 2])
+    assert [Color.YELLOW, Color.GREEN, Color.RED, Color.YELLOW, Color.BLUE] == coordinate.colors([1, 2, 3, 5, 8])
 
-    # 1番サークルにブロックを運搬する
-    coordinate.move_block(coordinate.get(1))
-
-    assert 7 == len(coordinate.open)
-    assert 0 == coordinate.open.count(1)
 
 
 def test_init_cross_circle_corrdinate():
@@ -156,14 +87,12 @@ def test_goal_node():
     """
     走行体の初期位置とブロックサークルの座標を指定すると、ブロックを設置するための交点サークルの座標が正しく返ることを確認する。
     """
-    is_left = True
-    bonus = 5
     cross_circles = CrossCirclesCoordinate()
-    block_circles = BlockCirclesCoordinate(is_left, bonus)
+    block_circles = create_block_circles()
 
     assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(3))
     assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(5))
-    assert (3,2) == cross_circles.goal_node((2,3), block_circles.get(7))
+    assert (2,1.5) == cross_circles.goal_node((2,1.5), block_circles.get(7))
     assert (1,0) == cross_circles.goal_node((3,0), block_circles.get(1))
 
 
@@ -178,3 +107,23 @@ def test_move_block_of_cross_circle():
 
     coordinate.move_block(point)
     assert coordinate.color(point) == Color.NONE
+
+
+def test_start_node():
+    coordinate = CrossCirclesCoordinate()
+    # 現実的にはありえないが、交点サークルのすべてに緑色のブロックを配置する
+    for x in range(0, 3+1):
+        for y in range(0, 3+1):
+            coordinate.set_block_color((x,y), Color.GREEN)
+    
+    # 走行体の現在地から最も近い交点サークルの座標を返すことを確認する。
+    assert ((1,1), 0) == coordinate.start_node((1.5,1), [Color.GREEN])
+    assert ((1,1), 0) == coordinate.start_node((1,1), [Color.GREEN])
+
+    # 指定色のブロックが置いてある交点サークルがない場合は、Noneが返ることを確認する。
+    assert None == coordinate.start_node((1,1), [Color.RED])
+
+    # 1つだけ青色のブロックを置いて、正しく処理できるか確認する
+    coordinate.set_block_color((0,2), Color.BLUE)
+    assert ((2,0), 2) == coordinate.start_node((2.5,0), [Color.RED, Color.BLUE, Color.GREEN])
+    assert ((0,2), 1) == coordinate.start_node((2.5, 0), [Color.YELLOW, Color.BLUE])

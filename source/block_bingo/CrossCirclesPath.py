@@ -1,5 +1,5 @@
 import heapq
-from block_bingo_coordinate import Color
+from BlockBingoCoordinate import Color
 
 class Node():
     '''

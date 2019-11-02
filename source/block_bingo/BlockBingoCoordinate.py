@@ -1,12 +1,11 @@
 """
-    @file   block_bingo_coordinate.py
+    @file   BlockBingoCoordinate.py
     @author T.Miyaji
     @brief  ブロックビンゴ攻略に使用するブロックサークルおよび交点サークルの座標を提供する。
 """
 from enum import Enum, auto
 import numpy as np
 
-# TODO Colorクラスは他のファイルにもあるので、統合する
 class Color(Enum):
     """
     ブロック、ブロックサークルまたは交点サークルの色。
@@ -22,7 +21,7 @@ class BlockCirclesCoordinate():
     """
     ブロックサークルの座標を表すクラス
     """
-    def __init__(self, is_left, bonus):
+    def __init__(self, is_left, bonus, color):
         """
         ブロックサークルの座標と色を設定する。
 
@@ -32,6 +31,8 @@ class BlockCirclesCoordinate():
             Lコースかどうか
         bonus : int
             ボーナスサークルのブロックサークル番号
+        color : int
+            カラーブロックが置かれたサークルのブロックサークル番号
         """
         # ブロックサークルの座標を辞書に登録する
         self.block_circles = { 1: (0, 0), 2: (0, 1), 3: (0, 2),
@@ -42,10 +43,10 @@ class BlockCirclesCoordinate():
             self.block_circle_color = [Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE]
         else:
             self.block_circle_color = [Color.RED, Color.GREEN, Color.YELLOW, Color.YELLOW, Color.BLUE, Color.BLUE, Color.RED, Color.GREEN]
-        # ブロックが設置されていないブロックサークルの座標を登録する
-        self.open = [i+1 for i in range(8)]
-        # ボーナスサークルの座標を登録する
-        self.bonus = bonus
+        # ボーナスサークルのブロックサークル番号を登録する
+        self.bonus_circle = bonus
+        # カラーブロックが置かれたサークルのブロックサークル番号を登録する
+        self.color_circle = color
     
 
     def get(self, circle_number):
@@ -57,44 +58,19 @@ class BlockCirclesCoordinate():
         circle_number : int
             ブロックサークル番号
         """
-        
         if circle_number < 1 or 8 < circle_number:
             raise ValueError('Block circle number is invalid!')
         return self.block_circles[circle_number]
 
-
-    def move_block(self, coordinate):
+    
+    def colors(self, candidate):
         """
-        ブロックサークルにブロックが設置されたことをデータ構造に登録する。
+        ブロックを設置するブロックサークルの番号から、サークルの色を返す。
 
-        Parameters
-        ----------
-        coordinate : tuple
-            ブロックサークルの座標
+        candidate : list
+            ブロックビンゴを成立するためのブロックサークル番号のリスト
         """
-        # openリストのうち引数の座標をキーにもつ要素を削除する
-        for key in [i for (i, e) in self.block_circles.items() if e == coordinate]:
-            self.open.remove(key)
-
-
-    def circle_to_put(self, color):
-        """
-        指定した色と同じ色で、まだブロックが置かれていないブロックサークルの座標を返す。
-
-        Parameters
-        ----------
-        color : Color
-            ブロックの色
-        """
-        # 指定色が黒の場合は、ボーナスサークルを返す
-        if color == Color.BLACK:
-            return self.get(self.bonus)
-
-        for index in [i+1 for (i, e) in enumerate(self.block_circle_color) if e == color]:
-            if index in self.open:
-                return self.get(index)
-        # 指定色のブロックがすでに運搬されていた場合は、Noneを返す
-        return None
+        return [self.block_circle_color[number-1] for number in candidate]
 
 
 class CrossCirclesCoordinate():
@@ -153,11 +129,15 @@ class CrossCirclesCoordinate():
         block_circle : tuple
             ブロックサークルの座標
         """
-        # ブロックサークルの周辺にある4つの交点サークルの座標を取得する
-        coordinates = [block_circle,
-                       (block_circle[0], block_circle[1]+1),
-                       (block_circle[0]+1, block_circle[1]),
-                       (block_circle[0]+1, block_circle[1]+1)]
+        # ブロックサークルの周辺にある8つの点の座標を取得する
+        coordinates = [block_circle, 
+                      (block_circle[0], block_circle[1]+0.5),
+                      (block_circle[0], block_circle[1]+1),
+                      (block_circle[0]+0.5, block_circle[1]),
+                      (block_circle[0]+0.5, block_circle[1]+1),
+                      (block_circle[0]+1, block_circle[1]),
+                      (block_circle[0]+1, block_circle[1]+0.5),
+                      (block_circle[0]+1, block_circle[1]+1)]
         # ブロックが置かれた交点サークルの座標を取り除く
         coordinates = list(set(coordinates) - set(self.open))
         # 交点サークルの座標と現在地の距離を計算する
@@ -179,3 +159,25 @@ class CrossCirclesCoordinate():
         self.set_block_color(coordinate, Color.NONE)
         # openリストから削除する
         self.open.remove(coordinate)
+    
+
+    def start_node(self, current, colors):
+        """
+        走行体の現在地から最も近い、指定色のブロックが置いてある交点サークルの座標とサークル色のリストインデックスを返す。
+
+        Parameters
+        ----------
+        current : tuple
+            走行体の現在地
+        colors : list
+            運搬するブロックの色のリスト
+        """
+        # 現在地から近い順にブロックが置いてある交点サークルの座標をソートする
+        distances = list(map(lambda x: abs(x[0]-current[0]) + abs(x[1]-current[1]), self.open))
+        coordinates = [self.open[index] for index in np.argsort(distances)]
+
+        # 走行体の現在地から最も近い、指定色のブロックが置いてある交点サークルの座標を調べる
+        for coordinate in coordinates:
+            if self.cross_circles[coordinate] in colors:
+                return (coordinate, colors.index(self.cross_circles[coordinate]))
+        return None
