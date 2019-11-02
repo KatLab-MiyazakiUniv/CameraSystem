@@ -9,6 +9,8 @@ from BlockBingoCoordinate import CrossCirclesCoordinate
 class Instructions():
     ENTER_BINGO_AREA_L4 = 'a'
     ENTER_BINGO_AREA_L6 = 'b'
+    ENTER_BINGO_AREA_R5 = 'w'
+    ENTER_BINGO_AREA_R8 = 'x'
     STRAIGHT = 'c'
     SPIN_RIGHT = 'd'
     SPIN_LEFT = 'e'
@@ -31,6 +33,8 @@ class Instructions():
     def translate(self, instruction):
         ja = {  Instructions.ENTER_BINGO_AREA_L4: '4番サークルに進入',
                 Instructions.ENTER_BINGO_AREA_L6: '6番サークルに進入',
+                Instructions.ENTER_BINGO_AREA_R5: '5番サークルに進入',
+                Instructions.ENTER_BINGO_AREA_R8: '8番サークルに進入',
                 Instructions.STRAIGHT: 'ブロックサークル間を直進',
                 Instructions.SPIN_RIGHT: '右に90°回頭する',
                 Instructions.SPIN_LEFT: '左に90°回頭する',
