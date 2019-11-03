@@ -34,6 +34,32 @@ def test_init_block_circles_coordinate_right():
     coordinate = create_block_circles()
     check_block_circles_size(coordinate)
     
+def test_init_block_circles_coordinate_error_bounus():
+    """
+    誤ったブロックサークル番号を指定したとき、例外が送出されることを確認する。
+    """
+    with pytest.raises(ValueError):
+        coordinate = create_block_circles(bonus=0)
+    with pytest.raises(ValueError):
+        coordinate = create_block_circles(bonus=9)
+
+def test_init_block_circles_coordinate_error_color():
+    """
+    誤ったブロックサークル番号を指定したとき、例外が送出されることを確認する。
+    """
+    with pytest.raises(ValueError):
+        coordinate = create_block_circles(color=0)
+    with pytest.raises(ValueError):
+        coordinate = create_block_circles(color=9)
+
+def test_init_block_circles_coordinate_error_black():
+    """
+    誤ったブロックサークル番号を指定したとき、例外が送出されることを確認する。
+    """
+    with pytest.raises(ValueError):
+        coordinate = create_block_circles(black=0)
+    with pytest.raises(ValueError):
+        coordinate = create_block_circles(black=9)
 
 def test_get_block_circles_coordinate_error_right():
     """
@@ -43,6 +69,21 @@ def test_get_block_circles_coordinate_error_right():
         coordinate = create_block_circles()
         coordinate.get(9)
         
+def test_get_block_circles_coordinate_get_color_circle():
+    """
+    コンストラクタで設定したカラーブロックが置かれているサークルを返す。
+    """
+    color_circle_number = 2 # ブロックサークル番号は適当
+    coordinate = create_block_circles(color=color_circle_number)
+    assert coordinate.get_color_circle() == color_circle_number
+
+def test_get_block_circles_coordinate_get_black_circle():
+    """
+    コンストラクタで設定した黒ブロックが置かれているサークルを返す。
+    """
+    black_circle_number = 2 # ブロックサークル番号は適当
+    coordinate = create_block_circles(black=black_circle_number)
+    assert coordinate.get_black_circle() == black_circle_number
 
 def test_colors():
     """
