@@ -45,11 +45,18 @@ class BlockCirclesCoordinate():
             self.block_circle_color = [Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE]
         else:
             self.block_circle_color = [Color.RED, Color.GREEN, Color.YELLOW, Color.YELLOW, Color.BLUE, Color.BLUE, Color.RED, Color.GREEN]
+        
         # ボーナスサークルのブロックサークル番号を登録する
+        if bonus < 1 or 8 < bonus:
+            raise ValueError('Bonus circle number is invalid!')
         self.bonus_circle = bonus
         # カラーブロックが置かれたサークルのブロックサークル番号を登録する
+        if color < 1 or 8 < color:
+            raise ValueError('Color block`s circle number is invalid!')
         self.color_circle = color
         # 黒ブロックが置かれたサークルのブロックサークル番号を登録する
+        if black < 1 or 8 < black:
+            raise ValueError('Black block`s circle number is invalid!')
         self.black_circle = black
 
     def get(self, circle_number):
