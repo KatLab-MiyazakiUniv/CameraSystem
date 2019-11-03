@@ -8,8 +8,8 @@ from BlockBingoCoordinate import Color
 from BlockBingoCoordinate import BlockCirclesCoordinate
 from BlockBingoCoordinate import CrossCirclesCoordinate
 
-def create_block_circles(is_left = True, bonus = 6, color = 3):
-    return BlockCirclesCoordinate(is_left, bonus, color)
+def create_block_circles(is_left = True, bonus = 6, color = 3, black = 5):
+    return BlockCirclesCoordinate(is_left, bonus, color, black)
 
 
 def check_block_circles_size(coordinate):

@@ -47,7 +47,7 @@ class BlockCirclesSolver():
         self.black = black
         self.color = color
         self.is_left = is_left
-        self.coordinate = BlockCirclesCoordinate(is_left, bonus, color)
+        self.coordinate = BlockCirclesCoordinate(is_left, bonus, color, black)
     
     def solve(self):
         """

@@ -8,11 +8,11 @@ from BlockBingoCoordinate import CrossCirclesCoordinate
 from RuleBook import Bingo
 from RuleBook import RuleBook
 
-def create_rule_book(color, bingo=Bingo.DOUBLE_BINGO):
+def create_rule_book(color, bingo=Bingo.DOUBLE_BINGO, black=6):
     is_left = True
     bonus = 1
     color = color
-    block_circle = BlockCirclesCoordinate(is_left, bonus, color)
+    block_circle = BlockCirclesCoordinate(is_left, bonus, color, black)
     cross_circle = CrossCirclesCoordinate()
 
     return RuleBook(block_circle, cross_circle, bingo=bingo)

@@ -25,8 +25,8 @@ def test_translate():
     assert order[4] == 'ブロックを黒線の中点から設置'
 
 
-def create_commands(is_left=True, bonus=5, color=3):
-    block_circles = BlockCirclesCoordinate(is_left, bonus, color)
+def create_commands(is_left=True, bonus=5, color=3, black=6):
+    block_circles = BlockCirclesCoordinate(is_left, bonus, color, black)
     cross_circles = CrossCirclesCoordinate()
 
     return Commands(block_circles, cross_circles)
