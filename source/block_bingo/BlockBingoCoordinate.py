@@ -21,7 +21,7 @@ class BlockCirclesCoordinate():
     """
     ブロックサークルの座標を表すクラス
     """
-    def __init__(self, is_left, bonus, color):
+    def __init__(self, is_left, bonus, color, black):
         """
         ブロックサークルの座標と色を設定する。
 
@@ -33,6 +33,8 @@ class BlockCirclesCoordinate():
             ボーナスサークルのブロックサークル番号
         color : int
             カラーブロックが置かれたサークルのブロックサークル番号
+        black : int
+            黒ブロックが置かれたサークルのブロックサークル番号
         """
         # ブロックサークルの座標を辞書に登録する
         self.block_circles = { 1: (0, 0), 2: (0, 1), 3: (0, 2),
@@ -47,7 +49,8 @@ class BlockCirclesCoordinate():
         self.bonus_circle = bonus
         # カラーブロックが置かれたサークルのブロックサークル番号を登録する
         self.color_circle = color
-    
+        # 黒ブロックが置かれたサークルのブロックサークル番号を登録する
+        self.black_circle = black
 
     def get(self, circle_number):
         """
@@ -62,11 +65,24 @@ class BlockCirclesCoordinate():
             raise ValueError('Block circle number is invalid!')
         return self.block_circles[circle_number]
 
+    def get_color_circle(self):
+        """
+        カラーブロックが置かれているブロックサークル番号を返す。
+        """
+        return self.color_circle
     
+    def get_black_circle(self):
+        """
+        黒ブロックが置かれているブロックサークル番号を返す。
+        """
+        return self.black_circle
+
     def colors(self, candidate):
         """
         ブロックを設置するブロックサークルの番号から、サークルの色を返す。
 
+        Parameters
+        ----------
         candidate : list
             ブロックビンゴを成立するためのブロックサークル番号のリスト
         """
