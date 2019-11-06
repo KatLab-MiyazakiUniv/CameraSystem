@@ -4,7 +4,7 @@
 @brief: ブロックサークルと交点サークルを囲むだけで各サークルの座標を取得．
 """
 
-import cv2
+import cv2.cv2 as cv2
 import numpy as np
 
 
@@ -14,8 +14,8 @@ class GetCirclePoint:
         """コンストラクタ
         """
         self.CROSS_CIRCLE_POINTS = 16  # 交点サークルの個数
-        self.BLOCK_CIRCLE_POINTS = 8   # ブロックサークルの個数
-        self.POINTS_NUMBER = 2         # 座標の個数
+        self.BLOCK_CIRCLE_POINTS = 8  # ブロックサークルの個数
+        self.POINTS_NUMBER = 2  # 座標の個数
         self.cc_points = np.empty((self.CROSS_CIRCLE_POINTS, self.POINTS_NUMBER), dtype=int)  # 交点サークル
         self.bc_points = np.empty((self.BLOCK_CIRCLE_POINTS, self.POINTS_NUMBER), dtype=int)  # ブロックサークル
         self.ix = self.iy = 0  # 起点となる座標
@@ -170,10 +170,10 @@ class GetCirclePoint:
 
             if get_circle_point.circle_mode == 0:  # 交点サークルを囲むモード
                 get_circle_point.cc_points = get_circle_point.calc_points(points=square_points, column=16)
-                get_circle_point.draw_all_points(img, get_circle_point.cc_points)
+                get_circle_point.draw_all_points(img=img, points=get_circle_point.cc_points, win_name=window_name)
             elif get_circle_point.circle_mode == 1:  # ブロックサークルを囲むモード
                 get_circle_point.bc_points = get_circle_point.calc_points(points=square_points, column=8)
-                get_circle_point.draw_all_points(img, get_circle_point.bc_points)
+                get_circle_point.draw_all_points(img=img, points=get_circle_point.bc_points, win_name=window_name)
                 # print('代入前：{0}'.format(get_circle_point.named_points))
                 get_circle_point.add()
                 # print('代入後：{0}'.format(get_circle_point.named_points))
@@ -181,6 +181,19 @@ class GetCirclePoint:
                 print('m9( ´,_ゝ｀)ﾌﾟｯ')
             get_circle_point.circle_mode += 1
             get_circle_point.mode = False  # ドラッグ・アンド・ドロップで範囲指定モードをOFF
+
+    def run(self):
+        img = './../img/clip_field.png'
+        window_name = 'WindowDAYO'
+        img = cv2.imread(img)
+        get_circle_point = GetCirclePoint()
+        cv2.namedWindow(window_name)
+        cv2.setMouseCallback(window_name, get_circle_point.drag_and_drop_square,
+                             [window_name, img, get_circle_point])
+        cv2.imshow(window_name, img)
+        cv2.moveWindow(window_name, 100, 100)  # 左上にウィンドウを出す
+        cv2.waitKey()
+        print(get_circle_point.named_points)
 
 
 # 自分をmain関数だと思っている精神異常者
