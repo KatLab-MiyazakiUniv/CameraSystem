@@ -3,9 +3,10 @@
     @author: Takahiro55555
     @brief: 黒ブロック運搬経路をコマンドへ変換するクラス
 """
+
 from BlockBingoCoordinate import BlockCirclesCoordinate
 from BlockCirclesPath import BlockCirclesSolver
-
+from commands import Instructions
 
 class BlackBlockCommands():
     def __init__(self, bonus, black, color, is_left=True):
@@ -53,22 +54,6 @@ class BlackBlockCommands():
         else:
             self.direction = (-1, 0)
 
-        ### コマンドの初期化（定義） ###
-        # HACK: 別ファイルから読み込んだほうが良いかも
-        # ブロックビンゴエリアへの侵入
-        self.ENTER_4 = 'a'  # Lコース
-        self.ENTER_6 = 'b'  # Lコース
-        self.ENTER_5 = 'w'  # Rコース
-        self.ENTER_8 = 'x'  # Rコース
-        # ブロックサークル間移動
-        self.MOVE_CIRCLE = 'c'
-        # 90度右回転
-        self.TURN_RIGHT_90 = 'd'
-        # 90度左回転
-        self.TURN_LEFT_90 = 'e'
-        # 180度回転
-        self.TURN_180 = 'f'
-
     def gen_commands(self):
         """
         運搬経路からコマンドを生成する
@@ -84,17 +69,17 @@ class BlackBlockCommands():
             # 座標系の相違を吸収
             tmp_trans[0], tmp_trans[1] = tmp_trans[1], tmp_trans[0]
             if self.route[0] == tmp_trans:
-                commands += self.ENTER_4
+                commands += Instructions.ENTER_BINGO_AREA_L4
             else:
-                commands += self.ENTER_6
+                commands += Instructions.ENTER_BINGO_AREA_L6
         else:
             tmp_trans = list(self.block_circles_coordinate.get(5))
             # 座標系の相違を吸収
             tmp_trans[0], tmp_trans[1] = tmp_trans[1], tmp_trans[0]
             if self.route[0] == tmp_trans:
-                commands += self.ENTER_5
+                commands += Instructions.ENTER_BINGO_AREA_R5
             else:
-                commands += self.ENTER_8
+                commands += Instructions.ENTER_BINGO_AREA_R8
         current_coordinate = self.route[0]
         for i in range(1, len(self.route)):
             commands += self.coordinate_to_command(current_coordinate, self.route[i], self.direction)
@@ -136,7 +121,7 @@ class BlackBlockCommands():
         # 機体の向きを更新
         self.direction = next_direction
         # ブロックサークル間移動
-        tmp_commands += self.MOVE_CIRCLE
+        tmp_commands += Instructions.STRAIGHT
         return tmp_commands
 
     def direction_to_command(self, robot_direction, movement_direction):
@@ -165,14 +150,14 @@ class BlackBlockCommands():
         # 90度回転
         direction = self.detect_direction(robot_direction, movement_direction)
         if direction == "r":
-            return self.TURN_RIGHT_90
+            return Instructions.SPIN_RIGHT
         if direction == "l":
-            return self.TURN_LEFT_90
+            return Instructions.SPIN_LEFT
         # 180度右回転
         if robot_direction[0] == movement_direction[0]:
-            return self.TURN_180
+            return Instructions.SPIN180
         if robot_direction[1] == movement_direction[1]:
-            return self.TURN_180
+            return Instructions.SPIN180
         return ""
 
     def detect_direction(self, robot_direction, movement_direction):
