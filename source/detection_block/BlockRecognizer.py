@@ -9,6 +9,14 @@ import pytest
 
 class BlockRecognizer:
     def __init__(self, bonus=1, isLeft=True):
+        """
+        Parameters
+        ----------
+        bonus: int
+            ボーナスサークルの番号
+        isLeft: bool
+            コース情報
+        """
         self.block_bingo = BlockBingo()
         self.extractor = BlockExtractor()
         self.bonus = bonus
