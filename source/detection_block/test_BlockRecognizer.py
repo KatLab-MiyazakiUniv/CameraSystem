@@ -16,7 +16,7 @@ def test_result():
     
     recognizer = BlockRecognizer()
     img = cv2.imread('detection_block/result.png')
-    black, color, cc = recognizer.recognize(img, circles_coordinates)
+    bc, cc = recognizer.recognize(img, circles_coordinates)
 
     # 正解データ result_cc_blocks[col][row]
     result_cc_blocks = (
@@ -26,7 +26,7 @@ def test_result():
         (Color.WHITE, Color.BLACK, Color.WHITE, Color.GREEN)
         )
     
-    assert (5, 7) == (black, color)
+    assert (5, 7) == (bc.get_black_circle(), bc.get_color_circle())
     for row in range(4):
         for col in range(4):
             assert cc.cross_circles[col][row] == result_cc_blocks[col][row]
@@ -44,7 +44,7 @@ def test_result1():
 
     recognizer = BlockRecognizer()
     img = cv2.imread('detection_block/result1.png')
-    black, color, cc = recognizer.recognize(img, circles_coordinates)
+    bc, cc = recognizer.recognize(img, circles_coordinates)
     
     # 正解データ result1_cc_blocks[col][row]
     result1_cc_blocks = (
@@ -54,7 +54,7 @@ def test_result1():
         (Color.WHITE, Color.BLACK, Color.WHITE, Color.GREEN)
         )
     
-    assert (5, 2) == (black, color)
+    assert (5, 2) == (bc.get_black_circle(), bc.get_color_circle())
     for row in range(4):
         for col in range(4):
             assert cc.cross_circles[col][row] == result1_cc_blocks[col][row]
