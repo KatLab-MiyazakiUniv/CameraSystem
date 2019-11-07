@@ -1,6 +1,6 @@
 from BlockBingo import BlockBingo
 from BlockBingo import Color
-from block_bingo.BlockBingoCoordinate import CrossCirclesCoordinate
+from block_bingo.BlockBingoCoordinate import CrossCirclesCoordinate, BlockCirclesCoordinate
 import cv2
 import sys
 import numpy as np
@@ -8,9 +8,19 @@ import pytest
 
 
 class BlockRecognizer:
-    def __init__(self):
+    def __init__(self, bonus=1, isLeft=True):
+        """
+        Parameters
+        ----------
+        bonus: int
+            ボーナスサークルの番号
+        isLeft: bool
+            コース情報
+        """
         self.block_bingo = BlockBingo()
         self.extractor = BlockExtractor()
+        self.bonus = bonus
+        self.isLeft = isLeft
                       
     def convert_to_hsv(self, img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -52,10 +62,8 @@ class BlockRecognizer:
 
         Returns
         -------
-        black: int
-            ブロックサークル上の黒ブロックの位置
-        color: int
-            ブロックサークル上のカラーブロックの位置
+        block_circle: BlockCirclesCoordinate
+            ブロックサークルのブロック情報
         cross_circle: CrossCirclesCoordinate
             交点サークル上のブロック情報
         """
@@ -63,12 +71,13 @@ class BlockRecognizer:
         img = self.extractor.remove_circle_number(img)
 
         # ブロックサークル上のブロックを識別
-        black, color = self.recognize_block_circle(img, circles_coordinates)
+        color, black = self.recognize_block_circle(img, circles_coordinates)
+        block_circle = BlockCirclesCoordinate(self.isLeft, self.bonus, color, black)
 
         # クロスサークル上のブロックを識別
         cross_circle = self.recognize_cross_circle(img, circles_coordinates)
     
-        return black, color, cross_circle
+        return block_circle, cross_circle
 
     def recognize_cross_circle(self, img, circles_coordinates):
         cross_circles = CrossCirclesCoordinate()
@@ -99,7 +108,7 @@ class BlockRecognizer:
             elif Color.WHITE != self.detect_color(self.extractor.closing(crop)):
                 color = idx + 1
         
-        return (black, color)   
+        return (color, black)   
 
     def extract_block_circles_point(self, circles_coordinates):
         points = []

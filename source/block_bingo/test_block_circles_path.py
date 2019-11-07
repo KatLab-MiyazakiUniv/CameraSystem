@@ -161,7 +161,7 @@ class BlockCirclesSolverTest(unittest.TestCase):
             5. 4.の条件を除いて部分集合は、元のリストの順序を保った状態の部分集合となっていること
         """
         original = [i + 1 for i in range(0, 5)] # [1, 2, 3, 4, 5]
-        solver = BlockCirclesSolver(0, 1, 2, True) # 引数の値は適当
+        solver = BlockCirclesSolver(1, 2, 3, True) # 引数の値は適当
         # 確認事項1.のテスト
         self.assertIsNone(solver.subset_of_tracks(0, 3, original))
         self.assertIsNone(solver.subset_of_tracks(2, 6, original))

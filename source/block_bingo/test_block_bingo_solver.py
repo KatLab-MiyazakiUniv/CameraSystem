@@ -10,8 +10,8 @@ from BlockBingoSolver import BlockCirclesCoordinate
 from BlockBingoSolver import CrossCirclesCoordinate
 from BlockBingoCoordinate import Color
 
-def create_block_bingo(path=[(1,0), (2,0), (2,1)], is_left=True, bonus=5, color=3):
-    return BlockBingoSolver(BlockCirclesCoordinate(is_left, bonus, color), CrossCirclesCoordinate(), path)
+def create_block_bingo(path=[(1,0), (2,0), (2,1)], is_left=True, bonus=5, color=3, black=6):
+    return BlockBingoSolver(BlockCirclesCoordinate(is_left, bonus, color, black), CrossCirclesCoordinate(), path)
 
 
 def test_path():
