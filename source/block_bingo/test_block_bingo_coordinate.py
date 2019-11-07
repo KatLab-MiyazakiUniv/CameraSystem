@@ -73,7 +73,7 @@ def test_get_block_circles_coordinate_get_color_circle():
     """
     コンストラクタで設定したカラーブロックが置かれているサークルを返す。
     """
-    color_circle_number = 2 # ブロックサークル番号は適当
+    color_circle_number = 2  # ブロックサークル番号は適当
     coordinate = create_block_circles(color=color_circle_number)
     assert coordinate.get_color_circle() == color_circle_number
 
@@ -81,7 +81,7 @@ def test_get_block_circles_coordinate_get_black_circle():
     """
     コンストラクタで設定した黒ブロックが置かれているサークルを返す。
     """
-    black_circle_number = 2 # ブロックサークル番号は適当
+    black_circle_number = 2  # ブロックサークル番号は適当
     coordinate = create_block_circles(black=black_circle_number)
     assert coordinate.get_black_circle() == black_circle_number
 
