@@ -19,12 +19,14 @@ class Points:
 
 
 class MoveGetCirclePoint(tk.Frame):
-    def __init__(self, master, title='Show Image', img='./../img/clip_field.png'):
+    def __init__(self, master, window_name=None, title='Show Image', img='./../img/sample_camera_area.jpg'):
         """コンストラクタ
         """
         super().__init__(master)
+        self.window_name = window_name
         self.RADIUS = 5  # 描画する円の半径
         self.master.bind("<KeyPress>", self.key_event)  # キーボードを入力を受け付ける
+        self.bingo_img = img
         self.img = Image.open(img)
         self.image_tk = ImageTk.PhotoImage(self.img)
         width, height = self.img.size  # 画像のサイズ
@@ -130,8 +132,8 @@ class MoveGetCirclePoint(tk.Frame):
         print('修正後： {0}'.format(self.get_circle_point.named_points))
 
     def run_get_circle_point(self):
-        img = './../img/clip_field.png'
-        window_name = 'WindowDAYO'
+        img = self.bingo_img
+        window_name = self.window_name
         img = cv2.imread(img)
         self.set_get_circle_point(GetCirclePoint(window_name=window_name))
         cv2.namedWindow(window_name)
@@ -153,5 +155,5 @@ class MoveGetCirclePoint(tk.Frame):
 
 if __name__ == '__main__':
     root = tk.Tk()
-    move_get_circle_point = MoveGetCirclePoint(master=root)  # 台形補正した画像をを準備して表示
+    move_get_circle_point = MoveGetCirclePoint(master=root, window_name='WindowDAYO')  # 台形補正した画像をを準備して表示
     move_get_circle_point.run()
