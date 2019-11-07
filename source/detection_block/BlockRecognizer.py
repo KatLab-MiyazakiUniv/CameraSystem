@@ -71,7 +71,7 @@ class BlockRecognizer:
         img = self.extractor.remove_circle_number(img)
 
         # ブロックサークル上のブロックを識別
-        black, color = self.recognize_block_circle(img, circles_coordinates)
+        color, black = self.recognize_block_circle(img, circles_coordinates)
         block_circle = BlockCirclesCoordinate(self.isLeft, self.bonus, color, black)
 
         # クロスサークル上のブロックを識別
@@ -108,7 +108,7 @@ class BlockRecognizer:
             elif Color.WHITE != self.detect_color(self.extractor.closing(crop)):
                 color = idx + 1
         
-        return (black, color)   
+        return (color, black)   
 
     def extract_block_circles_point(self, circles_coordinates):
         points = []
