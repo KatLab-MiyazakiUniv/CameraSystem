@@ -40,3 +40,36 @@ $ ./pytest.sh
 
 ## With PyCharm
 PyCharmで楽しみたい人はこの[URL](https://github.com/KatLab-MiyazakiUniv/CameraSystem/wiki/Pycharm-with-Poerty)を参照
+
+
+## HOW TO
+- `CameraSystem.py`を実行後，以下の表示になったら
+- <kbd>d</kbd>を入力すると`DEBUG MODE`
+- <kbd>y</kbd>を入力すると`HONBAN MODE`
+```bash
+SYS: Connect EV3
+BT: ちょいまちこ
+SYS: 本番ですか？
+     y: 本番モード
+     d: デバッグモードで実行
+>> 
+```
+
+#### DEBUG MODE
+- 数字カードの四隅をクリック（カメラ画像のウィンドウが後ろに出てるかもしれません）
+- 適当なキーボードを入力
+- ブロックビンゴエリアの四隅をクリック
+- 適当なキーボードを入力
+- 交点サークルをドラッグ・アンド・ドロップで囲む
+- ブロックサークルをドラッグ・アンド・ドロップで囲む
+- 適当なキーボードを入力
+- `tkinter`が起動する
+- マウスで円を操作し，座標を修正する
+- <kbd>d</kbd>を押すと現在の座標をすべてコンソール上に出す
+- <kbd>q</kbd>を押すと`tkinter`を終了する
+- **ここから下は後で書きます**
+
+#### ATTENTION
+##### マウスで円を操作するときの注意
+- マウスの動きが早すぎるとだめです
+- 円を左クリックした状態で他の円に追突すると暴れます
