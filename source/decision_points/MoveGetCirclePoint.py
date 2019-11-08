@@ -18,11 +18,11 @@ class Points:
         self.item_id = ()  # オブジェクトのID
 
 
-class MoveGetCirclePoint(tk.Frame):
-    def __init__(self, master, window_name=None, title='Show Image', img='./../img/sample_camera_area.jpg'):
+class MoveGetCirclePoint:
+    def __init__(self, window_name='WindowDAYO', title='Show Image', img='./img/block_bingo_img_dummy.png'):
         """コンストラクタ
         """
-        super().__init__(master)
+        self.master = tk.Tk()
         self.window_name = window_name
         self.RADIUS = 5  # 描画する円の半径
         self.master.bind("<KeyPress>", self.key_event)  # キーボードを入力を受け付ける
@@ -35,6 +35,12 @@ class MoveGetCirclePoint(tk.Frame):
         self.master.title(title)
         self.canvas = tk.Canvas(self.master, width=width, height=height)  # Canvas作成
         self.canvas.pack()
+        # self.canvas.create_image(0, 0, image=self.image_tk, anchor=tk.NW)  # ImageTk画像配置
+        # self.canvas.pack()
+
+    def convert_img(self, img='./../img/block_bingo_img_dummy.png'):
+        img = Image.open(img)
+        self.image_tk = ImageTk.PhotoImage(img)
         self.canvas.create_image(0, 0, image=self.image_tk, anchor=tk.NW)  # ImageTk画像配置
         self.canvas.pack()
 
@@ -148,12 +154,13 @@ class MoveGetCirclePoint(tk.Frame):
         print('プログラムが起動しました．ウィンドウが出ない場合は，後ろにウィンドウがでてるかもしれません．')
         self.run_get_circle_point()
         self.draw_get_circle_point()
-        self.mainloop()
+        self.master.mainloop()
         # self.fix_point()
         # self.debug()
 
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    move_get_circle_point = MoveGetCirclePoint(master=root, window_name='WindowDAYO')  # 台形補正した画像をを準備して表示
+    # root = tk.Tk()
+    move_get_circle_point = MoveGetCirclePoint(img='./../img/block_bingo_img_dummy.png')  # 台形補正した画像をを準備して表示
+    move_get_circle_point.convert_img()
     move_get_circle_point.run()

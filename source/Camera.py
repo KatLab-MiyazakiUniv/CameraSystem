@@ -7,7 +7,6 @@
 import sys
 import os
 import json
-import tkinter as tk
 
 import cv2
 import numpy as np
@@ -21,7 +20,6 @@ from decision_points.MoveGetCirclePoint import MoveGetCirclePoint
 class Camera:
     def __init__(self, url="http://raspberrypi.local/?action=stream"):
         self.camera_url = url
-        self.root = tk.Tk()
         # NOTE: 座標を指定すると画像に点や線が入ってしまうため処理用と座標指定用を分けた
         self.original_img = None  # キャプチャしてきた元画像（処理用）
         self.original_img_dummy = None  # キャプチャしてきた元画像（座標指定用）
@@ -29,6 +27,7 @@ class Camera:
         self.block_bingo_img_dummy = None  # 切り取ったブロックビンゴエリアの画像（座標指定用）
         self.loaded_settings_file = False
         self.modified_settings = False
+        self.move_get_circle_point = MoveGetCirclePoint()
 
         # 以下ファイルへ保存するデータ
         self.number_img_range = None  # 数字カードを切り取るための座標情報
@@ -154,12 +153,12 @@ class Camera:
 
     def get_circle_coordinates_with_range(self, window_name="Choose circles"):
         if self.block_bingo_circle_coordinates is None:
-            cv2.imwrite('./img/block_bingo_img_dummy.png', self.block_bingo_img_dummy)
             img = './img/block_bingo_img_dummy.png'
-            move_get_circle_point = MoveGetCirclePoint(master=self.root, window_name=window_name,
-                                                       img=img)
-            move_get_circle_point.run()
-            self.block_bingo_circle_coordinates = move_get_circle_point.get_circle_point.named_points
+            cv2.imwrite(img, self.block_bingo_img_dummy)  # 画像保存
+            self.move_get_circle_point.window_name = window_name
+            self.move_get_circle_point.convert_img(img)
+            self.move_get_circle_point.run()
+            self.block_bingo_circle_coordinates = self.move_get_circle_point.get_circle_point.named_points
             self.modified_settings = True
         return self.block_bingo_circle_coordinates
 
