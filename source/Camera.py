@@ -121,6 +121,7 @@ class Camera:
         # 台形補正の結果を表示（何かキーを押すと終了）
         if is_debug:
             cv2.imshow("color", result_img)
+            cv2.moveWindow("color", 100, 100)  # ウィンドウを左上に動かす
             cv2.waitKey(0)
             cv2.destroyAllWindows()
         return result_img
@@ -144,6 +145,7 @@ class Camera:
         # 台形補正の結果を表示（何かキーを押すと終了）
         if is_debug:
             cv2.imshow("color", result_img)
+            cv2.moveWindow("color", 100, 100)  # ウィンドウを左上に動かす
             cv2.waitKey(0)
             cv2.destroyAllWindows()
         self.block_bingo_img = result_img
@@ -171,6 +173,7 @@ class Camera:
             cv2.namedWindow(wname)
             cv2.setMouseCallback(wname, circle_ptlist.add_point, [wname, self.block_bingo_img_dummy, circle_ptlist])
             cv2.imshow(wname, self.block_bingo_img_dummy)
+            cv2.moveWindow(wname, 100, 100)  # ウィンドウを左上に動かす
             cv2.waitKey()
             cv2.destroyAllWindows()
             circle_ptlist.trans()
