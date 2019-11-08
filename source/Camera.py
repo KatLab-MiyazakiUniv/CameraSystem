@@ -101,6 +101,7 @@ class Camera:
         cv2.namedWindow(wname)
         cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
         cv2.imshow(wname, self.original_img_dummy)
+        cv2.moveWindow(wname, 0, 0)  # ウィンドウを左上に動かす
         cv2.waitKey()
         cv2.destroyAllWindows()
         ptlist.trans()
