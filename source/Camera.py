@@ -13,7 +13,6 @@ import numpy as np
 
 from decision_points.PointList import PointList
 from decision_points.BlockBingoPointList import BlockBingoPointList
-# from decision_points.GetCirclePoint import GetCirclePoint
 from decision_points.MoveGetCirclePoint import MoveGetCirclePoint
 
 

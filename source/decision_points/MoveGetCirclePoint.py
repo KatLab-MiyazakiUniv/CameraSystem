@@ -7,7 +7,7 @@
 import cv2.cv2 as cv2
 import tkinter as tk
 from PIL import Image, ImageTk
-from GetCirclePoint import GetCirclePoint
+from decision_points.GetCirclePoint import GetCirclePoint
 
 
 class Points:
