@@ -7,7 +7,6 @@ from block_bingo.commands import Instructions
 from block_bingo.BlockBingoSolver import BlockBingoSolver
 import time
 import threading
-from PrepareGarage import PrepareGarage
 
 
 class CameraSystem:
@@ -183,7 +182,7 @@ class CameraSystem:
         """
         solver = BlockBingoSolver(block_circles, cross_circles, path)
         return solver.solve()
-        
+
 
     def _send_command(self, commands):
         """
