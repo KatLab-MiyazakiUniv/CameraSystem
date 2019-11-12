@@ -22,7 +22,7 @@ def test_result():
         }
     
     recognizer = create_block_recognizer()
-    img = cv2.imread('result.png')
+    img = cv2.imread('detection_block/result.png')
     bc, cc = recognizer.recognize(img, circles_coordinates)
 
     # 正解データ result_cc_blocks[col][row]
@@ -50,7 +50,7 @@ def test_result1():
         'c03': (52, 606), 'c13': (231, 604), 'c23': (399, 608), 'c33': (581, 607)}
 
     recognizer = create_block_recognizer()
-    img = cv2.imread('result1.png')
+    img = cv2.imread('detection_block/result1.png')
     bc, cc = recognizer.recognize(img, circles_coordinates)
     
     # 正解データ result1_cc_blocks[col][row]
