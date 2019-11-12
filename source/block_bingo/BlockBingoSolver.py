@@ -3,9 +3,9 @@
     @author T.Miyaji
     @brief  ブロックビンゴを攻略するための経路を計算するクラス
 """
+from source.Color import Color
 from BlockBingoCoordinate import BlockCirclesCoordinate
 from BlockBingoCoordinate import CrossCirclesCoordinate
-from BlockBingoCoordinate import Color
 from RuleBook import RuleBook
 from RuleBook import Bingo
 from commands import Commands

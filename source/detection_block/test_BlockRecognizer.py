@@ -1,7 +1,8 @@
 import cv2
 
 from BlockRecognizer import BlockRecognizer
-from ..block_bingo.BlockBingoCoordinate import Color
+from source.Color import Color
+
 
 def create_block_recognizer():
     bonus = 1
