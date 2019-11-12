@@ -1,12 +1,12 @@
 import cv2
 
 from BlockRecognizer import BlockRecognizer
-from BlockBingo import Color
+from BlockBingoCoordinate import Color
 
 def create_block_recognizer():
     bonus = 1
-    is_Left = True
-    return BlockRecognizer(bonus, is_Left)
+    is_left = True
+    return BlockRecognizer(bonus, is_left)
 
 
 def test_result():
