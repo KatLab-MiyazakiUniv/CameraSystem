@@ -1,5 +1,5 @@
-from BlockBingoCoordinate import Color
 from block_bingo.BlockBingoCoordinate import CrossCirclesCoordinate, BlockCirclesCoordinate
+from block_bingo.BlockBingoCoordinate import Color
 import cv2
 import sys
 import numpy as np

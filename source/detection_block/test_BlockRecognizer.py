@@ -1,7 +1,7 @@
 import cv2
 
 from BlockRecognizer import BlockRecognizer
-from source.Color import Color
+from block_bingo.BlockBingoCoordinate import Color
 
 
 def create_block_recognizer():
