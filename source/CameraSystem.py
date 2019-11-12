@@ -167,31 +167,6 @@ class CameraSystem:
         
         return (commands, solver.reverse_route)
 
-<<<<<<< HEAD
-=======
-        while True:
-            print("SYS: Lコースですか？")
-            print("     y: Lコース")
-            print("     n: Rコース")
-            answer = input(">> ")
-            if answer is 'y':
-                self.is_left = True
-                break
-            elif answer is 'n':
-                self.is_left = False
-                break
-
-        while True:
-            print("SYS: 本番ですか？")
-            print("     y: 本番モード")
-            print("     d: デバッグモードで実行")
-            is_start = input(">> ")
-            if is_start is 'y':
-                break
-            elif is_start is 'd':
-                self.is_debug = True
-                break
->>>>>>> 3af2d96e010e844470416499cefa0d1adacb274f
 
     def _block_bingo_path(self, block_circles, cross_circles, path):
         """
