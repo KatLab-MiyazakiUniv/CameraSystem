@@ -174,6 +174,8 @@ class CameraSystem:
 
         Parameters
         ----------
+        block_circles : BlockCirclesCoordinate
+            ブロックサークルの座標
         cross_circles : CrossCirclesCoordinate
             交点サークルの座標
         """

@@ -7,18 +7,18 @@ import pytest
 
 
 class BlockRecognizer:
-    def __init__(self, bonus, isLeft):
+    def __init__(self, bonus, is_left):
         """
         Parameters
         ----------
         bonus: int
             ボーナスサークルの番号
-        isLeft: bool
+        is_left: bool
             コース情報
         """
         self.extractor = BlockExtractor()
         self.bonus = bonus
-        self.isLeft = isLeft
+        self.is_left = is_left
                       
     def convert_to_hsv(self, img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -70,7 +70,7 @@ class BlockRecognizer:
 
         # ブロックサークル上のブロックを識別
         color, black = self.recognize_block_circle(img, circles_coordinates)
-        block_circle = BlockCirclesCoordinate(self.isLeft, self.bonus, color, black)
+        block_circle = BlockCirclesCoordinate(self.is_left, self.bonus, color, black)
 
         # クロスサークル上のブロックを識別
         cross_circle = self.recognize_cross_circle(img, circles_coordinates)
