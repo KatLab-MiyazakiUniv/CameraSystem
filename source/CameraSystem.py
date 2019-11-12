@@ -83,7 +83,6 @@ class CameraSystem:
 
         print("\nSYS: コマンド送信しています...")
         self._send_command(commands)
-        # TODO これから
 
 
     def _connect_to_ev3(self):
@@ -165,8 +164,6 @@ class CameraSystem:
         """
         solver = BlackBlockCommands(block_circles.bonus_circle, block_circles.black_circle, block_circles.color_circle)
         commands = list(solver.gen_commands())
-        # 黒ブロックを配置するコマンドを追加する
-        commands.append(Instructions.PUT)
         
         return (commands, solver.reverse_route)
 
@@ -197,6 +194,7 @@ class CameraSystem:
         # 終了コードを送信
         self.bt.write(ord('#'))
         print("SYS: command send complete")
+
 
 if __name__ == '__main__':
     cs = CameraSystem()
