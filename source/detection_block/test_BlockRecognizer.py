@@ -3,6 +3,12 @@ import cv2
 from BlockRecognizer import BlockRecognizer
 from BlockBingo import Color
 
+def create_block_recognizer():
+    bonus = 1
+    is_Left = True
+    return BlockRecognizer(bonus, is_Left)
+
+
 def test_result():
     circles_coordinates = {
         'c00': (34, 61), 'c10': (210, 61), 'c20': (393, 56), 'c30': (573, 58),
@@ -14,7 +20,7 @@ def test_result():
         'c03': (49, 608), 'c13': (227, 606), 'c23': (400, 607), 'c33': (578, 608)
         }
     
-    recognizer = BlockRecognizer()
+    recognizer = create_block_recognizer()
     img = cv2.imread('detection_block/result.png')
     bc, cc = recognizer.recognize(img, circles_coordinates)
 
@@ -42,7 +48,7 @@ def test_result1():
         "b6": (133, 517), "b7": (311, 517), "b8": (483, 515),
         'c03': (52, 606), 'c13': (231, 604), 'c23': (399, 608), 'c33': (581, 607)}
 
-    recognizer = BlockRecognizer()
+    recognizer = create_block_recognizer()
     img = cv2.imread('detection_block/result1.png')
     bc, cc = recognizer.recognize(img, circles_coordinates)
     

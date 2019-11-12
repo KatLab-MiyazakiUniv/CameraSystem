@@ -8,7 +8,7 @@ import pytest
 
 
 class BlockRecognizer:
-    def __init__(self, bonus=1, isLeft=True):
+    def __init__(self, bonus, isLeft):
         """
         Parameters
         ----------
