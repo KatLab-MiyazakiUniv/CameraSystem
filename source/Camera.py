@@ -13,7 +13,7 @@ import numpy as np
 
 from decision_points.PointList import PointList
 from decision_points.BlockBingoPointList import BlockBingoPointList
-from decision_points.GetCirclePoint import GetCirclePoint
+from decision_points.MoveGetCirclePoint import MoveGetCirclePoint
 
 
 class Camera:
@@ -26,6 +26,7 @@ class Camera:
         self.block_bingo_img_dummy = None  # 切り取ったブロックビンゴエリアの画像（座標指定用）
         self.loaded_settings_file = False
         self.modified_settings = False
+        self.move_get_circle_point = MoveGetCirclePoint()
 
         # 以下ファイルへ保存するデータ
         self.number_img_range = None  # 数字カードを切り取るための座標情報
@@ -98,6 +99,7 @@ class Camera:
         cv2.namedWindow(wname)
         cv2.setMouseCallback(wname, ptlist.add_point, [wname, self.original_img_dummy, ptlist])
         cv2.imshow(wname, self.original_img_dummy)
+        cv2.moveWindow(wname, 0, 0)  # ウィンドウを左上に動かす
         cv2.waitKey()
         cv2.destroyAllWindows()
         ptlist.trans()
@@ -119,6 +121,7 @@ class Camera:
         # 台形補正の結果を表示（何かキーを押すと終了）
         if is_debug:
             cv2.imshow("color", result_img)
+            cv2.moveWindow("color", 100, 100)  # ウィンドウを左上に動かす
             cv2.waitKey(0)
             cv2.destroyAllWindows()
         return result_img
@@ -142,6 +145,7 @@ class Camera:
         # 台形補正の結果を表示（何かキーを押すと終了）
         if is_debug:
             cv2.imshow("color", result_img)
+            cv2.moveWindow("color", 100, 100)  # ウィンドウを左上に動かす
             cv2.waitKey(0)
             cv2.destroyAllWindows()
         self.block_bingo_img = result_img
@@ -150,15 +154,12 @@ class Camera:
 
     def get_circle_coordinates_with_range(self, window_name="Choose circles"):
         if self.block_bingo_circle_coordinates is None:
-            get_circle_point = GetCirclePoint(window_name)
-            cv2.namedWindow(window_name)
-            cv2.setMouseCallback(window_name, get_circle_point.drag_and_drop_square,
-                                 [window_name, self.block_bingo_img_dummy, get_circle_point])
-            cv2.imshow(window_name, self.block_bingo_img_dummy)
-            cv2.moveWindow(window_name, 100, 100)  # 左上にウィンドウを出す
-            cv2.waitKey()
-            cv2.destroyAllWindows()
-            self.block_bingo_circle_coordinates = get_circle_point.named_points
+            img = './img/block_bingo_img_dummy.png'
+            cv2.imwrite(img, self.block_bingo_img_dummy)  # 画像保存
+            self.move_get_circle_point.window_name = window_name
+            self.move_get_circle_point.convert_img(img)
+            self.move_get_circle_point.run()
+            self.block_bingo_circle_coordinates = self.move_get_circle_point.get_circle_point.named_points
             self.modified_settings = True
         return self.block_bingo_circle_coordinates
 
@@ -172,6 +173,7 @@ class Camera:
             cv2.namedWindow(wname)
             cv2.setMouseCallback(wname, circle_ptlist.add_point, [wname, self.block_bingo_img_dummy, circle_ptlist])
             cv2.imshow(wname, self.block_bingo_img_dummy)
+            cv2.moveWindow(wname, 100, 100)  # ウィンドウを左上に動かす
             cv2.waitKey()
             cv2.destroyAllWindows()
             circle_ptlist.trans()
@@ -296,7 +298,8 @@ if __name__ == '__main__':
             edit_settings = True
 
     # ラズパイから映像を受信し、保存する
-    camera = Camera("https://raw.githubusercontent.com/KatLab-MiyazakiUniv/CameraSystem/ticket-70/source/detection_number/imgs/sample.jpg")
+    camera = Camera(
+        "https://raw.githubusercontent.com/KatLab-MiyazakiUniv/CameraSystem/master/source/detection_number/imgs/sample.jpg")
     if not edit_settings:
         camera.load_settings()
     # 余白を設定
