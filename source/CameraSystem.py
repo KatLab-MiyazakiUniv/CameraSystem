@@ -10,15 +10,15 @@ import threading
 
 
 class CameraSystem:
-    def __init__(self):
-        self.camera = Camera()
+    def __init__(self, url="http://raspberrypi.local/?action=stream"):
+        self.camera = Camera(url)
         
         # NOTE: 以前に座標ポチポチしたデータを読み込む（ファイルが存在場合は何もしない）
         #       座標ポチポチをやり直したい場合は、camera.load_settings()を呼び出さなければOK
         self.camera.load_settings()
 
         self.bt = Bluetooth()
-        self.port = "COM3"
+        self.port = "COM4"
         self.is_debug = False
 
 
@@ -58,13 +58,6 @@ class CameraSystem:
                 self.is_debug = True
                 break
 
-        if not self.is_debug:
-            print('\nSYS: 開始しています...')
-            connect_thread.join()
-            while True:
-                if self.bt.read() == 2:
-                    break
-
         # 数字カードの数字を認識する
         print("\nSYS: 数字カードを認識しています...")
         card_number = self._detection_number()
@@ -77,6 +70,13 @@ class CameraSystem:
         instructions = Instructions()
         print("運搬経路コマンド")
         print([instructions.translate(command) for command in commands])
+
+        if not self.is_debug:
+            print('\nSYS: 開始しています...')
+            connect_thread.join()
+            while True:
+                if self.bt.read() == 2:
+                    break
 
         if self.is_debug:
             connect_thread.join()
@@ -167,32 +167,6 @@ class CameraSystem:
         
         return (commands, solver.reverse_route)
 
-<<<<<<< HEAD
-=======
-        while True:
-            print("SYS: Lコースですか？")
-            print("     y: Lコース")
-            print("     n: Rコース")
-            answer = input(">> ")
-            if answer is 'y':
-                self.is_left = True
-                break
-            elif answer is 'n':
-                self.is_left = False
-                break
-
-        while True:
-            print("SYS: 本番ですか？")
-            print("     y: 本番モード")
-            print("     d: デバッグモードで実行")
-            is_start = input(">> ")
-            if is_start is 'y':
-                break
-            elif is_start is 'd':
-                self.is_debug = True
-                break
->>>>>>> 3af2d96e010e844470416499cefa0d1adacb274f
-
     def _block_bingo_path(self, block_circles, cross_circles, path):
         """
         ブロックビンゴ成立のための運搬経路を計算する。
@@ -222,5 +196,5 @@ class CameraSystem:
 
 
 if __name__ == '__main__':
-    cs = CameraSystem()
+    cs = CameraSystem(url="./img/sample_camera_area_with_block.jpg")
     cs.start()
