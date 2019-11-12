@@ -1,4 +1,4 @@
-from DetectionNumber import DetectionNumber
+from detection_number.DetectionNumber import DetectionNumber
 from Camera import Camera
 from bluetooth.Bluetooth import Bluetooth
 from detection_block.BlockRecognizer import BlockRecognizer
