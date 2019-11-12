@@ -196,5 +196,5 @@ class CameraSystem:
 
 
 if __name__ == '__main__':
-    cs = CameraSystem(url="./img/sample_camera_area_with_block.jpg")
+    cs = CameraSystem(url="./img/sample_camera_area_with_block.jpg")  # 本番時はurlを消してね。
     cs.start()

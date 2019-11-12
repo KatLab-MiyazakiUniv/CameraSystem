@@ -84,7 +84,7 @@ class BlockRecognizer:
         for col in "0123":
             for row in "0123":
                 key = 'c' + row + col
-                coordinate = (int(row), int(col))
+                coordinate = (int(col), int(row))
                 point = circles_coordinates[key] # 交点サークルの座標
                 crop = self.extractor.trim(img, point) # 交点サークルの周辺を切り取る
                 color = self.detect_color(self.extractor.closing(crop)) # ブロック識別
