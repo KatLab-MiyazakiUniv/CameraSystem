@@ -7,6 +7,7 @@ from block_bingo.commands import Instructions
 from block_bingo.BlockBingoSolver import BlockBingoSolver
 import time
 import threading
+import pprint
 
 
 class CameraSystem:
@@ -69,7 +70,7 @@ class CameraSystem:
 
         instructions = Instructions()
         print("運搬経路コマンド")
-        print([instructions.translate(command) for command in commands])
+        pprint.pprint([instructions.translate(command) for command in commands])
 
         if not self.is_debug:
             print('\nSYS: 開始しています...')

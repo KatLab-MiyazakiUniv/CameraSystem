@@ -1,5 +1,4 @@
-from BlockBingo import BlockBingo
-from BlockBingo import Color
+from BlockBingoCoordinate import Color
 from block_bingo.BlockBingoCoordinate import CrossCirclesCoordinate, BlockCirclesCoordinate
 import cv2
 import sys
@@ -17,7 +16,6 @@ class BlockRecognizer:
         isLeft: bool
             コース情報
         """
-        self.block_bingo = BlockBingo()
         self.extractor = BlockExtractor()
         self.bonus = bonus
         self.isLeft = isLeft
