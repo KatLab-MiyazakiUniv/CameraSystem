@@ -22,6 +22,7 @@ class CameraSystem:
         self.is_debug = False
         self.route = None
         self.reverse_route = None
+        self.is_left = None
 
     def _connect_to_ev3(self):
         """
@@ -107,6 +108,18 @@ class CameraSystem:
         connect_thread.start()
 
         time.sleep(3)
+
+        while True:
+            print("SYS: Lコースですか？")
+            print("     y: Lコース")
+            print("     n: Rコース")
+            answer = input(">> ")
+            if answer is 'y':
+                self.is_left = True
+                break
+            elif answer is 'n':
+                self.is_left = False
+                break
 
         while True:
             print("SYS: 本番ですか？")
