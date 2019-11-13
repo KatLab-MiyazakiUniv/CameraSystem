@@ -216,7 +216,7 @@ class BlockBingoSolver():
         return [node for node in nodes if 0 <= node[0] <= 3 and 0 <= node[1] <= 3 and node not in block_circles]      
 
 
-    def solve(self, bingo=Bingo.FULL_BINGO):
+    def solve(self, bingo=Bingo.DOUBLE_BINGO):
         """
         ブロックビンゴ攻略とボーナスサークル設置を成立させるための運搬経路を計算する。
 
