@@ -34,7 +34,7 @@ class BlockRecognizer:
         (h, s, v) = self.convert_to_hsv(img)
         
         # 黒色の識別
-        if 0 <= v < 40:
+        if 0 <= v < 30:
             return Color.BLACK
         # 白色の識別
         if 240 <= v < 256:

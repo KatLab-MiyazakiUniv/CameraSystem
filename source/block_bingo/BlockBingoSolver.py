@@ -239,6 +239,9 @@ class BlockBingoSolver():
                 colors.append(Color.BLACK)
 
             (src, index) = self.cross_circles.start_node(self.position, colors)
+            if src is None or index is None:
+                #   ブロックの運搬経路が計算できなかったとき、計算を中断してそれまで計算済みの経路を送信するようにする
+                break
             # 走行体の現在地からブロックがある交点サークルまで移動する経路を求める
             path = self.a_star(self.position, src)
             # ブロックがある交点サークルからブロックを取得する
@@ -262,7 +265,7 @@ class BlockBingoSolver():
             self.direction = commands.put(self.position, placed_circle, self.direction)
         
         # ガレージに行くまでの運搬経路を計算する
-        if self.block_circles.block_circle_color[0] == Color.YELLOW:
+        if self.block_circles.is_left:
             # Lコースの場合、(2,2.5)まで移動する
             path = self.a_star(self.position, (2,2.5))
             self.direction = commands.convert(self.direction, path)

@@ -62,6 +62,7 @@ class BlockCirclesCoordinate():
         if black < 1 or 8 < black:
             raise ValueError('Black block`s circle number is invalid!')
         self.black_circle = black
+        self.is_left = is_left
 
     def get(self, circle_number):
         """
