@@ -447,7 +447,7 @@ class Commands():
         if sub == (1,1):    # ブロックサークルの右下の交点サークル
             if direction == 0 or direction == 2:    # 向きが北 or 東
                 # 走行体が北に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0]-1, src[0]-1), direction, has_block)
+                direction = self.spin(src, (src[0]-1, src[1]), direction, has_block)
                 # 左方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_L)
             if direction == 4 or direction == 6:    # 向きが南 or 西

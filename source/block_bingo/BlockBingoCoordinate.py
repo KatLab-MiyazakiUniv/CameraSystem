@@ -5,6 +5,8 @@
 """
 from enum import Enum, auto
 import numpy as np
+from enum import Enum, auto
+
 
 class Color(Enum):
     """
@@ -16,6 +18,8 @@ class Color(Enum):
     YELLOW = auto()
     GREEN = auto()
     BLACK = auto()
+    WHITE = auto()
+
 
 class BlockCirclesCoordinate():
     """
@@ -58,6 +62,7 @@ class BlockCirclesCoordinate():
         if black < 1 or 8 < black:
             raise ValueError('Black block`s circle number is invalid!')
         self.black_circle = black
+        self.is_left = is_left
 
     def get(self, circle_number):
         """
@@ -201,6 +206,7 @@ class CrossCirclesCoordinate():
 
         # 走行体の現在地から最も近い、指定色のブロックが置いてある交点サークルの座標を調べる
         for coordinate in coordinates:
-            if self.cross_circles[coordinate] in colors:
-                return (coordinate, colors.index(self.cross_circles[coordinate]))
+            for color in colors:
+                if self.cross_circles[coordinate].value == color.value:
+                    return coordinate, colors.index(color)
         return None

@@ -21,7 +21,7 @@ class BlackBlockCommandsTest(unittest.TestCase):
         確認事項
             1. 先頭のコマンドはブロックサークルへ侵入するコマンドである
             2. 回転コマンドが連続することはない
-            3. 末尾のコマンドは前進（サークル間移動）コマンドである
+            3. 末尾のコマンドはブロック設置コマンドである
         """
         # ブロック配置の組み合わせを列挙
         block_products = tuple(itertools.product((1, 2, 3, 4, 5, 6, 7, 8), repeat=3))
@@ -53,7 +53,7 @@ class BlackBlockCommandsTest(unittest.TestCase):
                     # 確認事項2.のテスト
                     self.assertTrue((before_flag != flag) or (not before_flag and not flag))
                 # 確認事項3.のテスト
-                self.assertTrue(commands[-1] == Instructions.STRAIGHT)
+                self.assertTrue(commands[-1] == Instructions.PUT)
 
     def test_coordinate_to_command(self):
         """

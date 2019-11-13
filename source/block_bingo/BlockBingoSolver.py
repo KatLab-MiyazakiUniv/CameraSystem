@@ -3,12 +3,13 @@
     @author T.Miyaji
     @brief  ブロックビンゴを攻略するための経路を計算するクラス
 """
+from BlockBingoCoordinate import Color
 from BlockBingoCoordinate import BlockCirclesCoordinate
 from BlockBingoCoordinate import CrossCirclesCoordinate
-from BlockBingoCoordinate import Color
 from RuleBook import RuleBook
 from RuleBook import Bingo
 from commands import Commands
+
 
 class Path():
     """
@@ -215,7 +216,7 @@ class BlockBingoSolver():
         return [node for node in nodes if 0 <= node[0] <= 3 and 0 <= node[1] <= 3 and node not in block_circles]      
 
 
-    def solve(self, bingo=Bingo.DOUBLE_BINGO):
+    def solve(self, bingo=Bingo.FULL_BINGO):
         """
         ブロックビンゴ攻略とボーナスサークル設置を成立させるための運搬経路を計算する。
 
@@ -261,7 +262,7 @@ class BlockBingoSolver():
             self.direction = commands.put(self.position, placed_circle, self.direction)
         
         # ガレージに行くまでの運搬経路を計算する
-        if self.block_circles.block_circle_color[0] == Color.YELLOW:
+        if self.block_circles.is_left:
             # Lコースの場合、(2,2.5)まで移動する
             path = self.a_star(self.position, (2,2.5))
             self.direction = commands.convert(self.direction, path)

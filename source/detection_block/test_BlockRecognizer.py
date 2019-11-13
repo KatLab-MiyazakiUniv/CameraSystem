@@ -1,7 +1,14 @@
 import cv2
 
 from BlockRecognizer import BlockRecognizer
-from BlockBingo import Color
+from block_bingo.BlockBingoCoordinate import Color
+
+
+def create_block_recognizer():
+    bonus = 1
+    is_left = True
+    return BlockRecognizer(bonus, is_left)
+
 
 def test_result():
     circles_coordinates = {
@@ -14,16 +21,16 @@ def test_result():
         'c03': (49, 608), 'c13': (227, 606), 'c23': (400, 607), 'c33': (578, 608)
         }
     
-    recognizer = BlockRecognizer()
+    recognizer = create_block_recognizer()
     img = cv2.imread('detection_block/result.png')
     bc, cc = recognizer.recognize(img, circles_coordinates)
 
     # 正解データ result_cc_blocks[col][row]
     result_cc_blocks = (
-        (Color.BLUE, Color.WHITE, Color.BLUE, Color.WHITE),
-        (Color.WHITE, Color.GREEN, Color.WHITE, Color.YELLOW),
-        (Color.RED, Color.WHITE, Color.YELLOW, Color.WHITE),
-        (Color.WHITE, Color.BLACK, Color.WHITE, Color.GREEN)
+        (Color.BLUE, Color.WHITE, Color.RED, Color.WHITE),
+        (Color.WHITE, Color.GREEN, Color.WHITE, Color.BLACK),
+        (Color.BLUE, Color.WHITE, Color.YELLOW, Color.WHITE),
+        (Color.WHITE, Color.YELLOW, Color.WHITE, Color.GREEN)
         )
     
     assert (5, 7) == (bc.get_black_circle(), bc.get_color_circle())
@@ -42,16 +49,16 @@ def test_result1():
         "b6": (133, 517), "b7": (311, 517), "b8": (483, 515),
         'c03': (52, 606), 'c13': (231, 604), 'c23': (399, 608), 'c33': (581, 607)}
 
-    recognizer = BlockRecognizer()
+    recognizer = create_block_recognizer()
     img = cv2.imread('detection_block/result1.png')
     bc, cc = recognizer.recognize(img, circles_coordinates)
     
     # 正解データ result1_cc_blocks[col][row]
     result1_cc_blocks = (
-        (Color.BLUE, Color.WHITE, Color.BLUE, Color.WHITE),
-        (Color.WHITE, Color.YELLOW, Color.WHITE, Color.YELLOW),
-        (Color.RED, Color.WHITE, Color.RED, Color.WHITE),
-        (Color.WHITE, Color.BLACK, Color.WHITE, Color.GREEN)
+        (Color.BLUE, Color.WHITE, Color.RED, Color.WHITE),
+        (Color.WHITE, Color.YELLOW, Color.WHITE, Color.BLACK),
+        (Color.BLUE, Color.WHITE, Color.RED, Color.WHITE),
+        (Color.WHITE, Color.YELLOW, Color.WHITE, Color.GREEN)
         )
     
     assert (5, 2) == (bc.get_black_circle(), bc.get_color_circle())

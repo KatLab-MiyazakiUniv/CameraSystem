@@ -1,6 +1,5 @@
-from BlockBingo import BlockBingo
-from BlockBingo import Color
 from block_bingo.BlockBingoCoordinate import CrossCirclesCoordinate, BlockCirclesCoordinate
+from block_bingo.BlockBingoCoordinate import Color
 import cv2
 import sys
 import numpy as np
@@ -8,19 +7,18 @@ import pytest
 
 
 class BlockRecognizer:
-    def __init__(self, bonus=1, isLeft=True):
+    def __init__(self, bonus, is_left):
         """
         Parameters
         ----------
         bonus: int
             ボーナスサークルの番号
-        isLeft: bool
+        is_left: bool
             コース情報
         """
-        self.block_bingo = BlockBingo()
         self.extractor = BlockExtractor()
         self.bonus = bonus
-        self.isLeft = isLeft
+        self.is_left = is_left
                       
     def convert_to_hsv(self, img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -72,7 +70,7 @@ class BlockRecognizer:
 
         # ブロックサークル上のブロックを識別
         color, black = self.recognize_block_circle(img, circles_coordinates)
-        block_circle = BlockCirclesCoordinate(self.isLeft, self.bonus, color, black)
+        block_circle = BlockCirclesCoordinate(self.is_left, self.bonus, color, black)
 
         # クロスサークル上のブロックを識別
         cross_circle = self.recognize_cross_circle(img, circles_coordinates)
@@ -84,7 +82,7 @@ class BlockRecognizer:
         for col in "0123":
             for row in "0123":
                 key = 'c' + row + col
-                coordinate = (int(row), int(col))
+                coordinate = (int(col), int(row))
                 point = circles_coordinates[key] # 交点サークルの座標
                 crop = self.extractor.trim(img, point) # 交点サークルの周辺を切り取る
                 color = self.detect_color(self.extractor.closing(crop)) # ブロック識別

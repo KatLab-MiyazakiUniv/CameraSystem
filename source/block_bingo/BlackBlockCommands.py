@@ -84,6 +84,9 @@ class BlackBlockCommands():
         for i in range(1, len(self.route)):
             commands += self.coordinate_to_command(current_coordinate, self.route[i], self.direction)
             current_coordinate = self.route[i]
+        
+        # 黒ブロックを配置するコマンドを追加する
+        commands += Instructions.PUT
         return commands
 
     def coordinate_to_command(self, robot_coor, next_coor, direction):
