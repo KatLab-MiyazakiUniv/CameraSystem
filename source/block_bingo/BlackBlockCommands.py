@@ -68,7 +68,7 @@ class BlackBlockCommands():
             tmp_trans = list(self.block_circles_coordinate.get(4))
             # 座標系の相違を吸収
             tmp_trans[0], tmp_trans[1] = tmp_trans[1], tmp_trans[0]
-            if self.route[0] == tmp_trans:
+            if list(self.route[0]) == tmp_trans:
                 commands += Instructions.ENTER_BINGO_AREA_L4
             else:
                 commands += Instructions.ENTER_BINGO_AREA_L6
@@ -76,7 +76,7 @@ class BlackBlockCommands():
             tmp_trans = list(self.block_circles_coordinate.get(5))
             # 座標系の相違を吸収
             tmp_trans[0], tmp_trans[1] = tmp_trans[1], tmp_trans[0]
-            if self.route[0] == tmp_trans:
+            if list(self.route[0]) == tmp_trans:
                 commands += Instructions.ENTER_BINGO_AREA_R5
             else:
                 commands += Instructions.ENTER_BINGO_AREA_R8
