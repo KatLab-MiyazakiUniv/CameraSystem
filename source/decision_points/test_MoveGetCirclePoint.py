@@ -12,8 +12,7 @@ from MoveGetCirclePoint import MoveGetCirclePoint, Points
 
 @pytest.fixture()
 def move_get_circle_point():
-    root = tk.Tk()
-    move_get_circle_point = MoveGetCirclePoint(master=root)
+    move_get_circle_point = MoveGetCirclePoint()
     return move_get_circle_point
 
 
