@@ -29,10 +29,10 @@ class CameraSystem:
         """
 
         # スレッドを立てて、BT接続を始める。
-        connect_thread = threading.Thread(target=self._connect_to_ev3)
-        connect_thread.start()
-
-        time.sleep(3)
+        if not self.is_debug:
+            connect_thread = threading.Thread(target=self._connect_to_ev3)
+            connect_thread.start()
+            time.sleep(3)
 
         while True:
             print("SYS: 本番ですか？")
@@ -58,19 +58,12 @@ class CameraSystem:
                 is_left = False
                 break
 
-        # 数字カードの数字を認識する
-        print("\nSYS: 数字カードを認識しています...")
-        card_number = self._detection_number()
-        print(f"SYS: ボーナスサークルは、{card_number}番サークル")
+        # 座標ギメ
+        print("\nSYS: 数字カードを切り取ってください")
+        self._detection_number_decision_points()
 
-        # 走行体の経路探索
-        print("\nSYS: ブロック運搬経路を計算しています...")
-        commands = self._path_planning(card_number, is_left)
-
-        instructions = Instructions()
-        print("運搬経路コマンド")
-        pprint.pprint([instructions.translate(command)
-                       for command in commands])
+        print("\nSYS: 格子状のエリアを切り取ってください")
+        self._detection_block_decide_points()
 
         if not self.is_debug:
             print('\nSYS: 開始しています...')
@@ -79,11 +72,23 @@ class CameraSystem:
                 if self.bt.read() == 2:
                     break
 
-        if self.is_debug:
-            connect_thread.join()
+        print("\nSYS: 数字カードを認識しています...")
+        card_number = self._detection_number()
+        print(f"SYS: ボーナスサークルは、{card_number}番サークル")
+
+        print("\nSYS: ブロック運搬経路を計算しています...")
+        commands = self._path_planning(card_number, is_left)
+
+        instructions = Instructions()
+        print("運搬経路コマンド")
+        pprint.pprint([instructions.translate(command)
+                       for command in commands])
 
         print("\nSYS: コマンド送信しています...")
-        self._send_command(commands)
+        if not self.is_debug:
+            self._send_command(commands)
+        else:
+            print(commands)
 
     def _connect_to_ev3(self):
         """
@@ -99,6 +104,15 @@ class CameraSystem:
                 return
 
             time.sleep(1)  # sec
+
+    def _detection_number_decision_points(self):
+        """
+        数字カードの切り取りと数字の識別
+        :return: 数字カードの数字
+        """
+        self.camera.capture(padding=100)
+        self.camera.get_number_img(is_debug=self.is_debug)
+        return
 
     def _detection_number(self):
         """
@@ -121,6 +135,19 @@ class CameraSystem:
         commands += self._block_bingo_path(block_circles, cross_circles, path)
 
         return commands
+
+    def _detection_block_decide_points(self):
+        # 領域、座標指定
+
+        while True:
+            try:
+                self.camera.get_block_bingo_img(is_debug=self.is_debug)  # 領域指定して画像取得
+                self.camera.get_circle_coordinates_with_range()  # 座標ポチポチ
+                break
+            except TypeError:
+                continue
+        self.camera.save_settings()  # 座標ポチポチした結果を保存
+        return
 
     def _detection_block(self, card_number, is_left):
         """
