@@ -34,6 +34,17 @@ class CameraSystem:
 
         time.sleep(3)
 
+        while True:
+            print("SYS: 本番ですか？")
+            print("     y: 本番モード")
+            print("     d: デバッグモードで実行")
+            is_start = input(">> ")
+            if is_start is 'y':
+                break
+            elif is_start is 'd':
+                self.is_debug = True
+                break
+
         is_left = None
         while is_left is None:
             print("SYS: Lコースですか？")
@@ -45,17 +56,6 @@ class CameraSystem:
                 break
             elif answer is 'n':
                 is_left = False
-                break
-
-        while True:
-            print("SYS: 本番ですか？")
-            print("     y: 本番モード")
-            print("     d: デバッグモードで実行")
-            is_start = input(">> ")
-            if is_start is 'y':
-                break
-            elif is_start is 'd':
-                self.is_debug = True
                 break
 
         # 数字カードの数字を認識する
