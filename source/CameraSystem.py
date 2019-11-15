@@ -29,10 +29,9 @@ class CameraSystem:
         """
 
         # スレッドを立てて、BT接続を始める。
-        if not self.is_debug:
-            connect_thread = threading.Thread(target=self._connect_to_ev3)
-            connect_thread.start()
-            time.sleep(3)
+        connect_thread = threading.Thread(target=self._connect_to_ev3)
+        connect_thread.start()
+        time.sleep(3)
 
         while True:
             print("SYS: 本番ですか？")
@@ -65,8 +64,8 @@ class CameraSystem:
         print("\nSYS: 格子状のエリアを切り取ってください")
         self._detection_block_decide_points()
 
+        print('\nSYS: 開始しています...')
         if not self.is_debug:
-            print('\nSYS: 開始しています...')
             connect_thread.join()
             while True:
                 if self.bt.read() == 2:
