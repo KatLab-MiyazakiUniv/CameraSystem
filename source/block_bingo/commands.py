@@ -6,6 +6,7 @@
 from BlockBingoCoordinate import BlockCirclesCoordinate
 from BlockBingoCoordinate import CrossCirclesCoordinate
 
+
 class Instructions():
     ENTER_BINGO_AREA_L4 = 'a'
     ENTER_BINGO_AREA_L6 = 'b'
@@ -23,35 +24,37 @@ class Instructions():
     TURN_LEFT90_EXIST_BLOCK = 'l'
     TURN_LEFT90_UNEXIST_BLOCK = 'm'
     TURN180 = 'n'
-
+    PREPARE_TO_PUT = 'o'
+    STRAIGHT_STRAIGHT = 'p'
     MOVE_NODE = 'u'
-    
+
     QUICK_PUT_R = 'y'
     QUICK_PUT_L = 'z'
 
-
     def translate(self, instruction):
-        ja = {  Instructions.ENTER_BINGO_AREA_L4: '4番サークルに進入',
-                Instructions.ENTER_BINGO_AREA_L6: '6番サークルに進入',
-                Instructions.ENTER_BINGO_AREA_R5: '5番サークルに進入',
-                Instructions.ENTER_BINGO_AREA_R8: '8番サークルに進入',
-                Instructions.STRAIGHT: 'ブロックサークル間を直進',
-                Instructions.SPIN_RIGHT: '右に90°回頭する',
-                Instructions.SPIN_LEFT: '左に90°回頭する',
-                Instructions.SPIN180: '180°回頭する',
-                Instructions.PUT: 'ブロックを黒線の中点から設置',
-                Instructions.STRAIGHT_DETOUR_RIGHT: 'ブロックを右方向に迂回しながら直進',
-                Instructions.STRAIGHT_DETOUR_LEFT: 'ブロックを左方向に迂回しながら直進',
-                Instructions.TURN_RIGHT90_EXIST_BLOCK: '右方向に旋回（ブロックあり）',
-                Instructions.TURN_LEFT90_EXIST_BLOCK: '左方向に旋回（ブロックあり）',
-                Instructions.TURN_RIGHT90_UNEXIST_BLOCK: '右方向に旋回（ブロックなし）',
-                Instructions.TURN_LEFT90_UNEXIST_BLOCK: '左方向に旋回（ブロックなし）'   ,   
-                Instructions.TURN180: '180°回頭して直進（ブロックなし）',
-                Instructions.MOVE_NODE: '交点サークルから黒線の中点まで直進',
+        ja = {Instructions.ENTER_BINGO_AREA_L4: '4番サークルに進入',
+              Instructions.ENTER_BINGO_AREA_L6: '6番サークルに進入',
+              Instructions.ENTER_BINGO_AREA_R5: '5番サークルに進入',
+              Instructions.ENTER_BINGO_AREA_R8: '8番サークルに進入',
+              Instructions.STRAIGHT: 'ブロックサークル間を移動',
+              Instructions.SPIN_RIGHT: '右に90°回頭する',
+              Instructions.SPIN_LEFT: '左に90°回頭する',
+              Instructions.SPIN180: '180°回頭する',
+              Instructions.PUT: 'ブロックを黒線の中点から設置',
+              Instructions.STRAIGHT_DETOUR_RIGHT: 'ブロックを右方向に迂回しながら直進',
+              Instructions.STRAIGHT_DETOUR_LEFT: 'ブロックを左方向に迂回しながら直進',
+              Instructions.TURN_RIGHT90_EXIST_BLOCK: '右方向に旋回（ブロックあり）',
+              Instructions.TURN_LEFT90_EXIST_BLOCK: '左方向に旋回（ブロックあり）',
+              Instructions.TURN_RIGHT90_UNEXIST_BLOCK: '右方向に旋回（ブロックなし）',
+              Instructions.TURN_LEFT90_UNEXIST_BLOCK: '左方向に旋回（ブロックなし）',
+              Instructions.TURN180: '180°回頭して直進（ブロックなし）',
+              Instructions.PREPARE_TO_PUT: 'ブロックサークルから黒線の中点まで直進',
+              Instructions.STRAIGHT_STRAIGHT: 'ブロックサークル間を2回移動する',
+              Instructions.MOVE_NODE: '交点サークル間を移動',
 
-                Instructions.QUICK_PUT_R: '交点サークルから右方向に旋回してブロック設置',
-                Instructions.QUICK_PUT_L: '交点サークルから左方向に旋回してブロック設置'
-        }
+              Instructions.QUICK_PUT_R: '交点サークルから右方向に旋回してブロック設置',
+              Instructions.QUICK_PUT_L: '交点サークルから左方向に旋回してブロック設置'
+              }
         return ja[instruction]
 
 
@@ -72,8 +75,7 @@ class Commands():
 
         # コマンドのリスト
         self.commands = []
-    
-    
+
     def convert(self, direction, path):
         """
         運搬経路をコマンド変換する。
@@ -97,11 +99,27 @@ class Commands():
                 direction = self.spin(src, dst, direction, has_block)
             direction = self.straight(src, dst, direction, has_block)
         return direction
-    
 
     def get(self):
-        return self.commands
+        """
+        変換したコマンドを返す。
+        もし、交点サークル間の移動が2個続いたときは、コマンドを1個にまとめる。
+        2個連続したとき1つにまとめるので、3個連続するときは2個にまとめられる。
+        :return:
+        """
+        commands = list(self.commands[0])
+        needPack = True  # MOVE_NODEを1つにまとめる必要があるかどうかを表す
 
+        for i in range(1, len(self.commands)):
+            # 交点サークル間の移動が2個連続するときは、格納しない
+            if needPack and self.commands[i] == Instructions.MOVE_NODE and \
+                    self.commands[i - 1] == Instructions.MOVE_NODE:
+                # 3個連続したとき1個にまとめられないために、needPackをFalseにする
+                needPack = False
+                continue
+            needPack = True
+            commands.append(self.commands[i])
+        return commands
 
     def get_next_direction(self, src, dst):
         """
@@ -117,18 +135,17 @@ class Commands():
         dst : tuple
             終点の座標
         """
-        subtraction = (dst[0]-src[0], dst[1]-src[1])
+        subtraction = (dst[0] - src[0], dst[1] - src[1])
 
         if subtraction == (-1, 0) or subtraction == (-0.5, 0):
-            return 0    # 北向き
+            return 0  # 北向き
         if subtraction == (0, 1) or subtraction == (0, 0.5):
-            return 2    # 東向き
+            return 2  # 東向き
         if subtraction == (1, 0) or subtraction == (0.5, 0):
-            return 4    # 南向き
+            return 4  # 南向き
         if subtraction == (0, -1) or subtraction == (0, -0.5):
-            return 6    # 西向き
+            return 6  # 西向き
         raise ValueError('could not calculate direction')
-
 
     def spin(self, src, dst, direction, has_block):
         """
@@ -146,7 +163,7 @@ class Commands():
             始点にブロックが存在するか
         """
         next_direction = self.get_next_direction(src, dst)
-        
+
         # 次の方向と現在の方向を引き算する。
         sub = next_direction - direction
         if sub == 0:
@@ -160,9 +177,8 @@ class Commands():
         if sub == -2 or sub == 6:
             self.commands.append(Instructions.SPIN_LEFT)
             return next_direction
-        
+
         raise ArithmeticError('cannot convert path to SPIN command!')
-    
 
     def straight(self, src, dst, direction, has_block):
         """
@@ -188,7 +204,6 @@ class Commands():
             return self.straight_detour(src, dst, direction, has_block)
         self.commands.append(Instructions.MOVE_NODE)
         return direction
-
 
     def turn(self, src, dst, direction, has_block):
         """
@@ -224,7 +239,6 @@ class Commands():
             return next_direction
         raise ArithmeticError('cannot convert path to TURN command!')
 
-
     def turn180(self, src, dst, direction, has_block):
         """
         180°回頭して直進するコマンドへ変換する。
@@ -247,7 +261,6 @@ class Commands():
         self.commands.append(Instructions.TURN180)
 
         return self.get_next_direction(src, dst)
-    
 
     def straight_detour(self, src, dst, direction, has_block):
         """
@@ -262,15 +275,14 @@ class Commands():
             else:
                 self.commands[-1] = Instructions.STRAIGHT_DETOUR_LEFT
             return direction
-        
+
         # 始点が格子状エリアの右端または下端にある場合
         if dst[0] < src[0] or src[1] < dst[1]:
             self.commands[-1] = Instructions.STRAIGHT_DETOUR_LEFT
         else:
             self.commands[-1] = Instructions.STRAIGHT_DETOUR_RIGHT
-        
+
         return direction
-    
 
     def turn_detour(self, src, dst, direction, has_block):
         """
@@ -302,7 +314,6 @@ class Commands():
             return next_direction
         raise ArithmeticError('cannot convert path to TURN command!')
 
-
     def turn180_detour(self, src, dst, direction, has_block):
         """
         ブロックありの180°回頭して直進するコマンドへ変換する。
@@ -327,7 +338,6 @@ class Commands():
         self.commands.append(top)
         # ブロックありの直進コマンドへ変換する
         return self.straight_detour(src, dst, direction, True)
-    
 
     def put(self, src, dst, direction, has_block=False):
         """
@@ -353,7 +363,6 @@ class Commands():
         # 始点が黒線の中点にあるとき
         return self.put_block_from_midpoint(src, dst, direction, has_block)
 
-
     def put_block_from_midpoint(self, src, dst, direction, has_block):
         """
         黒線の中点からブロックを設置する動作をコマンドに変換する。
@@ -372,23 +381,22 @@ class Commands():
         # 黒線の中点の座標からブロックサークルの座標を引く
         sub = (src[0] - dst[0], src[1] - dst[1])
 
-        if sub == (0,0.5): # ブロックサークルの上部の中点
+        if sub == (0, 0.5):  # ブロックサークルの上部の中点
             # 走行体が南に向くように回頭コマンドの変換をする
-            direction = self.spin(src, (src[0]+1, src[1]), direction, has_block)
-        if sub == (0.5,1): # ブロックサークルの左の中点
+            direction = self.spin(src, (src[0] + 1, src[1]), direction, has_block)
+        if sub == (0.5, 1):  # ブロックサークルの左の中点
             # 走行体が西に向くように回頭コマンドの変換をする
-            direction = self.spin(src, (src[0], src[1]-1), direction, has_block)
-        if sub == (1,0.5): # ブロックサークルの下部の中点
+            direction = self.spin(src, (src[0], src[1] - 1), direction, has_block)
+        if sub == (1, 0.5):  # ブロックサークルの下部の中点
             # 走行体が北に向くように回頭コマンドの変換をする
-            direction = self.spin(src, (src[0]-1, src[1]), direction, has_block)
-        if sub == (0.5,0): # ブロックサークルの右の中点
+            direction = self.spin(src, (src[0] - 1, src[1]), direction, has_block)
+        if sub == (0.5, 0):  # ブロックサークルの右の中点
             # 走行体が東に向くように回頭コマンドの変換をする
-            direction = self.spin(src, (src[0], src[1]+1), direction, has_block)
+            direction = self.spin(src, (src[0], src[1] + 1), direction, has_block)
 
         # ブロック設置のコマンド変換をする
         self.commands.append(Instructions.PUT)
-        return direction  
-
+        return direction
 
     def put_block_from_cross_circle(self, src, dst, direction, has_block):
         """
@@ -408,52 +416,52 @@ class Commands():
         # 交点サークルの座標からブロックサークルの座標を引く
         sub = (src[0] - dst[0], src[1] - dst[1])
 
-        if sub == (0,0):    # ブロックサークルの左上の交点サークル
-            if direction == 0 or direction == 2:    # 向きが北 or 東
+        if sub == (0, 0):  # ブロックサークルの左上の交点サークル
+            if direction == 0 or direction == 2:  # 向きが北 or 東
                 # 走行体が東に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0], src[1]+1), direction, has_block)
+                direction = self.spin(src, (src[0], src[1] + 1), direction, has_block)
                 # 右方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_R)
-            if direction == 4 or direction == 6:    # 向きが西 or 南
+            if direction == 4 or direction == 6:  # 向きが西 or 南
                 # 走行体が南に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0]+1, src[1]), direction, has_block)
+                direction = self.spin(src, (src[0] + 1, src[1]), direction, has_block)
                 # 左方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_L)
-        
-        if sub == (0,1):    # ブロックサークルの右上の交点サークル
-            if direction == 2 or direction == 4:    # 向きが東 or 南
+
+        if sub == (0, 1):  # ブロックサークルの右上の交点サークル
+            if direction == 2 or direction == 4:  # 向きが東 or 南
                 # 走行体が南に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0]+1, src[1]), direction, has_block)
+                direction = self.spin(src, (src[0] + 1, src[1]), direction, has_block)
                 # 右方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_R)
-            if direction == 0 or direction == 6:    # 向きが北 or 西
+            if direction == 0 or direction == 6:  # 向きが北 or 西
                 # 走行体が西に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0], src[1]-1), direction, has_block)
+                direction = self.spin(src, (src[0], src[1] - 1), direction, has_block)
                 # 左方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_L)
-        
-        if sub == (1,0):    # ブロックサークルの左下の交点サークル
-            if direction == 0 or direction == 6:    # 向きが北 or 西
+
+        if sub == (1, 0):  # ブロックサークルの左下の交点サークル
+            if direction == 0 or direction == 6:  # 向きが北 or 西
                 # 走行体が北に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0]-1, src[1]), direction, has_block)
+                direction = self.spin(src, (src[0] - 1, src[1]), direction, has_block)
                 # 右方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_R)
-            if direction == 2 or direction == 4:    # 向きが東 or 南
+            if direction == 2 or direction == 4:  # 向きが東 or 南
                 # 走行体が東に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0], src[1]+1), direction, has_block)
+                direction = self.spin(src, (src[0], src[1] + 1), direction, has_block)
                 # 左方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_L)
-        
-        if sub == (1,1):    # ブロックサークルの右下の交点サークル
-            if direction == 0 or direction == 2:    # 向きが北 or 東
+
+        if sub == (1, 1):  # ブロックサークルの右下の交点サークル
+            if direction == 0 or direction == 2:  # 向きが北 or 東
                 # 走行体が北に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0]-1, src[1]), direction, has_block)
+                direction = self.spin(src, (src[0] - 1, src[1]), direction, has_block)
                 # 左方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_L)
-            if direction == 4 or direction == 6:    # 向きが南 or 西
+            if direction == 4 or direction == 6:  # 向きが南 or 西
                 # 走行体が西に向くように回頭コマンドの変換をする
-                direction = self.spin(src, (src[0], src[1]-1), direction, has_block)
+                direction = self.spin(src, (src[0], src[1] - 1), direction, has_block)
                 # 右方向にブロックを設置する
                 self.commands.append(Instructions.QUICK_PUT_R)
-        
+
         return direction

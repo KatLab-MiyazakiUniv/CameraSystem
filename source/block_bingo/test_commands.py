@@ -19,8 +19,8 @@ def test_translate():
     order = [instructions.translate(e) for e in order]
 
     assert order[0] == '6番サークルに進入'
-    assert order[1] == 'ブロックサークル間を直進'
-    assert order[2] == 'ブロックサークル間を直進'
+    assert order[1] == 'ブロックサークル間を移動'
+    assert order[2] == 'ブロックサークル間を移動'
     assert order[3] == '左に90°回頭する'
     assert order[4] == 'ブロックを黒線の中点から設置'
 
@@ -236,3 +236,12 @@ def test_convert():
     commands = create_commands()
     assert 0 == commands.convert(direction, path)
     assert result == commands.get()
+
+
+def test_get():
+    commands = create_commands()
+    commands.commands = ['u', 'u', 'k', 'u', 'u', 'u', 'u', 'u', 'u', 'e', 'a']
+
+    # uが2個連続するとき、1個にまとめられることを確認する
+    expected = ['u', 'k', 'u', 'u', 'u', 'e', 'a']
+    assert commands.get() == expected
