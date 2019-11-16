@@ -19,8 +19,8 @@ def test_translate():
     order = [instructions.translate(e) for e in order]
 
     assert order[0] == '6番サークルに進入'
-    assert order[1] == 'ブロックサークル間を直進'
-    assert order[2] == 'ブロックサークル間を直進'
+    assert order[1] == 'ブロックサークル間を移動'
+    assert order[2] == 'ブロックサークル間を移動'
     assert order[3] == '左に90°回頭する'
     assert order[4] == 'ブロックを黒線の中点から設置'
 
