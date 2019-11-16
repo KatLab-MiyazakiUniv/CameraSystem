@@ -236,3 +236,12 @@ def test_convert():
     commands = create_commands()
     assert 0 == commands.convert(direction, path)
     assert result == commands.get()
+
+
+def test_get():
+    commands = create_commands()
+    commands.commands = ['u', 'u', 'k', 'u', 'u', 'u', 'u', 'u', 'u', 'e', 'a']
+
+    # uが2個連続するとき、1個にまとめられることを確認する
+    expected = ['u', 'k', 'u', 'u', 'u', 'e', 'a']
+    assert commands.get() == expected
