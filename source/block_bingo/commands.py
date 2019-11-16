@@ -25,7 +25,7 @@ class Instructions():
     TURN_LEFT90_UNEXIST_BLOCK = 'm'
     TURN180 = 'n'
     PREPARE_TO_PUT = 'o'
-
+    STRAIGHT_STRAIGHT = 'p'
     MOVE_NODE = 'u'
 
     QUICK_PUT_R = 'y'
@@ -49,6 +49,7 @@ class Instructions():
               Instructions.TURN_LEFT90_UNEXIST_BLOCK: '左方向に旋回（ブロックなし）',
               Instructions.TURN180: '180°回頭して直進（ブロックなし）',
               Instructions.PREPARE_TO_PUT: 'ブロックサークルから黒線の中点まで直進',
+              Instructions.STRAIGHT_STRAIGHT: 'ブロックサークル間を2回移動する',
               Instructions.MOVE_NODE: '交点サークル間を移動',
 
               Instructions.QUICK_PUT_R: '交点サークルから右方向に旋回してブロック設置',

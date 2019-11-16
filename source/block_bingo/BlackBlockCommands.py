@@ -87,7 +87,7 @@ class BlackBlockCommands():
         
         # 黒ブロックを配置するコマンドを追加する
         commands = self.put_to_command(commands)
-        return commands
+        return commands.replace(Instructions.STRAIGHT * 2, Instructions.STRAIGHT_STRAIGHT)
 
     def coordinate_to_command(self, robot_coor, next_coor, direction):
         """
