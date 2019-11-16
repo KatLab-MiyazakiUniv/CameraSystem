@@ -23,6 +23,7 @@ class Instructions():
     TURN_LEFT90_EXIST_BLOCK = 'l'
     TURN_LEFT90_UNEXIST_BLOCK = 'm'
     TURN180 = 'n'
+    PREPARE_TO_PUT = 'o'
 
     MOVE_NODE = 'u'
     
@@ -35,7 +36,7 @@ class Instructions():
                 Instructions.ENTER_BINGO_AREA_L6: '6番サークルに進入',
                 Instructions.ENTER_BINGO_AREA_R5: '5番サークルに進入',
                 Instructions.ENTER_BINGO_AREA_R8: '8番サークルに進入',
-                Instructions.STRAIGHT: 'ブロックサークル間を直進',
+                Instructions.STRAIGHT: 'ブロックサークル間を移動',
                 Instructions.SPIN_RIGHT: '右に90°回頭する',
                 Instructions.SPIN_LEFT: '左に90°回頭する',
                 Instructions.SPIN180: '180°回頭する',
@@ -45,9 +46,10 @@ class Instructions():
                 Instructions.TURN_RIGHT90_EXIST_BLOCK: '右方向に旋回（ブロックあり）',
                 Instructions.TURN_LEFT90_EXIST_BLOCK: '左方向に旋回（ブロックあり）',
                 Instructions.TURN_RIGHT90_UNEXIST_BLOCK: '右方向に旋回（ブロックなし）',
-                Instructions.TURN_LEFT90_UNEXIST_BLOCK: '左方向に旋回（ブロックなし）'   ,   
+                Instructions.TURN_LEFT90_UNEXIST_BLOCK: '左方向に旋回（ブロックなし）',
                 Instructions.TURN180: '180°回頭して直進（ブロックなし）',
-                Instructions.MOVE_NODE: '交点サークルから黒線の中点まで直進',
+                Instructions.PREPARE_TO_PUT: 'ブロックサークルから黒線の中点まで直進',
+                Instructions.MOVE_NODE: '交点サークル間を移動',
 
                 Instructions.QUICK_PUT_R: '交点サークルから右方向に旋回してブロック設置',
                 Instructions.QUICK_PUT_L: '交点サークルから左方向に旋回してブロック設置'
