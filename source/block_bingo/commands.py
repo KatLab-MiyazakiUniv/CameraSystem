@@ -102,6 +102,10 @@ class Commands():
     
 
     def get(self):
+        for i in range(1, len(self.commands)):
+            # 連続してMOVE_NODEが続く場合は、1つのMOVE_NODEに変換する
+            if self.commands[i] == Instructions.MOVE_NODE and self.commands[i-1] == Instructions.MOVE_NODE:
+                del self.commands[i-1]
         return self.commands
 
 
