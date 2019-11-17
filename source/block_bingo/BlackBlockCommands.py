@@ -86,8 +86,8 @@ class BlackBlockCommands():
             current_coordinate = self.route[i]
         
         # 黒ブロックを配置するコマンドを追加する
-        commands += Instructions.PUT
-        return commands
+        commands = self.put_to_command(commands)
+        return commands.replace(Instructions.STRAIGHT * 2, Instructions.STRAIGHT_STRAIGHT)
 
     def coordinate_to_command(self, robot_coor, next_coor, direction):
         """
@@ -202,6 +202,21 @@ class BlackBlockCommands():
             return 'l'
         # 回転しない or 180度回転
         return ''
+
+
+    def put_to_command(self, commands):
+        """
+        ブロックサークル間移動後に走行体がブロックを設置するコマンドを追加する。
+        :param commands: ブロックサークル間移動のコマンド
+        """
+        # 末尾のコマンドを削除する
+        commands = commands[:-1]
+        # ブロックサークル間の黒線まで移動するコマンドを追加する
+        commands += Instructions.PREPARE_TO_PUT
+        # 黒線からブロックを設置するコマンドを追加する
+        commands += Instructions.PUT
+
+        return commands
 
 
 def main():
