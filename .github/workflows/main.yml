@@ -28,8 +28,7 @@ jobs:
         with:
           path: ~/.venv
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
 
       - name: Set Poetry config
         run: |
