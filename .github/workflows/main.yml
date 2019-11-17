@@ -37,4 +37,3 @@ jobs:
       - name: Upload coverage to Codecov
         #uses: codecov/codecov-action@v1.0.3
         run: bash <(curl -s https://codecov.io/bash) -t fea0d3fe-4f4d-456b-aee7-5a0f3b5ca3e2 -c -F unittests
-
