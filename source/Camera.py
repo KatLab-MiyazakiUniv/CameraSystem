@@ -12,7 +12,6 @@ import cv2
 import numpy as np
 
 from decision_points.PointList import PointList
-from decision_points.BlockBingoPointList import BlockBingoPointList
 from decision_points.MoveGetCirclePoint import MoveGetCirclePoint
 
 
@@ -26,6 +25,7 @@ class Camera:
         self.block_bingo_img_dummy = None  # 切り取ったブロックビンゴエリアの画像（座標指定用）
         self.loaded_settings_file = False
         self.modified_settings = False
+        self.is_left = True  # TrueだとLコース
         self.move_get_circle_point = MoveGetCirclePoint()
 
         # 以下ファイルへ保存するデータ
@@ -90,6 +90,8 @@ class Camera:
         # 画像をメンバ変数に格納
         self.original_img = create_padding(img)
         self.original_img_dummy = create_padding(img_dummy)
+        cv2.imwrite('./img/img_padding2.png', self.original_img)
+        cv2.imwrite('./img/img_dummy2.png', self.original_img_dummy)
 
         # キャプチャ終了
         cap.release()
@@ -102,11 +104,20 @@ class Camera:
         cv2.moveWindow(wname, 0, 0)  # ウィンドウを左上に動かす
         cv2.waitKey()
         cv2.destroyAllWindows()
+        ptlist.is_left = self.is_left  # TrueだとLコース
         ptlist.trans()
         # 切り取りのための座標情報をメンバ変数に格納
         return ptlist.named_points
 
     def get_number_img(self, wname="CameraSystem", npoints=4, output_size=(420, 297), is_debug=True):
+        """
+        数字カードを切り取る
+        :param wname: str ウィンドウネーム
+        :param npoints: int ポチポチする個数
+        :param output_size: tuple[int, int] サイズ[width, height]
+        :param is_debug: bool Trueだとデバッグモード
+        :return:
+        """
         # ファイルから座標データを読み込んでいない場合は、切り取るための領域を選択する
 
         if self.number_img_range is None:
@@ -161,25 +172,6 @@ class Camera:
             self.move_get_circle_point.run()
             self.block_bingo_circle_coordinates = self.move_get_circle_point.get_circle_point.named_points
             self.modified_settings = True
-        return self.block_bingo_circle_coordinates
-
-    def get_circle_coordinates(self, wname="Choose circles", npoints=24):
-        """
-        切り取ったブロックビンゴエリアの画像から各種サークルの座標を指定
-        """
-        # ファイルから座標データを読み込んでいない場合は、各種サークルの座標を設定する
-        if self.block_bingo_circle_coordinates is None:
-            circle_ptlist = BlockBingoPointList(npoints)
-            cv2.namedWindow(wname)
-            cv2.setMouseCallback(wname, circle_ptlist.add_point, [wname, self.block_bingo_img_dummy, circle_ptlist])
-            cv2.imshow(wname, self.block_bingo_img_dummy)
-            cv2.moveWindow(wname, 100, 100)  # ウィンドウを左上に動かす
-            cv2.waitKey()
-            cv2.destroyAllWindows()
-            circle_ptlist.trans()
-            self.block_bingo_circle_coordinates = circle_ptlist.named_points
-            self.modified_settings = True
-        # FIX: ここでは座標を返さずに、座標の指定のみを行うべきかもしれない
         return self.block_bingo_circle_coordinates
 
     def load_settings(self, file_name="camera_settings.json"):

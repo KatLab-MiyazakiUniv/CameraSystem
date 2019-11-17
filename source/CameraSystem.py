@@ -57,6 +57,7 @@ class CameraSystem:
                 is_left = False
                 break
 
+        self.camera.is_left = is_left  # LコースかRコースか
         # 座標ギメ
         print("\nSYS: 数字カードを切り取ってください")
         self._detection_number_decision_points()
@@ -162,8 +163,8 @@ class CameraSystem:
         while True:
             # 領域、座標指定
             block_bingo_img = self.camera.get_block_bingo_img(
-                is_debug=self.is_debug)     # 領域指定して画像取得
-            circles_coordinates = self.camera.get_circle_coordinates_with_range()  # 座標ポチポチ
+                is_debug=self.is_debug)  # 領域指定して画像取得
+            circles_coordinates = self.camera.get_circle_coordinates_with_range()  # 座標をドラッグ・アンド・ドロップ
             self.camera.save_settings()  # 座標ポチポチした結果を保存
             # ブロックの認識器の生成
             recognizer = BlockRecognizer(card_number, is_left)

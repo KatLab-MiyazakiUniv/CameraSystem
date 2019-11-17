@@ -19,20 +19,20 @@ class BlockRecognizer:
         self.extractor = BlockExtractor()
         self.bonus = bonus
         self.is_left = is_left
-                      
+
     def convert_to_hsv(self, img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         h = hsv.T[0].flatten().mean()
         s = hsv.T[1].flatten().mean()
         v = hsv.T[2].flatten().mean()
         return (h, s, v)
-        
-    def detect_color(self, img):        
+
+    def detect_color(self, img):
         # 各色のHue最小値と最大値
-        hue_list = {Color.RED:[0, 15], Color.BLUE:[90, 110],
-                      Color.YELLOW:[15, 30], Color.GREEN:[60, 90]}
+        hue_list = {Color.RED: [0, 15], Color.BLUE: [90, 110],
+                    Color.YELLOW: [15, 30], Color.GREEN: [60, 90]}
         (h, s, v) = self.convert_to_hsv(img)
-        
+
         # 黒色の識別
         if 0 <= v < 40:
             return Color.BLACK
@@ -45,7 +45,8 @@ class BlockRecognizer:
                 return key
         print(h, s, v)
         return None
-    
+        # raise ValueError("値がNoneどすえ")
+
     def recognize(self, img, circles_coordinates):
         """
         各ブロック・交点サークル上のブロックを認識する
@@ -74,7 +75,7 @@ class BlockRecognizer:
 
         # クロスサークル上のブロックを識別
         cross_circle = self.recognize_cross_circle(img, circles_coordinates)
-    
+
         return block_circle, cross_circle
 
     def recognize_cross_circle(self, img, circles_coordinates):
@@ -83,39 +84,40 @@ class BlockRecognizer:
             for row in "0123":
                 key = 'c' + row + col
                 coordinate = (int(col), int(row))
-                point = circles_coordinates[key] # 交点サークルの座標
-                crop = self.extractor.trim(img, point) # 交点サークルの周辺を切り取る
-                color = self.detect_color(self.extractor.closing(crop)) # ブロック識別
-                cross_circles.set_block_color(coordinate, color) # 認識結果を辞書に格納
+                point = circles_coordinates[key]  # 交点サークルの座標
+                crop = self.extractor.trim(img, point)  # 交点サークルの周辺を切り取る
+                color = self.detect_color(self.extractor.closing(crop))  # ブロック識別
+                cross_circles.set_block_color(coordinate, color)  # 認識結果を辞書に格納
         return cross_circles
 
     def recognize_block_circle(self, img, circles_coordinates):
         black = None  # 黒ブロックが置かれているブロックサークル番号
         color = None  # カラーブロックが置かれているブロックサークル番号
-        
+
         # サークル座標のデータ構造からブロックサークルの座標だけ抽出する
         points = self.extract_block_circles_point(circles_coordinates)
-        
+
         for (idx, point) in enumerate(points):
             crop = self.extractor.trim(img, point)
-            #cv2.imshow("crop", crop)
-            #cv2.waitKey(0)
-            #cv2.destroyAllWindows()
+            # cv2.imshow("crop", crop)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
             if Color.BLACK == self.detect_color(self.extractor.closing(crop)):
                 black = idx + 1
             elif Color.WHITE != self.detect_color(self.extractor.closing(crop)):
                 color = idx + 1
-        
-        return (color, black)   
+
+        return (color, black)
 
     def extract_block_circles_point(self, circles_coordinates):
         points = []
-        for key in ['b' + str(i+1) for i in range(0, 8)]:
+        for key in ['b' + str(i + 1) for i in range(0, 8)]:
             points.append(circles_coordinates[key])
         return points
 
+
 class BlockExtractor():
-    def trim(self, img, point, margin = 5):
+    def trim(self, img, point, margin=5):
         """
         画像を指定の座標周辺で切り取る。
         
@@ -128,7 +130,7 @@ class BlockExtractor():
         margin : int
             指定座標の周囲(px)
         """
-        return img[point[1]-margin:point[1]+margin, point[0]-margin:point[0]+margin]
+        return img[point[1] - margin:point[1] + margin, point[0] - margin:point[0] + margin]
 
     def hsv_decomposition(self, img):
         """
@@ -152,7 +154,7 @@ class BlockExtractor():
             画像
         """
         (h, s, v) = self.hsv_decomposition(img)
-        s = cv2.GaussianBlur(s, (19,19), 0)
+        s = cv2.GaussianBlur(s, (19, 19), 0)
         _, dst = cv2.threshold(s, 57, 255, cv2.THRESH_BINARY)
         return dst
 
@@ -166,10 +168,10 @@ class BlockExtractor():
             画像
         """
         # 8近傍の定義
-        kernel = np.ones((9,9))
+        kernel = np.ones((9, 9))
         mask = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
         return mask
-    
+
     def opening(self, img):
         """
         オープニング処理する。
@@ -180,7 +182,7 @@ class BlockExtractor():
             画像
         """
         # 8近傍の定義
-        kernel = np.ones((9,9))
+        kernel = np.ones((9, 9))
         mask = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
         return mask
 
@@ -204,4 +206,3 @@ class BlockExtractor():
 
 if __name__ == '__main__':
     pass
-

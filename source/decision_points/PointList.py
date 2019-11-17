@@ -11,6 +11,7 @@ class PointList:
         self.npoints = npoints
         self.ptlist = np.empty((npoints, 2), dtype=int)
         self.pos = 0
+        self.is_left = True  # TrueならLコース
         self.named_points = {"l_top": None, "l_btm": None, "r_top": None, "r_btm": None}
 
     def add(self, x, y):
@@ -24,10 +25,16 @@ class PointList:
         sum_list = np.sum(self.ptlist, axis=1)
         x_list = self.ptlist[:, 0]
         y_list = self.ptlist[:, 1]
-        self.named_points["r_btm"] = self.ptlist[np.argmax(x_list)]
-        self.named_points["l_top"] = self.ptlist[np.argmin(x_list)]
-        self.named_points["r_top"] = self.ptlist[np.argmin(y_list)]
-        self.named_points["l_btm"] = self.ptlist[np.argmax(y_list)]
+        if self.is_left:  # TrueならLコース
+            self.named_points["r_btm"] = self.ptlist[np.argmax(x_list)]
+            self.named_points["r_top"] = self.ptlist[np.argmin(y_list)]
+            self.named_points["l_top"] = self.ptlist[np.argmin(x_list)]
+            self.named_points["l_btm"] = self.ptlist[np.argmax(y_list)]
+        else:  # FalseならRコース
+            self.named_points["r_btm"] = self.ptlist[np.argmax(y_list)]
+            self.named_points["r_top"] = self.ptlist[np.argmax(x_list)]
+            self.named_points["l_btm"] = self.ptlist[np.argmin(x_list)]
+            self.named_points["l_top"] = self.ptlist[np.argmin(y_list)]
         print(self.named_points)
 
     @staticmethod
