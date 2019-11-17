@@ -238,10 +238,11 @@ class BlockBingoSolver():
             if rule_book.bonus < 2:
                 colors.append(Color.BLACK)
 
-            (src, index) = self.cross_circles.start_node(self.position, colors)
-            if src is None or index is None:
+            src_index = self.cross_circles.start_node(self.position, colors)
+            if src_index is None:
                 #   ブロックの運搬経路が計算できなかったとき、計算を中断してそれまで計算済みの経路を送信するようにする
                 break
+            (src, index) = src_index
             # 走行体の現在地からブロックがある交点サークルまで移動する経路を求める
             path = self.a_star(self.position, src)
             # ブロックがある交点サークルからブロックを取得する

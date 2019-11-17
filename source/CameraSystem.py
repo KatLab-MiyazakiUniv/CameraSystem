@@ -178,6 +178,7 @@ class CameraSystem:
                 break
             else:
                 self.camera.capture(padding=100)
+        pprint.pprint(cross_circle.cross_circles)
         return (block_circle, cross_circle)
 
     def _black_circles_path(self, block_circles):
