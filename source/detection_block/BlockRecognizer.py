@@ -44,7 +44,8 @@ class BlockRecognizer:
             if value[0] <= h < value[1]:
                 return key
         print(h, s, v)
-        raise ValueError("値がNoneどすえ")
+        return None
+        # raise ValueError("値がNoneどすえ")
 
     def recognize(self, img, circles_coordinates):
         """
