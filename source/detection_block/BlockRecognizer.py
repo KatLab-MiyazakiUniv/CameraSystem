@@ -1,10 +1,8 @@
 from block_bingo.BlockBingoCoordinate import CrossCirclesCoordinate, BlockCirclesCoordinate
 from block_bingo.BlockBingoCoordinate import Color
 import cv2
-import sys
 import numpy as np
-import pytest
-
+import glob
 
 class BlockRecognizer:
     def __init__(self, bonus, is_left):
@@ -19,6 +17,32 @@ class BlockRecognizer:
         self.extractor = BlockExtractor()
         self.bonus = bonus
         self.is_left = is_left
+
+
+    def create_color_dict(self, files, key):
+        color_dict = {}
+        for file in files:
+            color_dict[file] = key
+
+        return color_dict
+
+
+    def open_sample_block_files(self):
+        white = self.create_color_dict(glob.glob('img/white/*.png'), Color.WHITE)
+        black = self.create_color_dict(glob.glob('img/black/*.png'), Color.BLACK)
+        blue = self.create_color_dict(glob.glob('img/blue/*.png'), Color.BLUE)
+        green = self.create_color_dict(glob.glob('img/green/*.png'), Color.GREEN)
+        red = self.create_color_dict(glob.glob('img/red/*.png'), Color.RED)
+        yellow = self.create_color_dict(glob.glob('img/yellow/*.png'), Color.YELLOW)
+
+        files = [white, black, blue, green, red, yellow]
+        for file in files:
+            if len(file) == 0:
+                raise ValueError('Cannot open image for calculating histogram')
+
+        return files
+
+
 
     def convert_to_hsv(self, img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
