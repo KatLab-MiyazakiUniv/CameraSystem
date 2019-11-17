@@ -26,12 +26,12 @@ class BlockRecognizer:
         return color_dict
 
     def open_sample_block_files(self):
-        white = self.create_color_dict(glob.glob('detection_block/img/white/*.png'), Color.WHITE)
-        black = self.create_color_dict(glob.glob('detection_block/img/black/*.png'), Color.BLACK)
-        blue = self.create_color_dict(glob.glob('detection_block/img/blue/*.png'), Color.BLUE)
-        green = self.create_color_dict(glob.glob('detection_block/img/green/*.png'), Color.GREEN)
-        red = self.create_color_dict(glob.glob('detection_block/img/red/*.png'), Color.RED)
-        yellow = self.create_color_dict(glob.glob('detection_block/img/yellow/*.png'), Color.YELLOW)
+        white = self.create_color_dict(glob.glob('img/white/*.png'), Color.WHITE)
+        black = self.create_color_dict(glob.glob('img/black/*.png'), Color.BLACK)
+        blue = self.create_color_dict(glob.glob('img/blue/*.png'), Color.BLUE)
+        green = self.create_color_dict(glob.glob('img/green/*.png'), Color.GREEN)
+        red = self.create_color_dict(glob.glob('img/red/*.png'), Color.RED)
+        yellow = self.create_color_dict(glob.glob('img/yellow/*.png'), Color.YELLOW)
 
         files = [white, black, blue, green, red, yellow]
         for file in files:
