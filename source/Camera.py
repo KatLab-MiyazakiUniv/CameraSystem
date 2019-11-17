@@ -90,6 +90,8 @@ class Camera:
         # 画像をメンバ変数に格納
         self.original_img = create_padding(img)
         self.original_img_dummy = create_padding(img_dummy)
+        cv2.imwrite('./img/img_padding2.png', self.original_img)
+        cv2.imwrite('./img/img_dummy2.png', self.original_img_dummy)
 
         # キャプチャ終了
         cap.release()
