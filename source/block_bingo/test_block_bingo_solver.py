@@ -10,6 +10,7 @@ from BlockBingoSolver import BlockCirclesCoordinate
 from BlockBingoSolver import CrossCirclesCoordinate
 from BlockBingoCoordinate import Color
 
+
 def create_block_bingo(path=[(1,0), (2,0), (2,1)], is_left=True, bonus=5, color=3, black=6):
     return BlockBingoSolver(BlockCirclesCoordinate(is_left, bonus, color, black), CrossCirclesCoordinate(), path)
 
@@ -205,10 +206,9 @@ def test_solve_left():
         for y in range(0, 3+1):
             solver.cross_circles.set_block_color((x,y), block[x][y])
 
-    commands = ['e', 'u', 'd', 'u', 'u', 'y', 'u', 'u', 'd', 'u', 'u', 
-                'u', 'j', 'u', 'z', 'd', 'u', 'u', 'f', 'u', 'u', 'z',
-                'e', 'u', 'u', 'f', 'u', 'u', 'u', 'l', 'd', 'g', 'e',
-                'm', 'u', 'e', 'u', 'u', 'u', 'u', 'z', 'e', 'u', 'm', 'h']
+    commands = ['e', 'u', 'd', 'u', 'y', 'u', 'd', 'u', 'u', 'j', 'u', 'z', 'd', 'u', 'f', 'u', 'z',
+                'e', 'u', 'f', 'u', 'u', 'l', 'd', 'g', 'e',
+                'm', 'u', 'e', 'u', 'u', 'z',  'f', 'u', 'u', 'k', 'u', 'e']
 
     assert commands == solver.solve()
 
@@ -223,9 +223,8 @@ def test_solve_right():
         for y in range(0, 3+1):
             solver.cross_circles.set_block_color((x,y), block[x][y])
 
-    commands = ['e', 'm', 'u', 'f', 'u', 'm', 'h', 'd', 'g', 'd', 'u', 'u', 
-                'u', 'z', 'e', 'u', 'u', 'f', 'u', 'k', 'u', 'z', 'e', 'u',
-                'u', 'u', 'u', 'd', 'y', 'u', 'k', 'u', 'u', 'k', 'u', 'u', 
-                'u', 'z', 'd', 'u', 'm']
+    commands = ['e', 'm', 'u', 'f', 'u', 'm', 'h', 'd', 'g', 'd', 'u',
+                'u', 'z', 'e', 'u', 'f', 'u', 'k', 'u', 'z', 'e', 'u',
+                'u', 'd', 'y', 'u', 'k', 'u', 'k', 'u', 'u', 'z', 'u', 'j', 'u', 'e']
     
     assert commands == solver.solve()

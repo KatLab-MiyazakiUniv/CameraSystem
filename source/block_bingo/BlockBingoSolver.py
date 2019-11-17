@@ -266,16 +266,16 @@ class BlockBingoSolver():
         
         # ガレージに行くまでの運搬経路を計算する
         if self.block_circles.is_left:
-            # Lコースの場合、(2,2.5)まで移動する
-            path = self.a_star(self.position, (2,2.5))
+            # Lコースの場合、(2,3)まで移動する
+            path = self.a_star(self.position, (2,3))
             self.direction = commands.convert(self.direction, path)
-            # ガレージ方向(座標(2,3)側）に回頭する
+            # ガレージ方向(座標(2,2.5)から座標(2,4)方向）に回頭する
             commands.spin((2,2.5), (2,3), self.direction, False)
         else:
-            # Rコースの場合、(1,0.5)まで移動する
-            path = self.a_star(self.position, (1,0.5))
+            # Rコースの場合、(1,0)まで移動する
+            path = self.a_star(self.position, (1,0))
             self.direction = commands.convert(self.direction, path)
-            # ガレージ方向(座標(1,0)側)に回頭する
+            # ガレージ方向(座標(1,0.5)から座標(1,0)方向)に回頭する
             commands.spin((1,0.5), (1,0), self.direction, path)
         return commands.get()
 
