@@ -87,10 +87,8 @@ class BlockRecognizer:
                 sample = cv2.imread(file)
                 # サンプル画像のヒストグラムを求める
                 comparer = self.calculate_histogram(sample)
-                # ブロック画像とサンプル画像を比較する
-                similarity[color] += self.compare_histogram(subject, comparer)
-            # 計算した類似度を正規化する
-            similarity[color] = similarity[color] / len(path.keys())
+                # ブロック画像とサンプル画像をヒストグラム類似度で比較する
+                similarity[color] = max(similarity[color], self.compare_histogram(subject, comparer))
         # 類似度が最も高い色を返す
         return max(similarity, key=similarity.get)
 
