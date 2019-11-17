@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import glob
 
+
 class BlockRecognizer:
     def __init__(self, bonus, is_left):
         """
@@ -18,14 +19,12 @@ class BlockRecognizer:
         self.bonus = bonus
         self.is_left = is_left
 
-
     def create_color_dict(self, files, key):
         color_dict = {}
         for file in files:
             color_dict[file] = key
 
         return color_dict
-
 
     def open_sample_block_files(self):
         white = self.create_color_dict(glob.glob('img/white/*.png'), Color.WHITE)
@@ -42,7 +41,16 @@ class BlockRecognizer:
 
         return files
 
-
+    def calculate_histogram(self, file_path):
+        # 画像を読み込む
+        img = cv2.imread(file_path)
+        # HSV色空間に変換する
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        # 色相(Hue)のヒストグラムを求める
+        h = cv2.calcHist([img], [0], None, [256], [0, 256])
+        # 明度(Value)のヒストグラムを求める
+        v = cv2.calcHist([img], [2], None, [256], [0, 256])
+        return (h, v)
 
     def convert_to_hsv(self, img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
