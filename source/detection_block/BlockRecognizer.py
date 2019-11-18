@@ -1,10 +1,8 @@
 from block_bingo.BlockBingoCoordinate import CrossCirclesCoordinate, BlockCirclesCoordinate
 from block_bingo.BlockBingoCoordinate import Color
 import cv2
-import sys
 import numpy as np
-import pytest
-
+import glob
 
 class BlockRecognizer:
     def __init__(self, bonus, is_left):
@@ -20,32 +18,80 @@ class BlockRecognizer:
         self.bonus = bonus
         self.is_left = is_left
 
-    def convert_to_hsv(self, img):
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        h = hsv.T[0].flatten().mean()
-        s = hsv.T[1].flatten().mean()
-        v = hsv.T[2].flatten().mean()
+    def create_color_dict(self, files, value):
+        color_dict = {}
+        for file in files:
+            color_dict[file] = value
+
+        return color_dict
+
+    def open_sample_block_files(self):
+        white = self.create_color_dict(glob.glob('detection_block/img/white/*.png'), Color.WHITE)
+        black = self.create_color_dict(glob.glob('detection_block/img/black/*.png'), Color.BLACK)
+        blue = self.create_color_dict(glob.glob('detection_block/img/blue/*.png'), Color.BLUE)
+        green = self.create_color_dict(glob.glob('detection_block/img/green/*.png'), Color.GREEN)
+        red = self.create_color_dict(glob.glob('detection_block/img/red/*.png'), Color.RED)
+        yellow = self.create_color_dict(glob.glob('detection_block/img/yellow/*.png'), Color.YELLOW)
+
+        files = [white, black, blue, green, red, yellow]
+        for file in files:
+            if len(file) == 0:
+                raise ValueError('Cannot open image for calculating histogram')
+
+        return files
+
+    def calculate_histogram(self, img):
+        # HSV色空間に変換する
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        # 色相(Hue)のヒストグラムを求める
+        h = cv2.calcHist([img], [0], None, [256], [0, 256])
+        # 彩度(Saturation)のヒストグラムを求める
+        s = cv2.calcHist([img], [1], None, [256], [0, 256])
+        # 明度(Value)のヒストグラムを求める
+        v = cv2.calcHist([img], [2], None, [256], [0, 256])
         return (h, s, v)
 
+
+    def compare_histogram(self, subject, comparer):
+        """
+        画像とサンプル画像の類似度を計算する
+        :param subject: 入力画像のヒストグラム
+        :param comparer: サンプル画像のヒストグラム
+        :return: 類似度
+        """
+        # 入力画像とサンプル画像のヒストグラムに関する次元が異なる場合は、例外を送出する
+        if len(subject) != len(comparer):
+            raise ArithmeticError('Cannot compare histogram! subject size != comparer size')
+        # 類似度を初期化しておく
+        similarity = 0
+        # ヒストグラム比較をする
+        for (h1, h2) in zip(subject, comparer):
+            similarity += 1 - cv2.compareHist(h1, h2, cv2.HISTCMP_BHATTACHARYYA)
+
+        return similarity / len(subject)
+
+
     def detect_color(self, img):
-        # 各色のHue最小値と最大値
-        hue_list = {Color.RED: [0, 15], Color.BLUE: [90, 110],
-                    Color.YELLOW: [15, 30], Color.GREEN: [60, 90]}
-        (h, s, v) = self.convert_to_hsv(img)
+        # 引数のブロック画像のヒストグラムを求める
+        subject = self.calculate_histogram(img)
+        # ヒストグラムを比較するサンプル画像ファイルのパスを取得する
+        paths = self.open_sample_block_files()
+        # 類似度を格納する辞書を用意する
+        similarity = {}
+        for path in paths:
+            # 類似度を初期化しておく
+            color = list(path.values())[0]
+            similarity[color] = 0
+            for file in path.keys():
+                # サンプル画像ファイルを開く
+                sample = cv2.imread(file)
+                # サンプル画像のヒストグラムを求める
+                comparer = self.calculate_histogram(sample)
+                # ブロック画像とサンプル画像をヒストグラム類似度で比較する
+                similarity[color] = max(similarity[color], self.compare_histogram(subject, comparer))
+        # 類似度が最も高い色を返す
+        return max(similarity, key=similarity.get)
 
-        # 黒色の識別
-        if 0 <= v < 40:
-            return Color.BLACK
-        # 白色の識別
-        if 240 <= v < 256:
-            return Color.WHITE
-
-        for (key, value) in hue_list.items():
-            if value[0] <= h < value[1]:
-                return key
-        print(h, s, v)
-        return None
-        # raise ValueError("値がNoneどすえ")
 
     def recognize(self, img, circles_coordinates):
         """
