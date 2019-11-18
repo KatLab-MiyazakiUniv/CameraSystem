@@ -130,7 +130,7 @@ class CameraSystem:
         (block_circles, cross_circles) = self._detection_block(card_number, is_left)
 
         # ブロックサークル内の黒ブロック運搬経路を計算する
-        (commands, path) = self._black_circles_path(block_circles)
+        (commands, path) = self._black_circles_path(block_circles, is_left)
         # ブロックビンゴを成立させるための運搬経路を計算する
         commands += self._block_bingo_path(block_circles, cross_circles, path)
 
@@ -181,7 +181,7 @@ class CameraSystem:
         pprint.pprint(cross_circle.cross_circles)
         return (block_circle, cross_circle)
 
-    def _black_circles_path(self, block_circles):
+    def _black_circles_path(self, block_circles, is_left):
         """
         ブロックサークル内の黒ブロックを運搬する経路を計算する。
 
@@ -191,7 +191,7 @@ class CameraSystem:
             ブロックサークルの座標
         """
         solver = BlackBlockCommands(
-            block_circles.bonus_circle, block_circles.black_circle, block_circles.color_circle)
+            block_circles.bonus_circle, block_circles.black_circle, block_circles.color_circle, is_left=is_left)
         commands = list(solver.gen_commands())
 
         return (commands, solver.reverse_route)
