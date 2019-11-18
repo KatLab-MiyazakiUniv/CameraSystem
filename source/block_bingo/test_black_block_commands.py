@@ -68,7 +68,7 @@ class BlackBlockCommandsTest(unittest.TestCase):
         # インデックスが増える方向に回転 => 右回転
         dx = (1, 0, -1, 0)
         dy = (0, 1, 0, -1)
-        generator = BlackBlockCommands(1, 2, 3)
+        generator = BlackBlockCommands(1, 2, 3, True)
         next_coor = (0, 0)
         # 座標の組み合わせを列挙
         movement_coordinates = tuple(itertools.product(tuple(itertools.product((0, 1, 2), repeat=2)), repeat=2))
@@ -128,7 +128,7 @@ class BlackBlockCommandsTest(unittest.TestCase):
             3. 回転しない際、空文字列''を返すこと
             4. 上記の条件を満たさない際、空文字列''を返すこと
         """
-        generator = BlackBlockCommands(1, 2, 3)
+        generator = BlackBlockCommands(1, 2, 3, True)
         dx = (1, 0, -1, 0)
         dy = (0, 1, 0, -1)
         # 確認事項1.のテスト
