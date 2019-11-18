@@ -107,19 +107,8 @@ class Commands():
         2個連続したとき1つにまとめるので、3個連続するときは2個にまとめられる。
         :return:
         """
-        commands = list(self.commands[0])
-        needPack = True  # MOVE_NODEを1つにまとめる必要があるかどうかを表す
-
-        for i in range(1, len(self.commands)):
-            # 交点サークル間の移動が2個連続するときは、格納しない
-            if needPack and self.commands[i] == Instructions.MOVE_NODE and \
-                    self.commands[i - 1] == Instructions.MOVE_NODE:
-                # 3個連続したとき1個にまとめられないために、needPackをFalseにする
-                needPack = False
-                continue
-            needPack = True
-            commands.append(self.commands[i])
-        return commands
+        commands = ''.join(self.commands)
+        return list(commands.replace(Instructions.MOVE_NODE * 2, Instructions.MOVE_NODE))
 
     def get_next_direction(self, src, dst):
         """

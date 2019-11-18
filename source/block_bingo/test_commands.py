@@ -240,8 +240,8 @@ def test_convert():
 
 def test_get():
     commands = create_commands()
-    commands.commands = ['u', 'u', 'k', 'u', 'u', 'u', 'u', 'u', 'u', 'e', 'a']
+    commands.commands = ['u', 'u', 'k', 'u', 'u', 'u', 'u', 'u', 'u', 'e', 'a', 'u']
 
     # uが2個連続するとき、1個にまとめられることを確認する
-    expected = ['u', 'k', 'u', 'u', 'u', 'e', 'a']
-    assert commands.get() == expected
+    expected = ['u', 'k', 'u', 'u', 'u', 'e', 'a', 'u']
+    assert expected == commands.get()
