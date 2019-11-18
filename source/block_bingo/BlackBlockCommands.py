@@ -9,7 +9,7 @@ from BlockCirclesPath import BlockCirclesSolver
 from commands import Instructions
 
 class BlackBlockCommands():
-    def __init__(self, bonus, black, color, is_left=True):
+    def __init__(self, bonus, black, color, is_left):
         """
         ブロックサークル内の黒ブロックを運搬する経路を計算するための情報を登録する。
         

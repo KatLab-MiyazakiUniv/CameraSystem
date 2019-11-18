@@ -1,6 +1,7 @@
 from detection_number.DetectionNumber import DetectionNumber
 from Camera import Camera
 from bluetooth.Bluetooth import Bluetooth
+from bluetooth.search_serial_port import search_com_ports
 from detection_block.BlockRecognizer import BlockRecognizer
 from block_bingo.BlackBlockCommands import BlackBlockCommands
 from block_bingo.commands import Instructions
@@ -11,7 +12,7 @@ import pprint
 
 
 class CameraSystem:
-    def __init__(self, url="http://raspberrypi.local/?action=stream"):
+    def __init__(self, url="http://192.168.11.25/?action=stream"):
         self.camera = Camera(url)
 
         # NOTE: 以前に座標ポチポチしたデータを読み込む（ファイルが存在場合は何もしない）
@@ -19,7 +20,7 @@ class CameraSystem:
         self.camera.load_settings()
 
         self.bt = Bluetooth()
-        self.port = "COM4"
+        self.port = "COM6"
         self.is_debug = False
 
     def start(self):
@@ -28,6 +29,7 @@ class CameraSystem:
         :return:
         """
 
+        search_com_ports()
         # スレッドを立てて、BT接続を始める。
         connect_thread = threading.Thread(target=self._connect_to_ev3)
         connect_thread.start()
