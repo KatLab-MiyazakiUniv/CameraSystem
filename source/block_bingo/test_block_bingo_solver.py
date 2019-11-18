@@ -206,11 +206,11 @@ def test_solve_left():
         for y in range(0, 3+1):
             solver.cross_circles.set_block_color((x,y), block[x][y])
 
-    commands = ['e', 'u', 'd', 'u', 'y', 'u', 'd', 'u', 'u', 'j', 'u', 'z', 'd', 'u', 'f', 'u', 'z',
-                'e', 'u', 'f', 'u', 'u', 'l', 'd', 'g', 'e',
-                'm', 'u', 'e', 'u', 'u', 'z',  'f', 'u', 'u', 'k', 'u', 'e']
+    commands = ['e', 'u', 'd', 'u', 'y', 'u', 'd', 'u', 'u', 'j', 'u', 'z',
+                'd', 'u', 'f', 'u', 'z', 'e', 'u', 'f', 'u', 'u', 'i', 'u',
+                'e', 'z', 'u', 'l', 'u', 'u', 'e', 'u', 'u', 'z', 'f', 'u', 'u', 'k', 'u', 'e']
 
-    assert commands == solver.solve()
+    assert solver.solve() == commands
 
 
 def test_solve_right():
@@ -223,8 +223,8 @@ def test_solve_right():
         for y in range(0, 3+1):
             solver.cross_circles.set_block_color((x,y), block[x][y])
 
-    commands = ['e', 'm', 'u', 'f', 'u', 'm', 'h', 'd', 'g', 'd', 'u',
-                'u', 'z', 'e', 'u', 'f', 'u', 'k', 'u', 'z', 'e', 'u',
-                'u', 'd', 'y', 'u', 'k', 'u', 'k', 'u', 'u', 'z', 'u', 'j', 'u', 'e']
-    
-    assert commands == solver.solve()
+    commands = ['e', 'm', 'u', 'f', 'u', 'u', 'l', 'u', 'z', 'f', 'u', 'd', 'u',
+                'u', 'k', 'u', 'y', 'e', 'u', 'd', 'y', 'u', 'k', 'u', 'd', 'u',
+                'u', 'm', 'u', 'y', 'e', 'u', 'f', 'u', 'z', 'u', 'j', 'u', 'e']
+
+    assert solver.solve() == commands

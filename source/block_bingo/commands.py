@@ -346,46 +346,7 @@ class Commands():
         # 終点にブロックサークルがあることを確認する
         if dst not in self.block_circles.block_circles.values():
             raise ValueError('cannot find block circle corresponding to dst!')
-        # 始点が交点サークルにあるとき
-        if src[0] in [0, 1, 2, 3] and src[1] in [0, 1, 2, 3]:
-            return self.put_block_from_cross_circle(src, dst, direction, has_block)
-        # 始点が黒線の中点にあるとき
-        return self.put_block_from_midpoint(src, dst, direction, has_block)
-
-    def put_block_from_midpoint(self, src, dst, direction, has_block):
-        """
-        黒線の中点からブロックを設置する動作をコマンドに変換する。
-
-        Parameters
-        ----------
-        src : tuple
-            始点の座標
-        dst : tuple
-            終点の座標
-        direction : int
-            走行体の現在の向き
-        has_block : bool
-            始点にブロックが存在するか
-        """
-        # 黒線の中点の座標からブロックサークルの座標を引く
-        sub = (src[0] - dst[0], src[1] - dst[1])
-
-        if sub == (0, 0.5):  # ブロックサークルの上部の中点
-            # 走行体が南に向くように回頭コマンドの変換をする
-            direction = self.spin(src, (src[0] + 1, src[1]), direction, has_block)
-        if sub == (0.5, 1):  # ブロックサークルの左の中点
-            # 走行体が西に向くように回頭コマンドの変換をする
-            direction = self.spin(src, (src[0], src[1] - 1), direction, has_block)
-        if sub == (1, 0.5):  # ブロックサークルの下部の中点
-            # 走行体が北に向くように回頭コマンドの変換をする
-            direction = self.spin(src, (src[0] - 1, src[1]), direction, has_block)
-        if sub == (0.5, 0):  # ブロックサークルの右の中点
-            # 走行体が東に向くように回頭コマンドの変換をする
-            direction = self.spin(src, (src[0], src[1] + 1), direction, has_block)
-
-        # ブロック設置のコマンド変換をする
-        self.commands.append(Instructions.PUT)
-        return direction
+        return self.put_block_from_cross_circle(src, dst, direction, has_block)
 
     def put_block_from_cross_circle(self, src, dst, direction, has_block):
         """
