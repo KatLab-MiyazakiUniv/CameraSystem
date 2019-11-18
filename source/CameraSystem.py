@@ -5,7 +5,7 @@ from bluetooth.search_serial_port import search_com_ports
 from detection_block.BlockRecognizer import BlockRecognizer
 from block_bingo.BlackBlockCommands import BlackBlockCommands
 from block_bingo.commands import Instructions
-from block_bingo.BlockBingoSolver import BlockBingoSolver
+from block_bingo.BlockBingoSolver import BlockBingoSolver, Bingo
 import time
 import threading
 import pprint
@@ -212,7 +212,7 @@ class CameraSystem:
             黒ブロックを運搬するためのブロックサークル間移動の運搬経路
         """
         solver = BlockBingoSolver(block_circles, cross_circles, path)
-        return solver.solve()
+        return solver.solve(bingo=Bingo.DOUBLE_BINGO)
 
     def _send_command(self, commands):
         """

@@ -133,7 +133,7 @@ def test_goal_node():
 
     assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(3))
     assert (1,2) == cross_circles.goal_node((1,1), block_circles.get(5))
-    assert (2,1.5) == cross_circles.goal_node((2,1.5), block_circles.get(7))
+    assert (2,1) == cross_circles.goal_node((2,1.5), block_circles.get(7))
     assert (1,0) == cross_circles.goal_node((3,0), block_circles.get(1))
 
 

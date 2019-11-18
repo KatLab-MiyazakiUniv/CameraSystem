@@ -156,24 +156,6 @@ def test_turn180_detour():
         assert result[2] == commands.get()[1]
 
 
-def test_put_block_from_midpoint():
-    # README.mdの8.1のコマンド変換例
-    # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
-    args = [[(1.5,1), (1,0), 0, False],
-            [(2,0.5), (1,0), 2, False],
-            [(1.5,0), (1,0), 0, False],
-            [(1,0.5), (1,0), 2, False]]
-    # 期待出力リスト: 次の走行体の向き, コマンド
-    results = [[6, 'e', 'g'], [0, 'e', 'g'], [2, 'd', 'g'], [4, 'd', 'g']]
-
-    for (arg, result) in zip(args, results):
-        commands = create_commands()
-        assert result[0] == commands.put_block_from_midpoint(arg[0], arg[1], arg[2], arg[3])
-        assert 2 == len(commands.get())
-        assert result[1] == commands.get()[0]
-        assert result[2] == commands.get()[1]
-
-
 def test_put_block_from_cross_circle():
     # README.mdの9.1のコマンド変換例
     # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
@@ -205,15 +187,11 @@ def test_put_block_from_cross_circle():
 def test_put():
     # 引数リスト: 始点, 終点, 現在の走行体の向き, 始点にブロックがあるか
     args = [[(0,0), (0,0), 0, False],
-            [(0,0.5), (0,0), 0, False],
-            [(1,2.5), (0,2), 2, False],
             [(2,2), (2,1), 4, False],
             [(2,2), (2,2), 6, False]]
 
     # 期待出力: 次の走行体の向き, コマンド
     results = [[2, 'd', 'y'],
-               [4, 'f', 'g'],
-               [0, 'e', 'g'],
                [4, 'y'],
                [4, 'e', 'z']]
     
@@ -240,8 +218,8 @@ def test_convert():
 
 def test_get():
     commands = create_commands()
-    commands.commands = ['u', 'u', 'k', 'u', 'u', 'u', 'u', 'u', 'u', 'e', 'a']
+    commands.commands = ['u', 'u', 'k', 'u', 'u', 'u', 'u', 'u', 'u', 'e', 'a', 'u']
 
     # uが2個連続するとき、1個にまとめられることを確認する
-    expected = ['u', 'k', 'u', 'u', 'u', 'e', 'a']
-    assert commands.get() == expected
+    expected = ['u', 'k', 'u', 'u', 'u', 'e', 'a', 'u']
+    assert expected == commands.get()
