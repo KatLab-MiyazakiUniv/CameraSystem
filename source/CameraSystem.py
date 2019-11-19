@@ -12,7 +12,7 @@ import pprint
 
 
 class CameraSystem:
-    def __init__(self, url="http://192.168.11.25/?action=stream"):
+    def __init__(self, url="http://raspberrypi.local/?action=stream"):
         self.camera = Camera(url)
 
         # NOTE: 以前に座標ポチポチしたデータを読み込む（ファイルが存在場合は何もしない）
