@@ -13,7 +13,7 @@ pyserial = "^3.4"
 chainer = "^6.5"
 matplotlib = "^3.1"
 tqdm = "^4.36"
-opencv-contrib-python = "^4.1"
+opencv-contrib-python = "^4.2"
 pillow = "^6.2"
 
 [tool.poetry.dev-dependencies]
